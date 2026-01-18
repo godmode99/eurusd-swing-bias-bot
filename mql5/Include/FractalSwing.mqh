@@ -1,1 +1,0 @@
-// Fractal swing detection placeholder

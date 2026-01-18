@@ -1,1 +1,0 @@
-// New bar detection placeholder

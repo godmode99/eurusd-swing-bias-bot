@@ -1,1 +1,0 @@
-// ATR calculations placeholder

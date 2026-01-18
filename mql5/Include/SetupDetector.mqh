@@ -1,1 +1,0 @@
-// Setup detector placeholder

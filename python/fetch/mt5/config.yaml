@@ -1,0 +1,47 @@
+app:
+  timezone: "Asia/Bangkok"
+
+mt5:
+  # ถ้า MT5 เปิดอยู่ปกติ ส่วนใหญ่ "initialize()" จะเจอเอง
+  # ถ้าไม่เจอ ให้ใส่ path ของ terminal64.exe เช่น:
+  # terminal_path: "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+  terminal_path: null
+
+symbols:
+  - "EURUSD"
+
+fetch:
+  # จำนวนแท่งที่จะดึง (มากพอสำหรับ MA/ATR/Fractal ภายหลัง)
+  bars_d1: 600
+  bars_h4: 1200
+
+  # จะบังคับใช้ server time ของ MT5 หรือแปลงเป็น UTC
+  store_time_as_utc: true
+
+output:
+  data_dir: "raw_data_mt5"
+  logs_dir: "logs"
+  overwrite_ohlc: true
+
+archive:
+  keep_run_manifest: true
+  keep_error_report: true
+
+validation:
+  # ยอมให้ missing ได้ไม่เกินกี่เปอร์เซ็นต์
+  max_missing_ratio: 0.01
+  # เช็คความสมเหตุสมผลของราคา
+  min_price: 0.0001
+  max_price: 1000.0
+
+retry:
+  attempts: 3
+  sleep_seconds: 2
+
+telegram:
+  enabled: true
+  bot_token: "8352337942:AAE_9923PEcYmGQbhA9vqjNUMmqZ40JPf0w"
+  chat_id: "-516921960" # ใส่เป็น string ไว้ก่อนก็ได้
+  send_on_success: true
+  send_on_warning: true
+  send_on_error: true

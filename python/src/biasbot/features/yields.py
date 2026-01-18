@@ -1,1 +1,0 @@
-"""Yield feature calculations."""
