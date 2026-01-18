@@ -1,0 +1,1 @@
+// EURUSD Swing EA placeholder

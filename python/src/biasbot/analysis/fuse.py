@@ -1,0 +1,1 @@
+"""Risk fuse logic."""

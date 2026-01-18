@@ -1,0 +1,8 @@
+[project]
+name = "eurusd-swing-bias-bot"
+version = "0.1.0"
+description = "Bias engine and MQL5 EA for EURUSD swing trading"
+requires-python = ">=3.10"
+
+[tool.black]
+line-length = 88
