@@ -41,7 +41,7 @@ retry:
 telegram:
   enabled: true
   bot_token: "8352337942:AAE_9923PEcYmGQbhA9vqjNUMmqZ40JPf0w"
-  chat_id: "-516921960" # ใส่เป็น string ไว้ก่อนก็ได้
+  chat_id: "-5169219602"
   send_on_success: true
   send_on_warning: true
   send_on_error: true
