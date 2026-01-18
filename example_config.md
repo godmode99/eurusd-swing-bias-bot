@@ -16,7 +16,7 @@ paths:
 
 # C:\Users\<you>\AppData\Roaming\MetaQuotes\Terminal\<hash>\MQL5\Files
 
-mt5_files_dir: "C:/REPLACE/MT5/MQL5/Files"
+mt5_files_dir: "C:\Users\iidogpon\AppData\Roaming\MetaQuotes\Terminal\010E047102812FC0C18890992854220E\MQL5\Files"
 
 # Output files (written by Python)
 
