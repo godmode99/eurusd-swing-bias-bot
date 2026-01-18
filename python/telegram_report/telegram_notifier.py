@@ -40,9 +40,19 @@ def send_telegram_message(cfg: Dict[str, Any], text: str, logger=None) -> None:
 
     try:
         r = requests.post(url, data=payload, timeout=20)
-        if not r.ok:
-            if logger:
-                logger.warning(f"Telegram send failed: HTTP {r.status_code} {r.text}")
+        if not r.ok and logger:
+            detail = r.text
+            try:
+                response_json = r.json()
+                detail = response_json.get("description", detail)
+            except ValueError:
+                response_json = None
+            logger.warning(f"Telegram send failed: HTTP {r.status_code} {detail}")
+            if r.status_code == 400 and "chat not found" in str(detail).lower():
+                logger.warning(
+                    "Telegram chat not found. Check telegram.chat_id, ensure the bot is added to the chat, "
+                    "and send /start to the bot for direct messages."
+                )
     except Exception as e:
         if logger:
             logger.warning(f"Telegram send exception: {e}")
