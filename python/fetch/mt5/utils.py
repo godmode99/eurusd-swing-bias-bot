@@ -13,8 +13,43 @@ def date_utc_compact() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d")
 
 def load_config(path: str) -> Dict[str, Any]:
+    load_env_file(Path(path).resolve().parent)
     with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    return apply_env_overrides(cfg)
+
+
+def load_env_file(start_dir: Path) -> None:
+    for parent in (start_dir, *start_dir.parents):
+        env_path = parent / ".env"
+        if env_path.exists():
+            for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key:
+                    os.environ[key] = value
+            break
+
+
+def apply_env_overrides(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    if not cfg:
+        return cfg
+    telegram = cfg.get("telegram", {}) or {}
+
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    if tg_token:
+        telegram["bot_token"] = tg_token
+
+    tg_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if tg_chat:
+        telegram["chat_id"] = tg_chat
+
+    cfg["telegram"] = telegram
+    return cfg
 
 
 def ensure_dir(p: str | Path) -> Path:

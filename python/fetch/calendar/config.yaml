@@ -1,6 +1,6 @@
 calendar:
   provider: "fmp"
-  api_key: "hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B" # แนะนำใช้ env: FMP_API_KEY
+  api_key: "" # ใช้จาก .env (FMP_API_KEY)
   timeout_seconds: 30
 
   # ช่วงวันที่จะดึง (สวิง 2–5 วัน แนะนำ lookback นิดหน่อย + forward สัก 2–3 สัปดาห์)
@@ -26,8 +26,8 @@ retry:
 
 telegram:
   enabled: true
-  bot_token: "8352337942:AAE_9923PEcYmGQbhA9vqjNUMmqZ40JPf0w"
-  chat_id: "-5169219602" # ของมึง (ถ้ากลุ่มเป็น supergroup แล้วใช้ -100... ก็เปลี่ยนตรงนี้)
+  bot_token: "" # ใช้จาก .env (TELEGRAM_BOT_TOKEN)
+  chat_id: "" # ใช้จาก .env (TELEGRAM_CHAT_ID)
   send_on_success: true
   send_on_warning: true
   send_on_error: true

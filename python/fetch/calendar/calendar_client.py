@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import requests
 from datetime import date
 from typing import Any, Dict, List, Optional
@@ -16,9 +15,9 @@ def fetch_fmp_calendar(
     date_to: date,
     timeout_seconds: int = 30,
 ) -> List[Dict[str, Any]]:
-    key = (api_key or os.getenv("FMP_API_KEY") or "").strip()
+    key = (api_key or "").strip()
     if not key:
-        raise RuntimeError("Missing FMP API key. Set env FMP_API_KEY or put calendar.api_key in config.yaml")
+        raise RuntimeError("Missing FMP API key. Set FMP_API_KEY in .env or calendar.api_key in config.yaml")
 
     params = {
         "from": date_from.strftime("%Y-%m-%d"),

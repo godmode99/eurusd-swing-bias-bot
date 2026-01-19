@@ -1,7 +1,6 @@
 # telegram_notifier.py
 from __future__ import annotations
 
-import os
 import requests
 from typing import Any, Dict
 
@@ -22,8 +21,8 @@ def send_telegram_message(cfg: Dict[str, Any], text: str, logger=None) -> None:
     if not _bool(tg.get("enabled"), False):
         return
 
-    bot_token = tg.get("bot_token") or os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = tg.get("chat_id") or os.getenv("TELEGRAM_CHAT_ID")
+    bot_token = tg.get("bot_token")
+    chat_id = tg.get("chat_id")
 
     if not bot_token or not chat_id:
         if logger:
