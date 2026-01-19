@@ -5,6 +5,10 @@ import xml.etree.ElementTree as ET
 from typing import Any, Dict, List
 
 FF_XML_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
+FF_HEADERS = {
+    "User-Agent": "eurusd-swing-bias-bot/1.0 (+https://nfs.faireconomy.media)",
+    "Accept": "application/xml,text/xml;q=0.9,*/*;q=0.8",
+}
 
 
 def _safe_text(node: ET.Element | None) -> str:
@@ -32,12 +36,19 @@ def normalize_currency(val: Any) -> str:
     return str(val or "").strip().upper()
 
 
+def _looks_like_html(payload: str) -> bool:
+    snippet = payload.lstrip()[:200].lower()
+    return snippet.startswith("<!doctype html") or "<html" in snippet
+
+
 def fetch_forexfactory_xml(timeout_seconds: int = 30) -> List[Dict[str, Any]]:
-    r = requests.get(FF_XML_URL, timeout=timeout_seconds)
+    r = requests.get(FF_XML_URL, headers=FF_HEADERS, timeout=timeout_seconds)
     r.raise_for_status()
 
     # FF XML often comes as windows-1252
     xml_text = r.content.decode("windows-1252", errors="replace")
+    if _looks_like_html(xml_text):
+        raise ValueError("ForexFactory XML returned HTML content (possible block).")
     root = ET.fromstring(xml_text)
 
     events: List[Dict[str, Any]] = []
@@ -71,5 +82,8 @@ def fetch_forexfactory_xml(timeout_seconds: int = 30) -> List[Dict[str, Any]]:
                 "raw": raw,
             }
         )
+
+    if not events:
+        raise ValueError("ForexFactory XML returned no <event> nodes.")
 
     return events
