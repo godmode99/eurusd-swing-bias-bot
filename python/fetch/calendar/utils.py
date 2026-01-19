@@ -10,6 +10,10 @@ from typing import Any, Dict
 import yaml
 
 
+class NonRetryableError(Exception):
+    pass
+
+
 def load_config(path: str) -> Dict[str, Any]:
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -69,6 +73,9 @@ def retry(fn, attempts: int, sleep_seconds: int, logger: logging.Logger, label: 
             return fn()
         except Exception as e:
             last_err = e
+            if isinstance(e, NonRetryableError):
+                logger.warning(f"{label}: non-retryable error: {e}")
+                break
             logger.warning(f"{label}: attempt {i}/{attempts} failed: {e}")
             if i < attempts:
                 time.sleep(sleep_seconds)

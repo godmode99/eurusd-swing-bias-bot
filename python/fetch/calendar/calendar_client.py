@@ -5,6 +5,7 @@ import requests
 from datetime import date
 from typing import Any, Dict, List, Optional
 
+from utils import NonRetryableError
 
 FMP_ENDPOINT = "https://financialmodelingprep.com/stable/economic-calendar"
 
@@ -26,6 +27,16 @@ def fetch_fmp_calendar(
     }
 
     r = requests.get(FMP_ENDPOINT, params=params, timeout=timeout_seconds)
+    if r.status_code == 402:
+        raise NonRetryableError(
+            "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan "
+            "or a valid API key with access."
+        )
+    if r.status_code in {401, 403}:
+        raise NonRetryableError(
+            f"FMP API returned {r.status_code} (Unauthorized). Check that your API key has access "
+            "to the economic calendar endpoint."
+        )
     r.raise_for_status()
 
     data = r.json()
