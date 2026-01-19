@@ -92,7 +92,7 @@ def format_manifest_message(manifest: Dict[str, Any]) -> str:
         for k, v in sources.items():
             ok = v.get("ok")
             rows = v.get("rows")
-            latest = v.get("latest_time")
+            latest = v.get("latest_time") or v.get("latest")
             used_cache = v.get("used_cache")
             error = (v.get("error") or "").strip()
             if ok and error:
@@ -105,6 +105,30 @@ def format_manifest_message(manifest: Dict[str, Any]) -> str:
             lines.append(f"• {k}: {tag}{cache}, rows={rows}, latest={latest}")
             if error:
                 lines.append(f"  ↳ error: {error}")
+            day_label = v.get("day")
+            if day_label:
+                raw_rows = v.get("raw_rows")
+                todays_rows = v.get("todays_rows")
+                filtered_today_rows = v.get("filtered_today_rows")
+                other_today_rows = v.get("other_today_rows")
+                other_today_events = v.get("other_today_events")
+                if ok and error:
+                    lines.append(f"  ↳ Recheck failed; using cache for {day_label}.")
+                if raw_rows == 0:
+                    lines.append(f"  ↳ Source returned 0 events for {day_label}.")
+                if filtered_today_rows == 0 and isinstance(todays_rows, int):
+                    lines.append(
+                        f"  ↳ No relevant news for {day_label} (total today={todays_rows})."
+                    )
+                if isinstance(other_today_events, list):
+                    if other_today_events:
+                        lines.append(f"  ↳ Other events on {day_label}:")
+                        for item in other_today_events:
+                            lines.append(f"    - {item}")
+                    elif isinstance(other_today_rows, int):
+                        lines.append(f"  ↳ Other events on {day_label}: none.")
+                elif ok is False:
+                    lines.append(f"  ↳ Other events on {day_label}: unavailable (fetch failed).")
 
     stale = manifest.get("stale_sources", []) or []
     if stale:
