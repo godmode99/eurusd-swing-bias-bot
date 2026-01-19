@@ -7,6 +7,13 @@ from typing import Any, Dict, List, Optional
 from utils import NonRetryableError
 
 FMP_ENDPOINT = "https://financialmodelingprep.com/stable/economic-calendar"
+RESPONSE_TEXT_LIMIT = 500
+
+
+def _truncate_response_text(text: str | None) -> str:
+    if not text:
+        return ""
+    return text.strip()[:RESPONSE_TEXT_LIMIT]
 
 
 def fetch_fmp_calendar(
@@ -26,15 +33,18 @@ def fetch_fmp_calendar(
     }
 
     r = requests.get(FMP_ENDPOINT, params=params, timeout=timeout_seconds)
+    response_snippet = _truncate_response_text(r.text)
     if r.status_code == 402:
         raise NonRetryableError(
             "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan "
             "or a valid API key with access."
+            + (f" Response body: {response_snippet}" if response_snippet else "")
         )
     if r.status_code in {401, 403}:
         raise NonRetryableError(
             f"FMP API returned {r.status_code} (Unauthorized). Check that your API key has access "
             "to the economic calendar endpoint."
+            + (f" Response body: {response_snippet}" if response_snippet else "")
         )
     r.raise_for_status()
 
