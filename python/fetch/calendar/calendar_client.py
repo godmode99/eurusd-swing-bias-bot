@@ -1,78 +1,75 @@
 from __future__ import annotations
 
 import requests
-from datetime import date
-from typing import Any, Dict, List, Optional
+import xml.etree.ElementTree as ET
+from typing import Any, Dict, List
 
-from utils import NonRetryableError
-
-FMP_ENDPOINT = "https://financialmodelingprep.com/stable/economic-calendar"
-RESPONSE_TEXT_LIMIT = 500
+FF_XML_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
 
 
-def _truncate_response_text(text: str | None) -> str:
-    if not text:
+def _safe_text(node: ET.Element | None) -> str:
+    if node is None or node.text is None:
         return ""
-    return text.strip()[:RESPONSE_TEXT_LIMIT]
-
-
-def fetch_fmp_calendar(
-    api_key: Optional[str],
-    date_from: date,
-    date_to: date,
-    timeout_seconds: int = 30,
-) -> List[Dict[str, Any]]:
-    key = (api_key or "").strip()
-    if not key:
-        raise RuntimeError("Missing FMP API key. Set FMP_API_KEY in .env or calendar.api_key in config.yaml")
-
-    params = {
-        "from": date_from.strftime("%Y-%m-%d"),
-        "to": date_to.strftime("%Y-%m-%d"),
-        "apikey": key,  # FMP requires apikey param :contentReference[oaicite:2]{index=2}
-    }
-
-    r = requests.get(FMP_ENDPOINT, params=params, timeout=timeout_seconds)
-    response_snippet = _truncate_response_text(r.text)
-    if r.status_code == 402:
-        raise NonRetryableError(
-            "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan "
-            "or a valid API key with access."
-            + (f" Response body: {response_snippet}" if response_snippet else "")
-        )
-    if r.status_code in {401, 403}:
-        raise NonRetryableError(
-            f"FMP API returned {r.status_code} (Unauthorized). Check that your API key has access "
-            "to the economic calendar endpoint."
-            + (f" Response body: {response_snippet}" if response_snippet else "")
-        )
-    r.raise_for_status()
-
-    data = r.json()
-    if not isinstance(data, list):
-        raise RuntimeError(f"Unexpected response type from FMP calendar: {type(data)}")
-
-    return data
+    return node.text.strip()
 
 
 def normalize_impact(val: Any) -> str:
-    if val is None:
-        return ""
-    s = str(val).strip()
+    s = str(val or "").strip()
     if not s:
         return ""
-    # normalize common variants
-    s_low = s.lower()
-    if "high" in s_low:
+    sl = s.lower()
+    if "high" in sl:
         return "High"
-    if "med" in s_low:
+    if "med" in sl:
         return "Medium"
-    if "low" in s_low:
+    if "low" in sl:
         return "Low"
-    return s  # fallback
+    # sometimes FF uses other labels like "Holiday"
+    return s
 
 
 def normalize_currency(val: Any) -> str:
-    if val is None:
-        return ""
-    return str(val).strip().upper()
+    return str(val or "").strip().upper()
+
+
+def fetch_forexfactory_xml(timeout_seconds: int = 30) -> List[Dict[str, Any]]:
+    r = requests.get(FF_XML_URL, timeout=timeout_seconds)
+    r.raise_for_status()
+
+    # FF XML often comes as windows-1252
+    xml_text = r.content.decode("windows-1252", errors="replace")
+    root = ET.fromstring(xml_text)
+
+    events: List[Dict[str, Any]] = []
+    for ev in root.findall(".//event"):
+        # tags commonly: title, country, currency, impact, date, time, forecast, previous, actual
+        title = _safe_text(ev.find("title"))
+        country = _safe_text(ev.find("country"))
+        currency = normalize_currency(_safe_text(ev.find("currency")))
+        impact = normalize_impact(_safe_text(ev.find("impact")))
+        date_s = _safe_text(ev.find("date"))
+        time_s = _safe_text(ev.find("time"))
+        forecast = _safe_text(ev.find("forecast"))
+        previous = _safe_text(ev.find("previous"))
+        actual = _safe_text(ev.find("actual"))
+        url = _safe_text(ev.find("url"))
+
+        raw = {child.tag: _safe_text(child) for child in list(ev)}
+
+        events.append(
+            {
+                "date": date_s,
+                "time": time_s,
+                "country": country,
+                "currency": currency,
+                "event": title,
+                "impact": impact,
+                "actual": actual,
+                "forecast": forecast,
+                "previous": previous,
+                "url": url,
+                "raw": raw,
+            }
+        )
+
+    return events

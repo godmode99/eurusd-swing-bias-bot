@@ -1,16 +1,12 @@
 {
-  "asof_utc": "2026-01-19T08:22:20Z",
+  "asof_utc": "2026-01-19T09:41:28Z",
   "sources": {
-    "FMP_ECONOMIC_CALENDAR": {
+    "FOREXFACTORY_XML_CALENDAR": {
       "ok": true,
       "rows": 0,
-      "rows_total": 0,
-      "rows_filtered": 0,
-      "latest_time": null,
-      "date_from": "2026-01-16",
-      "date_to": "2026-02-09",
+      "latest": null,
       "used_cache": false,
-      "error": "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.",
+      "error": null,
       "filters": {
         "currencies": [
           "USD",
@@ -24,5 +20,5 @@
     }
   },
   "stale_sources": [],
-  "notes": "Calendar fetch failed; wrote empty snapshot."
+  "notes": ""
 }

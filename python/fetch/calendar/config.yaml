@@ -1,16 +1,10 @@
 calendar:
-  provider: "fmp"
-  api_key: "" # ใช้จาก .env (FMP_API_KEY)
+  provider: "forexfactory_xml"
   timeout_seconds: 30
-
-  # ช่วงวันที่จะดึง (สวิง 2–5 วัน แนะนำ lookback นิดหน่อย + forward สัก 2–3 สัปดาห์)
-  lookback_days: 3
-  forward_days: 21
 
   # filter สำหรับ EURUSD
   currencies: ["USD", "EUR"]
-  impacts: ["High", "Medium"] # ถ้าเจอ provider ส่งเป็น string อื่น เดี๋ยวโค้ด normalize ให้
-  allow_empty_on_error: true # ให้เขียน snapshot ว่างเมื่อดึงไม่สำเร็จ (เช่น ไม่มีสิทธิ์ API)
+  impacts: ["High", "Medium"]
 
 output:
   data_dir: "raw_data_calendar"
@@ -26,8 +20,8 @@ retry:
 
 telegram:
   enabled: true
-  bot_token: "" # ใช้จาก .env (TELEGRAM_BOT_TOKEN)
-  chat_id: "" # ใช้จาก .env (TELEGRAM_CHAT_ID)
+  bot_token: null
+  chat_id: "-5169219602"
   send_on_success: true
   send_on_warning: true
   send_on_error: true
