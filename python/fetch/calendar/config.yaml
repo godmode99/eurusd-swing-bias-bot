@@ -10,6 +10,7 @@ calendar:
   # filter สำหรับ EURUSD
   currencies: ["USD", "EUR"]
   impacts: ["High", "Medium"] # ถ้าเจอ provider ส่งเป็น string อื่น เดี๋ยวโค้ด normalize ให้
+  allow_empty_on_error: true # ให้เขียน snapshot ว่างเมื่อดึงไม่สำเร็จ (เช่น ไม่มีสิทธิ์ API)
 
 output:
   data_dir: "raw_data_calendar"

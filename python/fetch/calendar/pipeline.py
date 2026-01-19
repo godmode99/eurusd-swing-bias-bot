@@ -14,8 +14,10 @@ from calendar_client import fetch_fmp_calendar, normalize_currency, normalize_im
 @dataclass
 class SourceStatus:
     ok: bool
+    rows: int
     rows_total: int
     rows_filtered: int
+    latest_time: str | None
     date_from: str
     date_to: str
     used_cache: bool
@@ -98,12 +100,14 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     status = SourceStatus(
         ok=False,
+        rows=0,
         rows_total=0,
         rows_filtered=0,
+        latest_time=None,
         date_from=d_from.strftime("%Y-%m-%d"),
         date_to=d_to.strftime("%Y-%m-%d"),
         used_cache=False,
-        error=None
+        error=None,
     )
 
     events_raw: List[Dict[str, Any]] = []
@@ -134,6 +138,11 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
         status.ok = True
         status.rows_total = len(events_raw)
         status.rows_filtered = len(events_filtered)
+        status.rows = len(events_filtered)
+        status.latest_time = max(
+            (e.get("date") for e in events_filtered if e.get("date")),
+            default=None,
+        )
 
         logger.info(f"Saved snapshot latest: {snapshot_latest} rows_filtered={len(events_filtered)}")
         if keep_daily_snapshot:
@@ -149,7 +158,24 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
             status.used_cache = True
             status.error = str(e)
             status.rows_filtered = len(cache)
+            status.rows = len(cache)
+            status.latest_time = max(
+                (item.get("date") for item in cache if isinstance(item, dict) and item.get("date")),
+                default=None,
+            )
             logger.warning("Using cache calendar.json (stale).")
+        elif bool(cal_cfg.get("allow_empty_on_error", False)):
+            events_filtered = []
+            status.ok = True
+            status.error = str(e)
+            status.rows = 0
+            status.rows_total = 0
+            status.rows_filtered = 0
+            status.latest_time = None
+            atomic_write_json(snapshot_latest, events_filtered)
+            if keep_daily_snapshot:
+                atomic_write_json(snapshot_daily, events_filtered)
+            logger.warning("Calendar fetch failed; wrote empty snapshot because allow_empty_on_error is enabled.")
         else:
             status.ok = False
             status.error = str(e)
@@ -161,6 +187,12 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 "error": str(e),
             })
 
+    notes = ""
+    if not status.ok:
+        notes = "Calendar fetch failed and no cache available."
+    elif status.error and not status.used_cache:
+        notes = "Calendar fetch failed; wrote empty snapshot."
+
     manifest = {
         "asof_utc": utc_now_iso(),
         "sources": {
@@ -170,7 +202,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
             }
         },
         "stale_sources": (["FMP_ECONOMIC_CALENDAR"] if status.used_cache else []),
-        "notes": "" if status.ok else "Calendar fetch failed and no cache available.",
+        "notes": notes,
     }
 
     atomic_write_json(manifest_path_latest, manifest)
