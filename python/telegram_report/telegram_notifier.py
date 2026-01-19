@@ -94,9 +94,17 @@ def format_manifest_message(manifest: Dict[str, Any]) -> str:
             rows = v.get("rows")
             latest = v.get("latest_time")
             used_cache = v.get("used_cache")
-            tag = "OK" if ok else "FAIL"
+            error = (v.get("error") or "").strip()
+            if ok and error:
+                tag = "WARN"
+            elif ok:
+                tag = "OK"
+            else:
+                tag = "FAIL"
             cache = " (cache)" if used_cache else ""
             lines.append(f"• {k}: {tag}{cache}, rows={rows}, latest={latest}")
+            if error:
+                lines.append(f"  ↳ error: {error}")
 
     stale = manifest.get("stale_sources", []) or []
     if stale:
