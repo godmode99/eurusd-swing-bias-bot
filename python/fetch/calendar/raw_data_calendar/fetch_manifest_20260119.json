@@ -1,5 +1,5 @@
 {
-  "asof_utc": "2026-01-19T08:15:45Z",
+  "asof_utc": "2026-01-19T08:22:20Z",
   "sources": {
     "FMP_ECONOMIC_CALENDAR": {
       "ok": true,
@@ -9,7 +9,7 @@
       "latest_time": null,
       "date_from": "2026-01-16",
       "date_to": "2026-02-09",
-      "used_cache": true,
+      "used_cache": false,
       "error": "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.",
       "filters": {
         "currencies": [
@@ -23,8 +23,6 @@
       }
     }
   },
-  "stale_sources": [
-    "FMP_ECONOMIC_CALENDAR"
-  ],
-  "notes": ""
+  "stale_sources": [],
+  "notes": "Calendar fetch failed; wrote empty snapshot."
 }

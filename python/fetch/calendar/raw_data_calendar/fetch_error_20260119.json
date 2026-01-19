@@ -1,5 +1,5 @@
 {
-  "asof_utc": "2026-01-19T08:15:45Z",
+  "asof_utc": "2026-01-19T08:22:20Z",
   "stage": "fetch_calendar_fmp",
   "error": "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access."
 }
