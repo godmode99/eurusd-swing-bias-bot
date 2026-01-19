@@ -69,6 +69,17 @@ def normalize_day_label(raw: str | None) -> str | None:
     return f"{month.capitalize()} {int(day)}"
 
 
+def attach_day_labels(events: List[Dict[str, Any]]) -> List[tuple[Dict[str, Any], str | None]]:
+    labeled: List[tuple[Dict[str, Any], str | None]] = []
+    last_label: str | None = None
+    for ev in events:
+        label = normalize_day_label(ev.get("date")) or last_label
+        if label:
+            last_label = label
+        labeled.append((ev, label))
+    return labeled
+
+
 def is_relevant_event(event: Dict[str, Any], currencies: List[str], impacts: List[str]) -> bool:
     cur_set = {c.upper() for c in (currencies or []) if c}
     imp_set = {i.capitalize() for i in (impacts or []) if i}
@@ -150,9 +161,8 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
         filtered = filter_events(raw_events, currencies=currencies, impacts=impacts)
         latest = try_extract_latest_date(filtered)
         day_label = target_day_label()
-        todays_events = [
-            ev for ev in raw_events if normalize_day_label(ev.get("date")) == day_label
-        ]
+        labeled_events = attach_day_labels(raw_events)
+        todays_events = [ev for ev, label in labeled_events if label == day_label]
         relevant_today = [ev for ev in todays_events if is_relevant_event(ev, currencies, impacts)]
         other_today = [ev for ev in todays_events if not is_relevant_event(ev, currencies, impacts)]
 
