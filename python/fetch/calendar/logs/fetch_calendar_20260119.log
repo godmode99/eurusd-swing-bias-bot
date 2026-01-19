@@ -1,0 +1,18 @@
+2026-01-19 14:45:20,574 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:45:20,575 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:45:22,176 | WARNING | FMP_CALENDAR: attempt 1/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:45:25,794 | WARNING | FMP_CALENDAR: attempt 2/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:45:29,451 | WARNING | FMP_CALENDAR: attempt 3/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:45:29,451 | ERROR | Calendar fetch failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:45:29,460 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:45:29,461 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:45:29,461 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 14:46:07,460 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:46:07,461 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:46:09,034 | WARNING | FMP_CALENDAR: attempt 1/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:46:12,582 | WARNING | FMP_CALENDAR: attempt 2/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:46:16,104 | WARNING | FMP_CALENDAR: attempt 3/3 failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:46:16,104 | ERROR | Calendar fetch failed: 402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B
+2026-01-19 14:46:16,112 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:46:16,113 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:46:16,113 | INFO | === CALENDAR FETCH PIPELINE END ===

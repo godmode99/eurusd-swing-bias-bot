@@ -1,0 +1,32 @@
+calendar:
+  provider: "fmp"
+  api_key: "hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B" # แนะนำใช้ env: FMP_API_KEY
+  timeout_seconds: 30
+
+  # ช่วงวันที่จะดึง (สวิง 2–5 วัน แนะนำ lookback นิดหน่อย + forward สัก 2–3 สัปดาห์)
+  lookback_days: 3
+  forward_days: 21
+
+  # filter สำหรับ EURUSD
+  currencies: ["USD", "EUR"]
+  impacts: ["High", "Medium"] # ถ้าเจอ provider ส่งเป็น string อื่น เดี๋ยวโค้ด normalize ให้
+
+output:
+  data_dir: "raw_data_calendar"
+  logs_dir: "logs"
+  archive:
+    keep_run_manifest: true
+    keep_error_report: true
+    keep_daily_snapshot: true
+
+retry:
+  attempts: 3
+  sleep_seconds: 2
+
+telegram:
+  enabled: true
+  bot_token: "8352337942:AAE_9923PEcYmGQbhA9vqjNUMmqZ40JPf0w"
+  chat_id: "-5169219602" # ของมึง (ถ้ากลุ่มเป็น supergroup แล้วใช้ -100... ก็เปลี่ยนตรงนี้)
+  send_on_success: true
+  send_on_warning: true
+  send_on_error: true

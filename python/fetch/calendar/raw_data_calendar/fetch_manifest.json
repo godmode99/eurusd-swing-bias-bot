@@ -1,0 +1,26 @@
+{
+  "asof_utc": "2026-01-19T07:46:16Z",
+  "sources": {
+    "FMP_ECONOMIC_CALENDAR": {
+      "ok": false,
+      "rows_total": 0,
+      "rows_filtered": 0,
+      "date_from": "2026-01-16",
+      "date_to": "2026-02-09",
+      "used_cache": false,
+      "error": "402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B",
+      "filters": {
+        "currencies": [
+          "USD",
+          "EUR"
+        ],
+        "impacts": [
+          "High",
+          "Medium"
+        ]
+      }
+    }
+  },
+  "stale_sources": [],
+  "notes": "Calendar fetch failed and no cache available."
+}

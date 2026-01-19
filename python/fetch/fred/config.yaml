@@ -1,0 +1,24 @@
+fred:
+  api_key: "dc0ab10f493d5d59f3e81e64f61126b0" # หรือใส่ key ตรงนี้ก็ได้
+  series_id: "DGS2"
+  observation_start: "2010-01-01"
+  timeout_seconds: 30
+
+output:
+  data_dir: "raw_data_macro"
+  logs_dir: "logs"
+  archive:
+    keep_run_manifest: true
+    keep_error_report: true
+
+retry:
+  attempts: 3
+  sleep_seconds: 2
+
+telegram:
+  enabled: true
+  bot_token: "8352337942:AAE_9923PEcYmGQbhA9vqjNUMmqZ40JPf0w"
+  chat_id: "-5169219602"
+  send_on_success: true
+  send_on_warning: true
+  send_on_error: true

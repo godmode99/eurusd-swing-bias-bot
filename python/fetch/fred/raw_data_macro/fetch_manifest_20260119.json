@@ -1,0 +1,14 @@
+{
+  "asof_utc": "2026-01-19T07:23:44Z",
+  "sources": {
+    "FRED_DGS2": {
+      "ok": true,
+      "rows": 4011,
+      "latest_date": "2026-01-15",
+      "used_cache": false,
+      "error": null
+    }
+  },
+  "stale_sources": [],
+  "notes": ""
+}
