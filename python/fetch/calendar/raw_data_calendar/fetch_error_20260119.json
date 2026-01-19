@@ -1,5 +1,5 @@
 {
-  "asof_utc": "2026-01-19T07:46:16Z",
+  "asof_utc": "2026-01-19T08:09:30Z",
   "stage": "fetch_calendar_fmp",
-  "error": "402 Client Error: Payment Required for url: https://financialmodelingprep.com/stable/economic-calendar?from=2026-01-16&to=2026-02-09&apikey=hhBX1dYU32l2mFgSXtWc1zUR4ygu9r1B"
+  "error": "FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access."
 }

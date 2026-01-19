@@ -16,3 +16,41 @@
 2026-01-19 14:46:16,112 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
 2026-01-19 14:46:16,113 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
 2026-01-19 14:46:16,113 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 14:50:29,963 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:50:29,964 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:50:31,548 | WARNING | FMP_CALENDAR: non-retryable error: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:50:31,548 | ERROR | Calendar fetch failed: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:50:31,556 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:50:31,556 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:50:31,556 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 14:51:21,229 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:51:21,230 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:51:23,211 | WARNING | FMP_CALENDAR: non-retryable error: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:51:23,212 | ERROR | Calendar fetch failed: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:51:23,218 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:51:23,219 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:51:23,219 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 14:55:17,251 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:55:17,252 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:55:18,960 | WARNING | FMP_CALENDAR: non-retryable error: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:55:18,961 | ERROR | Calendar fetch failed: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:55:18,964 | WARNING | Calendar fetch failed; wrote empty snapshot because allow_empty_on_error is enabled.
+2026-01-19 14:55:18,969 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:55:18,969 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:55:18,970 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 14:58:25,862 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 14:58:25,863 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 14:58:27,525 | WARNING | FMP_CALENDAR: non-retryable error: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:58:27,526 | ERROR | Calendar fetch failed: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 14:58:27,528 | WARNING | Using cache calendar.json (stale).
+2026-01-19 14:58:27,538 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 14:58:27,538 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 14:58:27,539 | INFO | === CALENDAR FETCH PIPELINE END ===
+2026-01-19 15:09:28,400 | INFO | === CALENDAR FETCH PIPELINE START ===
+2026-01-19 15:09:28,402 | INFO | Fetching calendar from FMP: 2026-01-16 -> 2026-02-09 (UTC)...
+2026-01-19 15:09:30,009 | WARNING | FMP_CALENDAR: non-retryable error: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 15:09:30,010 | ERROR | Calendar fetch failed: FMP API returned 402 Payment Required. The economic calendar endpoint needs a paid plan or a valid API key with access.
+2026-01-19 15:09:30,017 | WARNING | Calendar fetch failed; wrote empty snapshot because allow_empty_on_error is enabled.
+2026-01-19 15:09:30,022 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest.json
+2026-01-19 15:09:30,022 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\raw_data_calendar\fetch_manifest_20260119.json
+2026-01-19 15:09:30,023 | INFO | === CALENDAR FETCH PIPELINE END ===
