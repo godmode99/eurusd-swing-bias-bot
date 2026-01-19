@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import requests
 import pandas as pd
 from typing import Optional
@@ -15,7 +14,7 @@ def fetch_fred_series_observations(
     """
     Returns DataFrame columns: date, value
     """
-    key = api_key or os.getenv("FRED_API_KEY") or ""
+    key = api_key or ""
     params = {
         "series_id": series_id,
         "file_type": "json",

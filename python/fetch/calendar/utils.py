@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import logging
 from pathlib import Path
@@ -15,8 +16,49 @@ class NonRetryableError(Exception):
 
 
 def load_config(path: str) -> Dict[str, Any]:
+    load_env_file(Path(path).resolve().parent)
     with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    return apply_env_overrides(cfg)
+
+
+def load_env_file(start_dir: Path) -> None:
+    for parent in (start_dir, *start_dir.parents):
+        env_path = parent / ".env"
+        if env_path.exists():
+            for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key:
+                    os.environ[key] = value
+            break
+
+
+def apply_env_overrides(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    if not cfg:
+        return cfg
+    calendar = cfg.get("calendar", {}) or {}
+    telegram = cfg.get("telegram", {}) or {}
+
+    fmp_key = os.getenv("FMP_API_KEY", "").strip()
+    if fmp_key:
+        calendar["api_key"] = fmp_key
+
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    if tg_token:
+        telegram["bot_token"] = tg_token
+
+    tg_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if tg_chat:
+        telegram["chat_id"] = tg_chat
+
+    cfg["calendar"] = calendar
+    cfg["telegram"] = telegram
+    return cfg
 
 
 def ensure_dir(p: str | Path) -> Path:
