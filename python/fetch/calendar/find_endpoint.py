@@ -1,4 +1,4 @@
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Error as PlaywrightError, sync_playwright
 import json, re
 
 URL = "https://www.forexfactory.com/calendar"
@@ -18,32 +18,42 @@ def is_suspect(url: str) -> bool:
 def run():
     hits = []
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
 
-        def on_response(resp):
-            try:
-                url = resp.url
-                ct  = (resp.headers.get("content-type") or "").lower()
-                if is_suspect(url) or ("json" in ct or "xml" in ct or "csv" in ct):
-                    # บาง response ใหญ่/ช้า อย่าดึง body ทุกตัว
-                    size = int(resp.headers.get("content-length") or 0)
-                    hits.append({
-                        "url": url,
-                        "status": resp.status,
-                        "content_type": ct,
-                        "size": size,
-                    })
-            except:
-                pass
+            def on_response(resp):
+                try:
+                    url = resp.url
+                    ct  = (resp.headers.get("content-type") or "").lower()
+                    if is_suspect(url) or ("json" in ct or "xml" in ct or "csv" in ct):
+                        # บาง response ใหญ่/ช้า อย่าดึง body ทุกตัว
+                        size = int(resp.headers.get("content-length") or 0)
+                        hits.append({
+                            "url": url,
+                            "status": resp.status,
+                            "content_type": ct,
+                            "size": size,
+                        })
+                except:
+                    pass
 
-        page.on("response", on_response)
+            page.on("response", on_response)
 
-        page.goto(URL, wait_until="networkidle", timeout=60000)
-        page.wait_for_timeout(4000)
+            page.goto(URL, wait_until="networkidle", timeout=60000)
+            page.wait_for_timeout(4000)
 
-        browser.close()
+            browser.close()
+    except PlaywrightError as exc:
+        msg = str(exc)
+        if "Executable doesn't exist" in msg or "playwright install" in msg:
+            raise SystemExit(
+                "Playwright browsers are missing. Run:\n\n"
+                "  playwright install\n\n"
+                "Then retry this script."
+            ) from exc
+        raise
 
     # เรียงให้ดูง่าย
     hits_sorted = sorted(hits, key=lambda x: (("json" not in x["content_type"]), -x["size"]))
