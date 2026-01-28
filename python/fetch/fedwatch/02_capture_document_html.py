@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import traceback
 from dataclasses import asdict, dataclass
@@ -12,7 +13,8 @@ from typing import Optional
 from playwright.sync_api import sync_playwright
 
 URL = "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
-STATE_PATH = Path("secrets") / "fedwatch_storage.json"
+DEFAULT_STATE_PATH = Path("secrets") / "fedwatch_storage.json"
+FALLBACK_STATE_PATHS = (Path("ff_storage.json"), Path("secrets") / "ff_storage.json")
 ART_DIR = Path("artifacts") / "fedwatch"
 LATEST_DIR = ART_DIR / "latest"
 RUNS_DIR = ART_DIR / "runs"
@@ -79,6 +81,18 @@ def _copy_to_latest(run_dir: Path) -> None:
             shutil.copy2(src, LATEST_DIR / name)
 
 
+def _resolve_state_path() -> Path:
+    env_path = os.getenv("FEDWATCH_STORAGE_PATH")
+    if env_path:
+        return Path(env_path)
+    if DEFAULT_STATE_PATH.exists():
+        return DEFAULT_STATE_PATH
+    for candidate in FALLBACK_STATE_PATHS:
+        if candidate.exists():
+            return candidate
+    return DEFAULT_STATE_PATH
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", default=_run_id_now())
@@ -88,10 +102,12 @@ def main() -> int:
     run_dir = Path(args.run_dir) if args.run_dir else RUNS_DIR / args.run_id
     _ensure_dirs(run_dir)
 
-    if not STATE_PATH.exists():
+    state_path = _resolve_state_path()
+    if not state_path.exists():
         raise FileNotFoundError(
-            f"Missing storage state file: {_abs(STATE_PATH)}\n"
-            "Expected: secrets/fedwatch_storage.json (run 01_save_session.py)."
+            f"Missing storage state file: {_abs(state_path)}\n"
+            "Expected: secrets/fedwatch_storage.json (run 01_save_session.py), "
+            "ff_storage.json in repo root, or set FEDWATCH_STORAGE_PATH."
         )
 
     html_text: Optional[str] = None
@@ -109,7 +125,7 @@ def main() -> int:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         context = browser.new_context(
-            storage_state=str(STATE_PATH),
+            storage_state=str(state_path),
             viewport={"width": 1400, "height": 900},
             locale="en-US",
         )
@@ -177,7 +193,7 @@ def main() -> int:
         status=status,
         html_saved_to=_abs(out_html),
         screenshot_saved_to=_abs(out_png),
-        storage_state_path=_abs(STATE_PATH),
+        storage_state_path=_abs(state_path),
         playwright_user_agent=ua,
     )
     out_meta.write_text(json.dumps(asdict(meta), indent=2, ensure_ascii=False), encoding="utf-8")
