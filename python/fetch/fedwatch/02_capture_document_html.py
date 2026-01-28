@@ -172,18 +172,6 @@ def main() -> int:
 
     status = _detect_status(page_title, body_text)
 
-    if not html_text:
-        out_err.write_text(
-            "Failed to capture document HTML.\n"
-            f"- doc_status: {doc_status}\n"
-            f"- final_url: {final_url}\n"
-            f"- title: {page_title}\n",
-            encoding="utf-8",
-        )
-        return 1
-
-    out_html.write_text(html_text, encoding="utf-8")
-
     meta = Meta(
         fetched_at_utc=_iso_utc_now(),
         run_id=args.run_id,
@@ -197,6 +185,19 @@ def main() -> int:
         playwright_user_agent=ua,
     )
     out_meta.write_text(json.dumps(asdict(meta), indent=2, ensure_ascii=False), encoding="utf-8")
+
+    if not html_text:
+        out_err.write_text(
+            "Failed to capture document HTML.\n"
+            f"- doc_status: {doc_status}\n"
+            f"- final_url: {final_url}\n"
+            f"- title: {page_title}\n",
+            encoding="utf-8",
+        )
+        _copy_to_latest(run_dir)
+        return 1
+
+    out_html.write_text(html_text, encoding="utf-8")
 
     _copy_to_latest(run_dir)
 

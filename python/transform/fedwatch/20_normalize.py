@@ -70,6 +70,8 @@ def _compute_prob_groups(distribution: list[dict[str, Any]], current_range: str 
 
 def _validate(meetings: list[dict[str, Any]]) -> ValidationResult:
     issues: list[str] = []
+    if not meetings:
+        issues.append("no meetings extracted")
     for meeting in meetings:
         meeting_date = meeting.get("meeting_date")
         if not meeting_date or not isinstance(meeting_date, str):
