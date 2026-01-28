@@ -22,12 +22,12 @@ def is_login_page(page) -> bool:
 
 def detect_state(page, response_text: str | None = None) -> AuthState:
     text_upper = (response_text or "").upper()
-    if "AUTHENTICATED" in text_upper:
-        return AuthState.AUTHENTICATED
-    if "LOGIN_REQUIRED" in text_upper:
-        return AuthState.LOGIN_REQUIRED
     if "UNAUTHORIZED" in text_upper or "EXPIRED" in text_upper:
         return AuthState.UNAUTHORIZED_OR_EXPIRED
+    if "LOGIN_REQUIRED" in text_upper:
+        return AuthState.LOGIN_REQUIRED
+    if "AUTHENTICATED" in text_upper:
+        return AuthState.AUTHENTICATED
 
     try:
         page.wait_for_function(
