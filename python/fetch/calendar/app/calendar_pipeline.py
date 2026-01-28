@@ -72,6 +72,7 @@ def import_step_modules():
         if spec is None or spec.loader is None:
             raise ImportError(f"Unable to load module spec for {path}")
         module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
         spec.loader.exec_module(module)  # type: ignore[call-arg]
         return module
 
