@@ -153,4 +153,6 @@ Best practice
 
 เก็บ run log/meta เพื่อ debug
 
+สามารถตั้งค่า Telegram แจ้งผลได้ที่ python/fetch/calendar/config.yaml (enabled/bot_token/chat_id และ send_on_*). 
+
 ถ้าไฟล์ขึ้นต้นด้วยเลข import ยาก ให้ pipeline ใช้ subprocess เรียกไฟล์แทน (ชัวร์สุด)
