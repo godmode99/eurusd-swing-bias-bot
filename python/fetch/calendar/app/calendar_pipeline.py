@@ -17,11 +17,36 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import logging
 import shutil
 import sys
 import traceback
 from datetime import datetime
 from pathlib import Path
+
+# -------------------------------------------------------------------
+# calendar_pipeline.py location: <repo_root>/python/fetch/calendar/app/calendar_pipeline.py
+# telegram_notifier.py location: <repo_root>/python/telegram_report/telegram_notifier.py
+# -------------------------------------------------------------------
+BASE_DIR = Path(__file__).parent.resolve()  # .../python/fetch/calendar/app
+CALENDAR_DIR = BASE_DIR.parent.resolve()  # .../python/fetch/calendar
+PYTHON_DIR = BASE_DIR.parents[2].resolve()  # .../python
+TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
+
+if CALENDAR_DIR.exists() and str(CALENDAR_DIR) not in sys.path:
+    sys.path.insert(0, str(CALENDAR_DIR))
+
+if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
+    sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
+
+if not (TELEGRAM_REPORT_DIR / "telegram_notifier.py").exists():
+    raise FileNotFoundError(
+        "telegram_notifier.py not found at: "
+        + str(TELEGRAM_REPORT_DIR / "telegram_notifier.py")
+    )
+
+from telegram_notifier import send_telegram_message
+from utils import load_config, setup_logger
 
 # --- repo-relative paths ---
 REPO_ROOT = Path.cwd()  # expect running from repo root
@@ -42,6 +67,64 @@ WINDOWS_META = ART_DIR / "no_trade_windows.meta.json"
 
 PIPE_ERR     = ART_DIR / "pipeline_error.txt"
 PIPE_META    = ART_DIR / "pipeline_run.meta.json"
+
+CONFIG_PATH = CALENDAR_DIR / "config.yaml"
+
+
+def _safe_count_json_list(path: Path) -> int:
+    if not path.exists():
+        return 0
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+    return len(data) if isinstance(data, list) else 0
+
+
+def _classify_status(steps_ok: bool, events_count: int, windows_count: int) -> str:
+    if not steps_ok:
+        return "ERROR"
+    if events_count == 0 or windows_count == 0:
+        return "WARN"
+    return "OK"
+
+
+def _format_telegram_message(meta: dict, status: str) -> str:
+    if status == "OK":
+        head = "✅ <b>FF Calendar: OK</b>"
+    elif status == "WARN":
+        head = "⚠️ <b>FF Calendar: WARNING</b>"
+    else:
+        head = "❌ <b>FF Calendar: ERROR</b>"
+
+    lines = [
+        head,
+        f"<b>run_id</b>: {meta.get('run_id', '-')}",
+        f"<b>pair</b>: {meta.get('pair', '-')}",
+        f"<b>events</b>: {meta.get('events_count', 0)}",
+        f"<b>windows</b>: {meta.get('windows_count', 0)}",
+    ]
+
+    if meta.get("merge_overlaps") is not None:
+        lines.append(f"<b>merge_overlaps</b>: {meta.get('merge_overlaps')}")
+
+    if meta.get("archived"):
+        lines.append("<b>archived</b>: yes")
+
+    steps = meta.get("steps", [])
+    if steps:
+        ok_steps = [s.get("step") for s in steps if s.get("ok") is True]
+        bad_steps = [s.get("step") for s in steps if s.get("ok") is False]
+        if ok_steps:
+            lines.append("<b>steps_ok</b>: " + ", ".join(ok_steps))
+        if bad_steps:
+            lines.append("<b>steps_failed</b>: " + ", ".join(bad_steps))
+
+    err_file = meta.get("error_file") or ""
+    if err_file:
+        lines.append(f"<b>error_file</b>: {err_file}")
+
+    return "\n".join(lines)
 
 
 def ts_folder_name() -> str:
@@ -123,6 +206,15 @@ def main() -> None:
     ap.add_argument("--archive", action="store_true", help="Archive outputs to artifacts/ff/runs/<timestamp>/")
     args = ap.parse_args()
 
+    cfg = {}
+    logger = logging.getLogger("calendar_pipeline")
+    if CONFIG_PATH.exists():
+        cfg = load_config(str(CONFIG_PATH))
+        logs_dir = (CALENDAR_DIR / cfg.get("output", {}).get("logs_dir", "logs")).resolve()
+        logger = setup_logger(logs_dir, name="fetch_calendar")
+    else:
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+
     # Import modules
     # Module names cannot start with digits, so we load by file path instead.
     step02, step03, step20 = import_step_modules()
@@ -148,19 +240,34 @@ def main() -> None:
         # ---- Step 03: extract events ----
         print("STEP03 extract events ...", flush=True)
         step03.main()
+        events_count = _safe_count_json_list(EVENTS_JSON)
         meta["steps"].append({"step": "03_extract_from_document", "ok": True})
+        meta["events_count"] = events_count
 
         # ---- Step 20: risk windows ----
         print("STEP20 make risk windows ...", flush=True)
         step20.main(pair=args.pair, do_merge=(not args.no_merge))
+        windows_count = _safe_count_json_list(WINDOWS_JSON)
         meta["steps"].append({"step": "20_make_risk_windows", "ok": True})
+        meta["windows_count"] = windows_count
 
         # ---- Archive ----
         if args.archive:
             print("ARCHIVE outputs ...", flush=True)
             meta["archived"] = archive_run(run_dir)
 
+        status = _classify_status(True, meta.get("events_count", 0), meta.get("windows_count", 0))
+        meta["status"] = status
         PIPE_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        tg = cfg.get("telegram", {}) or {}
+        send_ok = bool(tg.get("send_on_success", True))
+        send_warn = bool(tg.get("send_on_warning", True))
+        send_err = bool(tg.get("send_on_error", True))
+        should_send = (status == "OK" and send_ok) or (status == "WARN" and send_warn) or (status == "ERROR" and send_err)
+        if should_send:
+            msg = _format_telegram_message(meta, status)
+            send_telegram_message(cfg, msg, logger=logger)
 
         print("DONE", flush=True)
         print("saved pipeline meta:", str(PIPE_META.resolve()), flush=True)
@@ -170,8 +277,27 @@ def main() -> None:
     except Exception:
         PIPE_ERR.write_text(traceback.format_exc(), encoding="utf-8")
         print("ERROR saved ->", str(PIPE_ERR.resolve()), flush=True)
-        meta["steps"].append({"step": "pipeline", "ok": False, "error_file": str(PIPE_ERR.resolve())})
+        error_path = str(PIPE_ERR.resolve())
+        meta["steps"].append({"step": "pipeline", "ok": False, "error_file": error_path})
+        meta["error_file"] = error_path
+        meta["status"] = "ERROR"
         PIPE_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+        cfg = {}
+        logger = logging.getLogger("calendar_pipeline")
+        if CONFIG_PATH.exists():
+            cfg = load_config(str(CONFIG_PATH))
+            logs_dir = (CALENDAR_DIR / cfg.get("output", {}).get("logs_dir", "logs")).resolve()
+            logger = setup_logger(logs_dir, name="fetch_calendar")
+        else:
+            logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+        tg = cfg.get("telegram", {}) or {}
+        send_ok = bool(tg.get("send_on_success", True))
+        send_warn = bool(tg.get("send_on_warning", True))
+        send_err = bool(tg.get("send_on_error", True))
+        should_send = (meta["status"] == "OK" and send_ok) or (meta["status"] == "WARN" and send_warn) or (meta["status"] == "ERROR" and send_err)
+        if should_send:
+            msg = _format_telegram_message(meta, meta["status"])
+            send_telegram_message(cfg, msg, logger=logger)
         input("Press Enter to exit...")
 
 
