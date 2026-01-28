@@ -12,6 +12,7 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 BASE_DIR = Path(__file__).resolve().parent
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
+REPO_ROOT = PYTHON_DIR.parent
 TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
 
 if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
@@ -31,6 +32,7 @@ class AuthState(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 def load_config() -> dict:
+    load_env_file(REPO_ROOT)
     cfg_path = Path(__file__).with_name("config.json")
     if cfg_path.exists():
         with open(cfg_path, "r", encoding="utf-8") as f:
@@ -40,16 +42,32 @@ def load_config() -> dict:
     return inject_telegram_env(cfg)
 
 
+def load_env_file(start_dir: Path) -> None:
+    for parent in (start_dir, *start_dir.parents):
+        env_path = parent / ".env"
+        if env_path.exists():
+            for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key:
+                    os.environ[key] = value
+            break
+
+
 def inject_telegram_env(cfg: dict) -> dict:
     cfg = dict(cfg or {})
     telegram = cfg.get("telegram", {}) or {}
 
     tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-    if tg_token and not telegram.get("bot_token"):
+    if tg_token:
         telegram["bot_token"] = tg_token
 
     tg_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-    if tg_chat and not telegram.get("chat_id"):
+    if tg_chat:
         telegram["chat_id"] = tg_chat
 
     cfg["telegram"] = telegram
@@ -69,7 +87,11 @@ def setup_logger() -> logging.Logger:
 
 
 def notify_telegram(cfg: dict, message: str, logger: logging.Logger) -> None:
+    if logger:
+        logger.info("Telegram notify: %s", message)
     send_telegram_message(cfg, message, logger=logger)
+    if logger:
+        logger.info("Telegram notify finished")
 
 def pick_creds(cfg: dict):
     # 1) config.json
