@@ -9,7 +9,7 @@
     "High": "96.50",
     "Low": "96.495",
     "Open": "96.50",
-    "Volume": "1,041",
+    "Volume": "1,152",
     "Contract Code": "ZQM6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -24,7 +24,7 @@
     "High": "96.575",
     "Low": "96.565",
     "Open": "96.57",
-    "Volume": "3,217",
+    "Volume": "3,975",
     "Contract Code": "ZQN6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -39,7 +39,7 @@
     "High": "96.65",
     "Low": "96.64",
     "Open": "96.645",
-    "Volume": "1,426",
+    "Volume": "1,473",
     "Contract Code": "ZQQ6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -54,7 +54,7 @@
     "High": "96.695",
     "Low": "96.685",
     "Open": "96.69",
-    "Volume": "1,502",
+    "Volume": "1,538",
     "Contract Code": "ZQU6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -69,7 +69,7 @@
     "High": "96.755",
     "Low": "96.74",
     "Open": "96.75",
-    "Volume": "1,619",
+    "Volume": "1,771",
     "Contract Code": "ZQV6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -84,7 +84,7 @@
     "High": "96.805",
     "Low": "96.79",
     "Open": "96.80",
-    "Volume": "283",
+    "Volume": "288",
     "Contract Code": "ZQX6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -99,7 +99,7 @@
     "High": "96.84",
     "Low": "96.825",
     "Open": "96.835",
-    "Volume": "321",
+    "Volume": "457",
     "Contract Code": "ZQZ6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -114,7 +114,7 @@
     "High": "96.855",
     "Low": "96.835",
     "Open": "96.85",
-    "Volume": "889",
+    "Volume": "909",
     "Contract Code": "ZQF7",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -159,7 +159,7 @@
     "High": "96.845",
     "Low": "96.83",
     "Open": "96.84",
-    "Volume": "453",
+    "Volume": "454",
     "Contract Code": "ZQJ7",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -394,12 +394,12 @@
     "Code": "SR3M6",
     "Expiry": "FM\nJUN 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=SR3&title=Chart%20-%20JUN%202026%20Three-Month%20SOFR&venue=0&monthYear=M6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "96.55",
-    "Change": "UNCH",
+    "Last Price": "96.545",
+    "Change": "-0.005",
     "High": "96.56",
     "Low": "96.545",
     "Open": "96.555",
-    "Volume": "58,173",
+    "Volume": "61,478",
     "Contract Code": "SR3M6",
     "Front Month": "true",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
@@ -424,12 +424,12 @@
     "Code": "SR3Z5",
     "Expiry": "DEC 2025",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=SR3&title=Chart%20-%20DEC%202025%20Three-Month%20SOFR&venue=0&monthYear=Z5&year=2025&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "96.3075",
-    "Change": "UNCH",
+    "Last Price": "96.305",
+    "Change": "-0.0025",
     "High": "96.3075",
     "Low": "96.305",
     "Open": "96.3075",
-    "Volume": "2,667",
+    "Volume": "2,773",
     "Contract Code": "SR3Z5",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
@@ -472,9 +472,9 @@
     "Last Price": "96.375",
     "Change": "UNCH",
     "High": "96.38",
-    "Low": "96.375",
+    "Low": "96.37",
     "Open": "96.375",
-    "Volume": "36,320",
+    "Volume": "37,985",
     "Contract Code": "SR3H6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
@@ -504,7 +504,7 @@
     "High": "96.37",
     "Low": "96.365",
     "Open": "96.365",
-    "Volume": "2,269",
+    "Volume": "2,879",
     "Contract Code": "ZQG6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -519,7 +519,7 @@
     "High": "96.385",
     "Low": "96.385",
     "Open": "96.385",
-    "Volume": "1,820",
+    "Volume": "2,203",
     "Contract Code": "ZQH6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -534,7 +534,7 @@
     "High": "96.405",
     "Low": "96.405",
     "Open": "96.405",
-    "Volume": "5,617",
+    "Volume": "5,624",
     "Contract Code": "ZQJ6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -549,7 +549,7 @@
     "High": "96.445",
     "Low": "96.44",
     "Open": "96.445",
-    "Volume": "2,758",
+    "Volume": "3,362",
     "Contract Code": "ZQK6",
     "Front Month": "false",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
@@ -564,7 +564,7 @@
     "High": "96.50",
     "Low": "96.495",
     "Open": "96.50",
-    "Volume": "1,041",
+    "Volume": "1,152",
     "Contract Code": "ZQM6",
     "Front Month": "true",
     "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
