@@ -23,7 +23,11 @@ def _format_percent(value: float | None) -> str:
 def _find_next_meeting(meetings: list[dict[str, Any]]) -> dict[str, Any] | None:
     if not meetings:
         return None
-    return meetings[0]
+    sorted_meetings = sorted(
+        meetings,
+        key=lambda meeting: meeting.get("meeting_date") or "",
+    )
+    return sorted_meetings[0]
 
 
 def main() -> int:
