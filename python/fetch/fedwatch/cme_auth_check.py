@@ -149,7 +149,7 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
         return
 
 def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
-    selectors = [".watchlist-products table", "table"]
+    selectors = [".watchlist-table", ".watchlist-products table", "table"]
     for selector in selectors:
         try:
             page.wait_for_selector(selector, timeout=10_000)
@@ -159,8 +159,91 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
             """(sel) => {
                 const table = document.querySelector(sel);
                 if (!table) return null;
+
+                if (table.classList.contains('watchlist-table')) {
+                    const headers = [
+                        'Name',
+                        'Code',
+                        'Expiry',
+                        'Chart URL',
+                        'Last Price',
+                        'Change',
+                        'High',
+                        'Low',
+                        'Open',
+                        'Volume',
+                        'Contract Code',
+                        'Front Month',
+                        'Product URL',
+                    ];
+
+                    const rows = Array.from(table.querySelectorAll('.tbody .tr')).map(row => {
+                        const nameCell = row.querySelector('.first-column .table-cell.month-code');
+                        let name = '';
+                        let code = '';
+                        if (nameCell) {
+                            const lines = nameCell.innerText
+                                .split('\\n')
+                                .map(line => line.trim())
+                                .filter(Boolean);
+                            if (lines.length > 0) name = lines[0];
+                            if (lines.length > 1) code = lines[lines.length - 1];
+                        }
+
+                        const codeAnchor = row.querySelector('.first-column a.code');
+                        if (codeAnchor && codeAnchor.innerText.trim()) {
+                            code = codeAnchor.innerText.trim();
+                        }
+                        const productUrl = codeAnchor ? codeAnchor.href : '';
+
+                        const expiryCell = row.querySelector('.second-column .expiration-month');
+                        const expiry = expiryCell ? expiryCell.innerText.trim() : '';
+
+                        const contractInput = row.querySelector('input[data-contract-code]');
+                        const contractCode = contractInput
+                            ? contractInput.getAttribute('data-contract-code') || ''
+                            : '';
+                        const isFrontMonth = contractInput
+                            ? (contractInput.getAttribute('data-is-front-month') === 'true')
+                            : false;
+
+                        const chartAnchor = row.querySelector('.third-column a[data-code]');
+                        const chartUrl = chartAnchor ? chartAnchor.href : '';
+
+                        const valueCells = Array.from(
+                            row.querySelectorAll('.third-column .table-cell')
+                        ).map(cell => cell.innerText.trim());
+
+                        const lastPrice = valueCells[1] || '';
+                        const change = valueCells[2] || '';
+                        const high = valueCells[3] || '';
+                        const low = valueCells[4] || '';
+                        const open = valueCells[5] || '';
+                        const volume = valueCells[6] || '';
+
+                        return [
+                            name,
+                            code,
+                            expiry,
+                            chartUrl,
+                            lastPrice,
+                            change,
+                            high,
+                            low,
+                            open,
+                            volume,
+                            contractCode,
+                            isFrontMonth ? 'true' : 'false',
+                            productUrl,
+                        ];
+                    });
+
+                    return { headers, rows };
+                }
+
                 const headers = Array.from(table.querySelectorAll('thead th'))
-                    .map(th => th.innerText.trim());
+                    .map(th => th.innerText.trim())
+                    .filter(Boolean);
                 const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr => {
                     return Array.from(tr.querySelectorAll('th, td'))
                         .map(td => td.innerText.trim());
