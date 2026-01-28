@@ -1,0 +1,6 @@
+{
+  "user_data_dir": "cme_profile",
+  "auth_url": "https://login.cmegroup.com/sso/accountstatus/showAuth.action",
+  "username": "your_email_or_userid",
+  "password": "your_password"
+}
