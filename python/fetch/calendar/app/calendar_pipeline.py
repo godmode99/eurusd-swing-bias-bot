@@ -81,6 +81,45 @@ def _safe_count_json_list(path: Path) -> int:
     return len(data) if isinstance(data, list) else 0
 
 
+def _pair_currencies(pair: str) -> list[str]:
+    clean = "".join(ch for ch in str(pair) if ch.isalnum()).upper()
+    if len(clean) < 6:
+        return []
+    return [clean[:3], clean[3:6]]
+
+
+def _load_events(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    return data if isinstance(data, list) else []
+
+
+def _summarize_related_news(events_path: Path, pair: str, limit: int = 10) -> dict:
+    currencies = _pair_currencies(pair)
+    if not currencies:
+        return {"pair_currencies": [], "total": 0, "items": []}
+    events = _load_events(events_path)
+    related = [
+        e for e in events if str(e.get("currency", "")).upper() in currencies
+    ]
+    items = []
+    for event in related[:limit]:
+        time_label = event.get("timeLabel") or event.get("datetime_bkk") or "-"
+        currency = str(event.get("currency") or "-").upper()
+        impact = event.get("impact") or ""
+        name = event.get("prefixedName") or event.get("name") or "-"
+        parts = [time_label, currency]
+        if impact:
+            parts.append(impact)
+        detail = " ".join(parts)
+        items.append(f"{detail} - {name}")
+    return {"pair_currencies": currencies, "total": len(related), "items": items}
+
+
 def _classify_status(steps_ok: bool, events_count: int, windows_count: int) -> str:
     if not steps_ok:
         return "ERROR"
@@ -121,6 +160,18 @@ def _format_telegram_message(meta: dict, status: str) -> str:
             lines.append("<b>steps_ok</b>: " + ", ".join(ok_steps))
         if bad_steps:
             lines.append("<b>steps_failed</b>: " + ", ".join(bad_steps))
+
+    related = meta.get("related_news") or {}
+    related_total = related.get("total")
+    related_items = related.get("items") or []
+    related_currencies = related.get("pair_currencies") or []
+    if related_total is not None:
+        label = ", ".join(related_currencies) if related_currencies else meta.get("pair", "-")
+        lines.append(f"<b>related_news</b> ({label}): {related_total}")
+        if related_items:
+            lines.append("<b>related_news_details</b>:")
+            for item in related_items:
+                lines.append(f"- {item}")
 
     err_file = meta.get("error_file") or ""
     if err_file:
@@ -264,6 +315,7 @@ def main() -> None:
         events_count = _safe_count_json_list(EVENTS_JSON)
         meta["steps"].append({"step": "03_extract_from_document", "ok": True})
         meta["events_count"] = events_count
+        meta["related_news"] = _summarize_related_news(EVENTS_JSON, args.pair)
 
         # ---- Step 20: risk windows ----
         print("STEP20 make risk windows ...", flush=True)
