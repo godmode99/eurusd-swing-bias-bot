@@ -115,6 +115,8 @@ def _format_telegram_message(meta: dict, status: str) -> str:
     if steps:
         ok_steps = [s.get("step") for s in steps if s.get("ok") is True]
         bad_steps = [s.get("step") for s in steps if s.get("ok") is False]
+        total_steps = len(steps)
+        lines.append(f"<b>steps_total</b>: {total_steps}")
         if ok_steps:
             lines.append("<b>steps_ok</b>: " + ", ".join(ok_steps))
         if bad_steps:
@@ -123,6 +125,19 @@ def _format_telegram_message(meta: dict, status: str) -> str:
     err_file = meta.get("error_file") or ""
     if err_file:
         lines.append(f"<b>error_file</b>: {err_file}")
+
+    paths = meta.get("paths", {})
+    if paths:
+        lines.append("<b>paths</b>:")
+        for key, value in paths.items():
+            lines.append(f"- <b>{key}</b>: {value}")
+
+    archive_dir = meta.get("archive_dir")
+    if archive_dir:
+        lines.append(f"<b>archive_dir</b>: {archive_dir}")
+        archived = meta.get("archived", {})
+        if archived:
+            lines.append(f"<b>archived_files</b>: {len(archived)}")
 
     return "\n".join(lines)
 
@@ -229,6 +244,12 @@ def main() -> None:
         "merge_overlaps": (not args.no_merge),
         "steps": [],
         "archived": {},
+        "paths": {
+            "events_json": str(EVENTS_JSON.resolve()),
+            "events_csv": str(EVENTS_CSV.resolve()),
+            "windows_json": str(WINDOWS_JSON.resolve()),
+            "pipeline_meta": str(PIPE_META.resolve()),
+        },
     }
 
     try:
@@ -255,6 +276,7 @@ def main() -> None:
         if args.archive:
             print("ARCHIVE outputs ...", flush=True)
             meta["archived"] = archive_run(run_dir)
+            meta["archive_dir"] = str(run_dir.resolve())
 
         status = _classify_status(True, meta.get("events_count", 0), meta.get("windows_count", 0))
         meta["status"] = status
