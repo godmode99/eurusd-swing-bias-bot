@@ -5,9 +5,19 @@ import json
 import os
 import sys
 import getpass
+import logging
 from enum import Enum
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+
+BASE_DIR = Path(__file__).resolve().parent
+PYTHON_DIR = BASE_DIR.parents[1].resolve()
+TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
+
+if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
+    sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
+
+from telegram_notifier import send_telegram_message
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
@@ -24,8 +34,42 @@ def load_config() -> dict:
     cfg_path = Path(__file__).with_name("config.json")
     if cfg_path.exists():
         with open(cfg_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
+            cfg = json.load(f)
+    else:
+        cfg = {}
+    return inject_telegram_env(cfg)
+
+
+def inject_telegram_env(cfg: dict) -> dict:
+    cfg = dict(cfg or {})
+    telegram = cfg.get("telegram", {}) or {}
+
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    if tg_token and not telegram.get("bot_token"):
+        telegram["bot_token"] = tg_token
+
+    tg_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if tg_chat and not telegram.get("chat_id"):
+        telegram["chat_id"] = tg_chat
+
+    cfg["telegram"] = telegram
+    return cfg
+
+
+def setup_logger() -> logging.Logger:
+    logger = logging.getLogger("cme_auth_check")
+    if logger.handlers:
+        return logger
+    logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
+
+
+def notify_telegram(cfg: dict, message: str, logger: logging.Logger) -> None:
+    send_telegram_message(cfg, message, logger=logger)
 
 def pick_creds(cfg: dict):
     # 1) config.json
@@ -311,6 +355,7 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
 
 def main():
     cfg = load_config()
+    logger = setup_logger()
 
     auth_url = (cfg.get("auth_url") or DEFAULT_AUTH_URL).strip()
     user_data_dir = (cfg.get("user_data_dir") or os.environ.get("CME_USER_DATA_DIR") or "cme_profile").strip()
@@ -340,15 +385,18 @@ def main():
                 response_text = None
         state = detect_state(page, response_text=response_text)
         print(f"STATE: {state} | url={page.url}")
+        notify_telegram(cfg, f"🔐 CME auth check: {state} | url={page.url}", logger)
 
         if state == AuthState.AUTHENTICATED:
             print("✅ Already logged in")
+            notify_telegram(cfg, "✅ CME auth check: already logged in", logger)
             fetch_watchlist_html(page, cfg)
             context.close()
             return
 
         # 2) ต้อง login
         print("⚠️ Need login -> จะพยายามกรอกให้")
+        notify_telegram(cfg, "⚠️ CME auth check: login required, attempting auto login", logger)
         user, pwd = pick_creds(cfg)
 
         try:
@@ -380,9 +428,11 @@ def main():
                 response_text = None
         state2 = detect_state(page, response_text=response_text)
         print(f"AFTER LOGIN STATE: {state2} | url={page.url}")
+        notify_telegram(cfg, f"🔐 CME auth check after login: {state2} | url={page.url}", logger)
 
         if state2 == AuthState.AUTHENTICATED:
             print("✅ Login success")
+            notify_telegram(cfg, "✅ CME auth check: login success", logger)
             fetch_watchlist_html(page, cfg)
             context.close()
             return
@@ -401,14 +451,17 @@ def main():
                 response_text = None
         state3 = detect_state(page, response_text=response_text)
         print(f"AFTER MANUAL STATE: {state3} | url={page.url}")
+        notify_telegram(cfg, f"🔐 CME auth check after manual: {state3} | url={page.url}", logger)
 
         if state3 == AuthState.AUTHENTICATED:
             print("✅ Success after manual")
+            notify_telegram(cfg, "✅ CME auth check: success after manual step", logger)
             fetch_watchlist_html(page, cfg)
             context.close()
             return
 
         save_debug(page, "auth_failed")
+        notify_telegram(cfg, "❌ CME auth check: authentication failed", logger)
         context.close()
         sys.exit(2)
 
