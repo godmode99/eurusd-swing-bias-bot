@@ -94,6 +94,12 @@ def notify_telegram(cfg: dict, message: str, logger: logging.Logger) -> None:
         logger.info("Telegram notify finished")
 
 
+def queue_telegram(messages: list[str], message: str, logger: logging.Logger | None = None) -> None:
+    if logger:
+        logger.info("Telegram queue: %s", message)
+    messages.append(message)
+
+
 def format_json_preview(payload: list[dict] | list[list[str]], max_chars: int = 1200) -> str:
     preview = payload[:3] if isinstance(payload, list) else payload
     try:
@@ -402,191 +408,200 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
 def main():
     cfg = load_config()
     logger = setup_logger()
+    messages: list[str] = []
 
     auth_url = (cfg.get("auth_url") or DEFAULT_AUTH_URL).strip()
     user_data_dir = (cfg.get("user_data_dir") or os.environ.get("CME_USER_DATA_DIR") or "cme_profile").strip()
 
-    with sync_playwright() as p:
-        context = p.chromium.launch_persistent_context(
-            user_data_dir,
-            headless=False,
-        )
-        page = context.new_page()
-
-        # 1) เริ่มที่ auth_url เสมอ
-        try:
-            response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
-            page.wait_for_timeout(1200)
-        except PlaywrightTimeoutError:
-            print("❌ goto auth_url timeout")
-            save_debug(page, "auth_timeout")
-            context.close()
-            sys.exit(1)
-
-        response_text = None
-        if response is not None:
+    def run() -> int:
+        exit_code = 0
+        with sync_playwright() as p:
+            context = p.chromium.launch_persistent_context(
+                user_data_dir,
+                headless=False,
+            )
+            page = context.new_page()
             try:
-                response_text = response.text()
-            except Exception:
-                response_text = None
-        state = detect_state(page, response_text=response_text)
-        print(f"STATE: {state} | url={page.url}")
-        notify_telegram(
-            cfg,
-            (
-                "🔐 CME auth check\n"
-                f"- state: {state}\n"
-                f"- url: {page.url}\n"
-                f"- auth_url: {auth_url}\n"
-                f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
-            ),
-            logger,
-        )
+                # 1) เริ่มที่ auth_url เสมอ
+                try:
+                    response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+                    page.wait_for_timeout(1200)
+                except PlaywrightTimeoutError:
+                    print("❌ goto auth_url timeout")
+                    save_debug(page, "auth_timeout")
+                    queue_telegram(messages, "❌ CME auth check: auth_url timeout", logger)
+                    return 1
 
-        if state == AuthState.AUTHENTICATED:
-            print("✅ Already logged in")
-            notify_telegram(cfg, "✅ CME auth check: already logged in", logger)
-            watchlist_summary = fetch_watchlist_html(page, cfg)
-            if watchlist_summary:
-                notify_telegram(
-                    cfg,
+                response_text = None
+                if response is not None:
+                    try:
+                        response_text = response.text()
+                    except Exception:
+                        response_text = None
+                state = detect_state(page, response_text=response_text)
+                print(f"STATE: {state} | url={page.url}")
+                queue_telegram(
+                    messages,
                     (
-                        "📄 CME watchlist export (authenticated)\n"
-                        f"- rows: {watchlist_summary['row_count']}\n"
-                        f"- json: {watchlist_summary['json_output']}\n"
-                        f"- csv: {watchlist_summary['csv_output']}\n"
-                        f"- html: {watchlist_summary['html_output']}\n"
-                        "🧾 json preview:\n"
-                        f"{watchlist_summary['json_preview']}"
+                        "🔐 CME auth check\n"
+                        f"- state: {state}\n"
+                        f"- url: {page.url}\n"
+                        f"- auth_url: {auth_url}\n"
+                        f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
                     ),
                     logger,
                 )
-            context.close()
-            return
 
-        # 2) ต้อง login
-        print("⚠️ Need login -> จะพยายามกรอกให้")
-        notify_telegram(
-            cfg,
-            (
-                "⚠️ CME auth check: login required\n"
-                "- action: attempting auto login\n"
-                f"- auth_url: {auth_url}\n"
-                f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
-            ),
-            logger,
-        )
-        user, pwd = pick_creds(cfg)
+                if state == AuthState.AUTHENTICATED:
+                    print("✅ Already logged in")
+                    queue_telegram(messages, "✅ CME auth check: already logged in", logger)
+                    watchlist_summary = fetch_watchlist_html(page, cfg)
+                    if watchlist_summary:
+                        queue_telegram(
+                            messages,
+                            (
+                                "📄 CME watchlist export (authenticated)\n"
+                                f"- rows: {watchlist_summary['row_count']}\n"
+                                f"- json: {watchlist_summary['json_output']}\n"
+                                f"- csv: {watchlist_summary['csv_output']}\n"
+                                f"- html: {watchlist_summary['html_output']}\n"
+                                "🧾 json preview:\n"
+                                f"{watchlist_summary['json_preview']}"
+                            ),
+                            logger,
+                        )
+                    return exit_code
 
-        try:
-            page.wait_for_selector("#user", timeout=20_000)
-            page.wait_for_selector("#pwd", timeout=20_000)
-            page.wait_for_selector("#loginBtn", timeout=20_000)
-
-            page.fill("#user", user)
-            page.fill("#pwd", pwd)
-            page.click("#loginBtn")
-
-            # อาจติด reCAPTCHA/MFA -> ให้ทำเองได้
-            try:
-                page.wait_for_load_state("networkidle", timeout=30_000)
-            except:
-                pass
-
-        except Exception as e:
-            print(f"❌ Error while filling login: {e}")
-
-        # 3) เช็คซ้ำด้วย auth_url
-        response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
-        page.wait_for_timeout(1200)
-        response_text = None
-        if response is not None:
-            try:
-                response_text = response.text()
-            except Exception:
-                response_text = None
-        state2 = detect_state(page, response_text=response_text)
-        print(f"AFTER LOGIN STATE: {state2} | url={page.url}")
-        notify_telegram(
-            cfg,
-            (
-                "🔐 CME auth check after login\n"
-                f"- state: {state2}\n"
-                f"- url: {page.url}"
-            ),
-            logger,
-        )
-
-        if state2 == AuthState.AUTHENTICATED:
-            print("✅ Login success")
-            notify_telegram(cfg, "✅ CME auth check: login success", logger)
-            watchlist_summary = fetch_watchlist_html(page, cfg)
-            if watchlist_summary:
-                notify_telegram(
-                    cfg,
+                # 2) ต้อง login
+                print("⚠️ Need login -> จะพยายามกรอกให้")
+                queue_telegram(
+                    messages,
                     (
-                        "📄 CME watchlist export (auto login)\n"
-                        f"- rows: {watchlist_summary['row_count']}\n"
-                        f"- json: {watchlist_summary['json_output']}\n"
-                        f"- csv: {watchlist_summary['csv_output']}\n"
-                        f"- html: {watchlist_summary['html_output']}\n"
-                        "🧾 json preview:\n"
-                        f"{watchlist_summary['json_preview']}"
+                        "⚠️ CME auth check: login required\n"
+                        "- action: attempting auto login\n"
+                        f"- auth_url: {auth_url}\n"
+                        f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
                     ),
                     logger,
                 )
-            context.close()
-            return
+                user, pwd = pick_creds(cfg)
 
-        print("❌ ยังไม่สำเร็จ (อาจติด reCAPTCHA/MFA/OTP หรือรหัสผิด)")
-        print("➡️ ไปทำขั้นตอนบน browser ให้ผ่าน แล้วกลับมากด Enter เพื่อเช็คซ้ำ")
-        input()
+                try:
+                    page.wait_for_selector("#user", timeout=20_000)
+                    page.wait_for_selector("#pwd", timeout=20_000)
+                    page.wait_for_selector("#loginBtn", timeout=20_000)
 
-        response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
-        page.wait_for_timeout(1200)
-        response_text = None
-        if response is not None:
-            try:
-                response_text = response.text()
-            except Exception:
+                    page.fill("#user", user)
+                    page.fill("#pwd", pwd)
+                    page.click("#loginBtn")
+
+                    # อาจติด reCAPTCHA/MFA -> ให้ทำเองได้
+                    try:
+                        page.wait_for_load_state("networkidle", timeout=30_000)
+                    except:
+                        pass
+
+                except Exception as e:
+                    print(f"❌ Error while filling login: {e}")
+
+                # 3) เช็คซ้ำด้วย auth_url
+                response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+                page.wait_for_timeout(1200)
                 response_text = None
-        state3 = detect_state(page, response_text=response_text)
-        print(f"AFTER MANUAL STATE: {state3} | url={page.url}")
-        notify_telegram(
-            cfg,
-            (
-                "🔐 CME auth check after manual\n"
-                f"- state: {state3}\n"
-                f"- url: {page.url}"
-            ),
-            logger,
-        )
-
-        if state3 == AuthState.AUTHENTICATED:
-            print("✅ Success after manual")
-            notify_telegram(cfg, "✅ CME auth check: success after manual step", logger)
-            watchlist_summary = fetch_watchlist_html(page, cfg)
-            if watchlist_summary:
-                notify_telegram(
-                    cfg,
+                if response is not None:
+                    try:
+                        response_text = response.text()
+                    except Exception:
+                        response_text = None
+                state2 = detect_state(page, response_text=response_text)
+                print(f"AFTER LOGIN STATE: {state2} | url={page.url}")
+                queue_telegram(
+                    messages,
                     (
-                        "📄 CME watchlist export (manual)\n"
-                        f"- rows: {watchlist_summary['row_count']}\n"
-                        f"- json: {watchlist_summary['json_output']}\n"
-                        f"- csv: {watchlist_summary['csv_output']}\n"
-                        f"- html: {watchlist_summary['html_output']}\n"
-                        "🧾 json preview:\n"
-                        f"{watchlist_summary['json_preview']}"
+                        "🔐 CME auth check after login\n"
+                        f"- state: {state2}\n"
+                        f"- url: {page.url}"
                     ),
                     logger,
                 )
-            context.close()
-            return
 
-        save_debug(page, "auth_failed")
-        notify_telegram(cfg, "❌ CME auth check: authentication failed", logger)
-        context.close()
-        sys.exit(2)
+                if state2 == AuthState.AUTHENTICATED:
+                    print("✅ Login success")
+                    queue_telegram(messages, "✅ CME auth check: login success", logger)
+                    watchlist_summary = fetch_watchlist_html(page, cfg)
+                    if watchlist_summary:
+                        queue_telegram(
+                            messages,
+                            (
+                                "📄 CME watchlist export (auto login)\n"
+                                f"- rows: {watchlist_summary['row_count']}\n"
+                                f"- json: {watchlist_summary['json_output']}\n"
+                                f"- csv: {watchlist_summary['csv_output']}\n"
+                                f"- html: {watchlist_summary['html_output']}\n"
+                                "🧾 json preview:\n"
+                                f"{watchlist_summary['json_preview']}"
+                            ),
+                            logger,
+                        )
+                    return exit_code
+
+                print("❌ ยังไม่สำเร็จ (อาจติด reCAPTCHA/MFA/OTP หรือรหัสผิด)")
+                print("➡️ ไปทำขั้นตอนบน browser ให้ผ่าน แล้วกลับมากด Enter เพื่อเช็คซ้ำ")
+                input()
+
+                response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+                page.wait_for_timeout(1200)
+                response_text = None
+                if response is not None:
+                    try:
+                        response_text = response.text()
+                    except Exception:
+                        response_text = None
+                state3 = detect_state(page, response_text=response_text)
+                print(f"AFTER MANUAL STATE: {state3} | url={page.url}")
+                queue_telegram(
+                    messages,
+                    (
+                        "🔐 CME auth check after manual\n"
+                        f"- state: {state3}\n"
+                        f"- url: {page.url}"
+                    ),
+                    logger,
+                )
+
+                if state3 == AuthState.AUTHENTICATED:
+                    print("✅ Success after manual")
+                    queue_telegram(messages, "✅ CME auth check: success after manual step", logger)
+                    watchlist_summary = fetch_watchlist_html(page, cfg)
+                    if watchlist_summary:
+                        queue_telegram(
+                            messages,
+                            (
+                                "📄 CME watchlist export (manual)\n"
+                                f"- rows: {watchlist_summary['row_count']}\n"
+                                f"- json: {watchlist_summary['json_output']}\n"
+                                f"- csv: {watchlist_summary['csv_output']}\n"
+                                f"- html: {watchlist_summary['html_output']}\n"
+                                "🧾 json preview:\n"
+                                f"{watchlist_summary['json_preview']}"
+                            ),
+                            logger,
+                        )
+                    return exit_code
+
+                save_debug(page, "auth_failed")
+                queue_telegram(messages, "❌ CME auth check: authentication failed", logger)
+                return 2
+            finally:
+                context.close()
+
+        return exit_code
+
+    exit_code = run()
+    if messages:
+        notify_telegram(cfg, "\n\n".join(messages), logger)
+    if exit_code:
+        sys.exit(exit_code)
 
 if __name__ == "__main__":
     main()
