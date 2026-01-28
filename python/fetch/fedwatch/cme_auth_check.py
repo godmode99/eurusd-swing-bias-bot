@@ -9,6 +9,7 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
+DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
 NAV_TIMEOUT = 60_000
 
 class AuthState(str, Enum):
@@ -105,6 +106,34 @@ def save_debug(page, prefix="debug"):
     except:
         pass
 
+def fetch_watchlist_html(page, cfg: dict) -> None:
+    watchlist_url = (cfg.get("watchlist_url") or DEFAULT_WATCHLIST_URL).strip()
+    output_path = (cfg.get("watchlist_output") or "watchlist.html").strip()
+
+    try:
+        page.goto(watchlist_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+        page.wait_for_timeout(1200)
+    except PlaywrightTimeoutError:
+        print(f"❌ goto watchlist timeout: {watchlist_url}")
+        save_debug(page, "watchlist_timeout")
+        return
+
+    try:
+        html = page.content()
+    except Exception as exc:
+        print(f"❌ read watchlist HTML failed: {exc}")
+        save_debug(page, "watchlist_read_failed")
+        return
+
+    try:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"✅ saved watchlist html: {output_path}")
+    except Exception as exc:
+        print(f"❌ write watchlist HTML failed: {exc}")
+        save_debug(page, "watchlist_write_failed")
+        return
+
 def main():
     cfg = load_config()
 
@@ -139,6 +168,7 @@ def main():
 
         if state == AuthState.AUTHENTICATED:
             print("✅ Already logged in")
+            fetch_watchlist_html(page, cfg)
             context.close()
             return
 
@@ -178,6 +208,7 @@ def main():
 
         if state2 == AuthState.AUTHENTICATED:
             print("✅ Login success")
+            fetch_watchlist_html(page, cfg)
             context.close()
             return
 
@@ -198,6 +229,7 @@ def main():
 
         if state3 == AuthState.AUTHENTICATED:
             print("✅ Success after manual")
+            fetch_watchlist_html(page, cfg)
             context.close()
             return
 
