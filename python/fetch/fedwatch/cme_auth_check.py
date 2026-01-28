@@ -51,7 +51,15 @@ def is_login_page(page) -> bool:
         and page.locator("#loginBtn").count() > 0
     )
 
-def detect_state(page) -> AuthState:
+def detect_state(page, response_text: str | None = None) -> AuthState:
+    text_upper = (response_text or "").upper()
+    if "AUTHENTICATED" in text_upper:
+        return AuthState.AUTHENTICATED
+    if "LOGIN_REQUIRED" in text_upper:
+        return AuthState.LOGIN_REQUIRED
+    if "UNAUTHORIZED" in text_upper or "EXPIRED" in text_upper:
+        return AuthState.UNAUTHORIZED_OR_EXPIRED
+
     # รอให้หน้า render นิดนึง กัน false positive
     try:
         page.wait_for_function(
@@ -112,7 +120,7 @@ def main():
 
         # 1) เริ่มที่ auth_url เสมอ
         try:
-            page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+            response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
             page.wait_for_timeout(1200)
         except PlaywrightTimeoutError:
             print("❌ goto auth_url timeout")
@@ -120,7 +128,13 @@ def main():
             context.close()
             sys.exit(1)
 
-        state = detect_state(page)
+        response_text = None
+        if response is not None:
+            try:
+                response_text = response.text()
+            except Exception:
+                response_text = None
+        state = detect_state(page, response_text=response_text)
         print(f"STATE: {state} | url={page.url}")
 
         if state == AuthState.AUTHENTICATED:
@@ -151,9 +165,15 @@ def main():
             print(f"❌ Error while filling login: {e}")
 
         # 3) เช็คซ้ำด้วย auth_url
-        page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+        response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
         page.wait_for_timeout(1200)
-        state2 = detect_state(page)
+        response_text = None
+        if response is not None:
+            try:
+                response_text = response.text()
+            except Exception:
+                response_text = None
+        state2 = detect_state(page, response_text=response_text)
         print(f"AFTER LOGIN STATE: {state2} | url={page.url}")
 
         if state2 == AuthState.AUTHENTICATED:
@@ -165,9 +185,15 @@ def main():
         print("➡️ ไปทำขั้นตอนบน browser ให้ผ่าน แล้วกลับมากด Enter เพื่อเช็คซ้ำ")
         input()
 
-        page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
+        response = page.goto(auth_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
         page.wait_for_timeout(1200)
-        state3 = detect_state(page)
+        response_text = None
+        if response is not None:
+            try:
+                response_text = response.text()
+            except Exception:
+                response_text = None
+        state3 = detect_state(page, response_text=response_text)
         print(f"AFTER MANUAL STATE: {state3} | url={page.url}")
 
         if state3 == AuthState.AUTHENTICATED:
