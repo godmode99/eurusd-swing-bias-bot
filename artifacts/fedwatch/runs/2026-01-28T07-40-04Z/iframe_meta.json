@@ -1,0 +1,13 @@
+{
+  "fetched_at_utc": "2026-01-28T07:40:17+00:00",
+  "run_id": "2026-01-28T07-40-04Z",
+  "host_url": "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html",
+  "iframe_url": "https://cmegroup-tools.quikstrike.net/User/QuikStrikeTools.aspx?viewitemid=IntegratedFedWatchTool&userId=lwolf&jobRole=&company=&companyType=&userId=&jobRole=&company=&companyType=",
+  "final_url": "https://cmegroup-tools.quikstrike.net/Error/ErrorPage.aspx?MSG=Access+to+QuikStrike+has+been+denied+-+unexpected+null+referrer&DET=+++at+QuikStrike.BusinessLogic.LoginManager.PerformReferrerCheck(Boolean+trialUser)+in+C%3a%5cProjects%5cQuikStrike%5cSource%5cQuikStrike%5cQuikStrike.BusinessLogic%5cLoginManager.cs%3aline+225%0d%0a+++at+QuikStrike.BusinessLogic.LoginManager.AttemptIntegratedModeAutoLogin(Boolean+byPassReferrerSecurity)+in+C%3a%5cProjects%5cQuikStrike%5cSource%5cQuikStrike%5cQuikStrike.BusinessLogic%5cLoginManager.cs%3aline+212%0d%0a+++at+QuikStrike.Public.Web.Account.Login.AttemptIntegratedModeAutoLogin()+in+C%3a%5cProjects%5cQuikStrike%5cSource%5cQuikStrike%5cQuikStrike.Public.Web%5cAccount%5cLogin.aspx.cs%3aline+127%0d%0a+++at+QuikStrike.Public.Web.Account.Login.Page_Load(Object+sender%2c+EventArgs+e)+in+C%3a%5cProjects%5cQuikStrike%5cSource%5cQuikStrike%5cQuikStrike.Public.Web%5cAccount%5cLogin.aspx.cs%3aline+59%0d%0a+++at+System.Web.UI.Control.OnLoad(EventArgs+e)%0d%0a+++at+System.Web.UI.Control.LoadRecursive()%0d%0a+++at+System.Web.UI.Page.ProcessRequestMain(Boolean+includeStagesBeforeAsyncPoint%2c+Boolean+includeStagesAfterAsyncPoint)&insid=206545514&qsid=4027b4d1-8c46-40b3-a902-1c3e656da5be",
+  "page_title": "QuikStrike Error",
+  "status": "OK",
+  "html_saved_to": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\runs\\2026-01-28T07-40-04Z\\iframe.html",
+  "screenshot_saved_to": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\runs\\2026-01-28T07-40-04Z\\iframe_screenshot.png",
+  "storage_state_path": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\ff_storage.json",
+  "playwright_user_agent": ""
+}

@@ -1,6 +1,6 @@
 {
-  "run_id": "2026-01-28T07-21-54Z",
-  "started_at_utc": "2026-01-28T07:21:54+00:00",
+  "run_id": "2026-01-28T07-27-42Z",
+  "started_at_utc": "2026-01-28T07:27:42+00:00",
   "status": "CHALLENGE",
   "steps": [
     {
@@ -10,9 +10,9 @@
     }
   ],
   "paths": {
-    "run_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\runs\\2026-01-28T07-21-54Z",
+    "run_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\runs\\2026-01-28T07-27-42Z",
     "latest_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\latest",
     "history_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\history"
   },
-  "finished_at_utc": "2026-01-28T07:22:04+00:00"
+  "finished_at_utc": "2026-01-28T07:27:53+00:00"
 }
