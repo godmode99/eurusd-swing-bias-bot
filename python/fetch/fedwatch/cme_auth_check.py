@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 import os
 import sys
@@ -109,6 +110,8 @@ def save_debug(page, prefix="debug"):
 def fetch_watchlist_html(page, cfg: dict) -> None:
     watchlist_url = (cfg.get("watchlist_url") or DEFAULT_WATCHLIST_URL).strip()
     output_path = (cfg.get("watchlist_output") or "watchlist.html").strip()
+    json_output = (cfg.get("watchlist_json_output") or "watchlist.json").strip()
+    csv_output = (cfg.get("watchlist_csv_output") or "watchlist.csv").strip()
 
     try:
         page.goto(watchlist_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
@@ -117,6 +120,17 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
         print(f"❌ goto watchlist timeout: {watchlist_url}")
         save_debug(page, "watchlist_timeout")
         return
+
+    table_data = extract_watchlist_table(page)
+    if table_data is None:
+        print("⚠️ watchlist table not found")
+    else:
+        headers, rows = table_data
+        if rows:
+            save_table_as_json(headers, rows, json_output)
+            save_table_as_csv(headers, rows, csv_output)
+        else:
+            print("⚠️ watchlist table found but no rows to export")
 
     try:
         html = page.content()
@@ -133,6 +147,60 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
         print(f"❌ write watchlist HTML failed: {exc}")
         save_debug(page, "watchlist_write_failed")
         return
+
+def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
+    selectors = [".watchlist-products table", "table"]
+    for selector in selectors:
+        try:
+            page.wait_for_selector(selector, timeout=10_000)
+        except PlaywrightTimeoutError:
+            continue
+        table_data = page.evaluate(
+            """(sel) => {
+                const table = document.querySelector(sel);
+                if (!table) return null;
+                const headers = Array.from(table.querySelectorAll('thead th'))
+                    .map(th => th.innerText.trim());
+                const rows = Array.from(table.querySelectorAll('tbody tr')).map(tr => {
+                    return Array.from(tr.querySelectorAll('th, td'))
+                        .map(td => td.innerText.trim());
+                });
+                return { headers, rows };
+            }""",
+            selector,
+        )
+        if table_data and table_data.get("rows"):
+            headers = table_data.get("headers") or []
+            rows = table_data.get("rows") or []
+            return headers, rows
+    return None
+
+def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: str) -> None:
+    payload = []
+    if headers:
+        for row in rows:
+            item = {headers[i]: row[i] if i < len(row) else "" for i in range(len(headers))}
+            payload.append(item)
+    else:
+        payload = rows
+
+    try:
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False, indent=2)
+        print(f"✅ saved watchlist json: {output_path}")
+    except Exception as exc:
+        print(f"❌ write watchlist json failed: {exc}")
+
+def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: str) -> None:
+    try:
+        with open(output_path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.writer(f)
+            if headers:
+                writer.writerow(headers)
+            writer.writerows(rows)
+        print(f"✅ saved watchlist csv: {output_path}")
+    except Exception as exc:
+        print(f"❌ write watchlist csv failed: {exc}")
 
 def main():
     cfg = load_config()
