@@ -1,0 +1,12 @@
+{
+  "run_id": "2026-01-28T07-12-15Z",
+  "started_at_utc": "2026-01-28T07:12:15+00:00",
+  "status": "error",
+  "steps": [
+    {
+      "step": "capture",
+      "exit_code": 1
+    }
+  ],
+  "finished_at_utc": "2026-01-28T07:12:16+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "run_id": "2026-01-28T07-13-10Z",
+  "started_at_utc": "2026-01-28T07:13:10+00:00",
+  "status": "ERROR",
+  "steps": [
+    {
+      "step": "capture",
+      "exit_code": 1,
+      "ok": false
+    }
+  ],
+  "paths": {
+    "run_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\runs\\2026-01-28T07-13-10Z",
+    "latest_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\latest",
+    "history_dir": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\fedwatch\\history"
+  },
+  "finished_at_utc": "2026-01-28T07:13:10+00:00"
+}
