@@ -11,6 +11,7 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
 NAV_TIMEOUT = 60_000
 
 class AuthState(str, Enum):
@@ -107,11 +108,34 @@ def save_debug(page, prefix="debug"):
     except:
         pass
 
+def resolve_output_paths(cfg: dict) -> dict[str, Path]:
+    output_dir = Path(cfg.get("watchlist_output_dir", DEFAULT_OUTPUT_DIR))
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    html_output = Path(cfg.get("watchlist_output", output_dir / "watchlist.html"))
+    json_output = Path(cfg.get("watchlist_json_output", output_dir / "watchlist.json"))
+    csv_output = Path(cfg.get("watchlist_csv_output", output_dir / "watchlist.csv"))
+
+    if not html_output.is_absolute():
+        html_output = output_dir / html_output
+    if not json_output.is_absolute():
+        json_output = output_dir / json_output
+    if not csv_output.is_absolute():
+        csv_output = output_dir / csv_output
+
+    return {
+        "output_dir": output_dir,
+        "html_output": html_output,
+        "json_output": json_output,
+        "csv_output": csv_output,
+    }
+
 def fetch_watchlist_html(page, cfg: dict) -> None:
     watchlist_url = (cfg.get("watchlist_url") or DEFAULT_WATCHLIST_URL).strip()
-    output_path = (cfg.get("watchlist_output") or "watchlist.html").strip()
-    json_output = (cfg.get("watchlist_json_output") or "watchlist.json").strip()
-    csv_output = (cfg.get("watchlist_csv_output") or "watchlist.csv").strip()
+    outputs = resolve_output_paths(cfg)
+    output_path = outputs["html_output"]
+    json_output = outputs["json_output"]
+    csv_output = outputs["csv_output"]
 
     try:
         page.goto(watchlist_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
@@ -258,7 +282,7 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
             return headers, rows
     return None
 
-def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: str) -> None:
+def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: Path) -> None:
     payload = []
     if headers:
         for row in rows:
@@ -274,7 +298,7 @@ def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: s
     except Exception as exc:
         print(f"❌ write watchlist json failed: {exc}")
 
-def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: str) -> None:
+def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Path) -> None:
     try:
         with open(output_path, "w", encoding="utf-8", newline="") as f:
             writer = csv.writer(f)
