@@ -55,7 +55,7 @@ def detect_state(page, response_text: str | None = None) -> AuthState:
     if "session has expired" in body_txt or "unauthorized" in body_txt:
         return AuthState.UNAUTHORIZED_OR_EXPIRED
 
-    return AuthState.AUTHENTICATED
+    return AuthState.UNKNOWN
 
 
 def visit_auth_and_detect(page, auth_url: str) -> AuthState:
