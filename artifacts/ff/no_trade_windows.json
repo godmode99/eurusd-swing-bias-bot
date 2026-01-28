@@ -26,19 +26,6 @@
     "soloUrl": "/calendar/349-us-durable-goods-orders-mm"
   },
   {
-    "event_id": 152093,
-    "currency": "USD",
-    "impact": "medium",
-    "name": "President Trump Speaks",
-    "dateline_epoch": 1769520600,
-    "start_iso_bkk": "2026-01-27T20:00:00+07:00",
-    "end_iso_bkk": "2026-01-27T20:45:00+07:00",
-    "start_epoch": 1769518800,
-    "end_epoch": 1769521500,
-    "source": "forexfactory",
-    "soloUrl": "/calendar/645-us-president-trump-speaks"
-  },
-  {
     "event_id": 146878,
     "currency": "USD",
     "impact": "medium",
@@ -50,6 +37,19 @@
     "end_epoch": 1769526900,
     "source": "forexfactory",
     "soloUrl": "/calendar/208-us-cb-consumer-confidence"
+  },
+  {
+    "event_id": 152093,
+    "currency": "USD",
+    "impact": "medium",
+    "name": "President Trump Speaks",
+    "dateline_epoch": 1769547600,
+    "start_iso_bkk": "2026-01-28T03:30:00+07:00",
+    "end_iso_bkk": "2026-01-28T04:15:00+07:00",
+    "start_epoch": 1769545800,
+    "end_epoch": 1769548500,
+    "source": "forexfactory",
+    "soloUrl": "/calendar/645-us-president-trump-speaks"
   },
   {
     "event_id": 146494,
