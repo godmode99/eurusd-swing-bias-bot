@@ -20,6 +20,7 @@ class ExtractResult:
     asof_utc: str
     source: str
     asof_text: str | None
+    current_target_range: str | None
     meetings: list[dict[str, Any]]
     tables: list[list[list[str]]]
     next_data: dict[str, Any] | None
@@ -114,6 +115,46 @@ def _extract_asof_text(html: str) -> str | None:
     return None
 
 
+def _normalize_rate_range(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        cleaned = value.strip()
+        if cleaned:
+            return cleaned
+        return None
+    if isinstance(value, dict):
+        low = value.get("low") or value.get("min") or value.get("lower")
+        high = value.get("high") or value.get("max") or value.get("upper")
+        if isinstance(low, (int, float)) and isinstance(high, (int, float)):
+            return f"{low:.2f}-{high:.2f}"
+    return None
+
+
+def _extract_current_target_range(html: str, next_data: dict[str, Any] | None) -> str | None:
+    patterns = [
+        r"current target rate[^0-9]*([0-9.]+\s*-\s*[0-9.]+)",
+        r"target range[^0-9]*([0-9.]+\s*-\s*[0-9.]+)",
+        r"current rate[^0-9]*([0-9.]+\s*-\s*[0-9.]+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, html, flags=re.IGNORECASE)
+        if match:
+            return match.group(1).replace(" ", "")
+
+    if not next_data:
+        return None
+
+    for item in _walk_json(next_data):
+        if isinstance(item, dict):
+            for key in ("currentTargetRange", "current_target_range", "targetRange", "target_range"):
+                if key in item:
+                    normalized = _normalize_rate_range(item.get(key))
+                    if normalized:
+                        return normalized
+    return None
+
+
 def _extract_next_data(html: str) -> dict[str, Any] | None:
     match = re.search(r"<script[^>]+id=\"__NEXT_DATA__\"[^>]*>(.*?)</script>", html, re.DOTALL)
     if not match:
@@ -164,6 +205,92 @@ def _extract_meetings_from_tables(tables: list[list[list[str]]]) -> list[dict[st
     return meetings
 
 
+def _walk_json(obj: Any) -> list[Any]:
+    items: list[Any] = []
+    stack = [obj]
+    while stack:
+        current = stack.pop()
+        items.append(current)
+        if isinstance(current, dict):
+            stack.extend(current.values())
+        elif isinstance(current, list):
+            stack.extend(current)
+    return items
+
+
+def _normalize_distribution(raw_items: Any) -> list[dict[str, Any]]:
+    if not isinstance(raw_items, list):
+        return []
+    distribution: list[dict[str, Any]] = []
+    for row in raw_items:
+        if not isinstance(row, dict):
+            continue
+        rate_range = _normalize_rate_range(
+            row.get("rateRange")
+            or row.get("rate_range")
+            or row.get("range")
+            or row.get("targetRange")
+            or row.get("target_range")
+        )
+        prob = row.get("probability") or row.get("prob") or row.get("probabilityPercent")
+        if isinstance(prob, str):
+            prob = _parse_probability(prob)
+        if rate_range and isinstance(prob, (int, float)):
+            if prob > 1.0:
+                prob = prob / 100.0
+            distribution.append({"rate_range": rate_range, "prob": float(prob)})
+    return distribution
+
+
+def _extract_meetings_from_next_data(next_data: dict[str, Any]) -> list[dict[str, Any]]:
+    meetings: dict[str, dict[str, Any]] = {}
+    for item in _walk_json(next_data):
+        if not isinstance(item, dict):
+            continue
+
+        if "meetings" in item and isinstance(item.get("meetings"), list):
+            for meeting in item["meetings"]:
+                if not isinstance(meeting, dict):
+                    continue
+                meeting_date = (
+                    meeting.get("meetingDate")
+                    or meeting.get("meeting_date")
+                    or meeting.get("date")
+                    or meeting.get("meeting")
+                )
+                if not isinstance(meeting_date, str):
+                    continue
+                distribution = _normalize_distribution(
+                    meeting.get("probabilities") or meeting.get("distribution") or meeting.get("rateProbabilities")
+                )
+                if distribution:
+                    meetings[_parse_meeting_date(meeting_date)] = {
+                        "meeting_date": _parse_meeting_date(meeting_date),
+                        "distribution": distribution,
+                    }
+            continue
+
+        meeting_date = (
+            item.get("meetingDate")
+            or item.get("meeting_date")
+            or item.get("date")
+            or item.get("meeting")
+        )
+        if not isinstance(meeting_date, str):
+            continue
+
+        distribution = _normalize_distribution(
+            item.get("probabilities") or item.get("distribution") or item.get("rateProbabilities")
+        )
+        if distribution:
+            meetings[_parse_meeting_date(meeting_date)] = {
+                "meeting_date": _parse_meeting_date(meeting_date),
+                "distribution": distribution,
+            }
+
+    return list(meetings.values())
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-dir", default="")
@@ -185,13 +312,25 @@ def main() -> int:
     next_data = _extract_next_data(html)
     if next_data:
         notes.append("Found __NEXT_DATA__ JSON payload")
+        meetings_from_next = _extract_meetings_from_next_data(next_data)
+        if meetings_from_next:
+            notes.append(f"Found {len(meetings_from_next)} meetings in __NEXT_DATA__")
+            if not meetings:
+                meetings = meetings_from_next
+        else:
+            notes.append("No meeting distribution found in __NEXT_DATA__")
     else:
         notes.append("No __NEXT_DATA__ payload found")
+
+    current_target_range = _extract_current_target_range(html, next_data)
+    if current_target_range:
+        notes.append(f"Detected current target range: {current_target_range}")
 
     result = ExtractResult(
         asof_utc=_iso_utc_now(),
         source="fedwatch",
         asof_text=_extract_asof_text(html),
+        current_target_range=current_target_range,
         meetings=meetings,
         tables=tables,
         next_data=next_data,
