@@ -158,6 +158,31 @@ Exit Codes:
 
 1 error
 
+B2) fetch/02b_capture_iframe_html.py
+
+วัตถุประสงค์: เรียกดู/ดึง HTML จากหน้า iframe (QuikStrike FedWatch Tool)
+Logic หลัก:
+
+เปิดหน้า FedWatch หลัก → หา iframe src (หรือกำหนด --iframe-url ตรง ๆ)
+
+ดึง HTML จาก iframe ในหน้า host (รักษา referrer เพื่อลดการถูกปฏิเสธ) และบันทึก HTML + screenshot + meta
+
+Outputs (per run):
+
+artifacts/fedwatch/runs/<ts>/iframe.html
+
+.../iframe_screenshot.png
+
+.../iframe_meta.json
+
+Exit Codes:
+
+0 OK (iframe content ready)
+
+2 CHALLENGE/BLOCKED (ต้องรีเฟรช session)
+
+1 error
+
 C) fetch/03_extract_from_document.py
 
 วัตถุประสงค์: แตก data จาก HTML
