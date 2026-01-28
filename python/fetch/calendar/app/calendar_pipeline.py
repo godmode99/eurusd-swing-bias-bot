@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import shutil
 import sys
@@ -58,15 +59,34 @@ def import_step_modules():
     Import step modules. This assumes these files exist:
     - python/fetch/calendar/02_capture_document_html.py
     - python/fetch/calendar/03_extract_from_document.py
-    - python/transform/calendar/20_make_risk_windows.py
+    - python/fetch/calendar/20_make_risk_windows.py
     """
-    # Ensure repo root on sys.path
+    # Ensure repo root on sys.path for any package-relative imports.
     if str(REPO_ROOT) not in sys.path:
         sys.path.insert(0, str(REPO_ROOT))
 
-    from python.fetch.calendar import _02_capture_document_html as step02  # type: ignore
-    from python.fetch.calendar import _03_extract_from_document as step03  # type: ignore
-    from python.transform.calendar import _20_make_risk_windows as step20  # type: ignore
+    def load_module(name: str, path: Path):
+        if not path.exists():
+            raise FileNotFoundError(f"Missing step module: {path}")
+        spec = importlib.util.spec_from_file_location(name, path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"Unable to load module spec for {path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)  # type: ignore[call-arg]
+        return module
+
+    step02 = load_module(
+        "ff_step02",
+        REPO_ROOT / "python" / "fetch" / "calendar" / "02_capture_document_html.py",
+    )
+    step03 = load_module(
+        "ff_step03",
+        REPO_ROOT / "python" / "fetch" / "calendar" / "03_extract_from_document.py",
+    )
+    step20 = load_module(
+        "ff_step20",
+        REPO_ROOT / "python" / "fetch" / "calendar" / "20_make_risk_windows.py",
+    )
     return step02, step03, step20
 
 
@@ -103,12 +123,7 @@ def main() -> None:
     args = ap.parse_args()
 
     # Import modules
-    # IMPORTANT: Python module names cannot start with digits, so rename files:
-    #   02_capture_document_html.py -> _02_capture_document_html.py
-    #   03_extract_from_document.py -> _03_extract_from_document.py
-    #   20_make_risk_windows.py     -> _20_make_risk_windows.py
-    #
-    # If you want to keep original filenames, runner can use subprocess instead.
+    # Module names cannot start with digits, so we load by file path instead.
     step02, step03, step20 = import_step_modules()
 
     run_id = ts_folder_name()
