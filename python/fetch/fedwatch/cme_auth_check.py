@@ -93,6 +93,18 @@ def notify_telegram(cfg: dict, message: str, logger: logging.Logger) -> None:
     if logger:
         logger.info("Telegram notify finished")
 
+
+def format_json_preview(payload: list[dict] | list[list[str]], max_chars: int = 1200) -> str:
+    preview = payload[:3] if isinstance(payload, list) else payload
+    try:
+        preview_text = json.dumps(preview, ensure_ascii=False, indent=2)
+    except TypeError:
+        preview_text = json.dumps(str(preview), ensure_ascii=False, indent=2)
+
+    if len(preview_text) > max_chars:
+        return preview_text[: max_chars - 3] + "..."
+    return preview_text
+
 def pick_creds(cfg: dict):
     # 1) config.json
     user = (cfg.get("username") or "").strip()
@@ -196,7 +208,7 @@ def resolve_output_paths(cfg: dict) -> dict[str, Path]:
         "csv_output": csv_output,
     }
 
-def fetch_watchlist_html(page, cfg: dict) -> None:
+def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     watchlist_url = (cfg.get("watchlist_url") or DEFAULT_WATCHLIST_URL).strip()
     outputs = resolve_output_paths(cfg)
     output_path = outputs["html_output"]
@@ -209,16 +221,19 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
     except PlaywrightTimeoutError:
         print(f"❌ goto watchlist timeout: {watchlist_url}")
         save_debug(page, "watchlist_timeout")
-        return
+        return None
 
     table_data = extract_watchlist_table(page)
+    payload: list[dict] | list[list[str]] = []
+    row_count = 0
     if table_data is None:
         print("⚠️ watchlist table not found")
     else:
         headers, rows = table_data
         if rows:
-            save_table_as_json(headers, rows, json_output)
+            payload = save_table_as_json(headers, rows, json_output)
             save_table_as_csv(headers, rows, csv_output)
+            row_count = len(rows)
         else:
             print("⚠️ watchlist table found but no rows to export")
 
@@ -227,7 +242,7 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
     except Exception as exc:
         print(f"❌ read watchlist HTML failed: {exc}")
         save_debug(page, "watchlist_read_failed")
-        return
+        return None
 
     try:
         with open(output_path, "w", encoding="utf-8") as f:
@@ -236,7 +251,15 @@ def fetch_watchlist_html(page, cfg: dict) -> None:
     except Exception as exc:
         print(f"❌ write watchlist HTML failed: {exc}")
         save_debug(page, "watchlist_write_failed")
-        return
+        return None
+
+    return {
+        "row_count": row_count,
+        "html_output": str(output_path),
+        "json_output": str(json_output),
+        "csv_output": str(csv_output),
+        "json_preview": format_json_preview(payload) if payload else "[]",
+    }
 
 def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
     selectors = [".watchlist-table", ".watchlist-products table", "table"]
@@ -348,7 +371,7 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
             return headers, rows
     return None
 
-def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: Path) -> None:
+def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: Path) -> list[dict] | list[list[str]]:
     payload = []
     if headers:
         for row in rows:
@@ -363,6 +386,7 @@ def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: P
         print(f"✅ saved watchlist json: {output_path}")
     except Exception as exc:
         print(f"❌ write watchlist json failed: {exc}")
+    return payload
 
 def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Path) -> None:
     try:
@@ -407,18 +431,51 @@ def main():
                 response_text = None
         state = detect_state(page, response_text=response_text)
         print(f"STATE: {state} | url={page.url}")
-        notify_telegram(cfg, f"🔐 CME auth check: {state} | url={page.url}", logger)
+        notify_telegram(
+            cfg,
+            (
+                "🔐 CME auth check\n"
+                f"- state: {state}\n"
+                f"- url: {page.url}\n"
+                f"- auth_url: {auth_url}\n"
+                f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
+            ),
+            logger,
+        )
 
         if state == AuthState.AUTHENTICATED:
             print("✅ Already logged in")
             notify_telegram(cfg, "✅ CME auth check: already logged in", logger)
-            fetch_watchlist_html(page, cfg)
+            watchlist_summary = fetch_watchlist_html(page, cfg)
+            if watchlist_summary:
+                notify_telegram(
+                    cfg,
+                    (
+                        "📄 CME watchlist export (authenticated)\n"
+                        f"- rows: {watchlist_summary['row_count']}\n"
+                        f"- json: {watchlist_summary['json_output']}\n"
+                        f"- csv: {watchlist_summary['csv_output']}\n"
+                        f"- html: {watchlist_summary['html_output']}\n"
+                        "🧾 json preview:\n"
+                        f"{watchlist_summary['json_preview']}"
+                    ),
+                    logger,
+                )
             context.close()
             return
 
         # 2) ต้อง login
         print("⚠️ Need login -> จะพยายามกรอกให้")
-        notify_telegram(cfg, "⚠️ CME auth check: login required, attempting auto login", logger)
+        notify_telegram(
+            cfg,
+            (
+                "⚠️ CME auth check: login required\n"
+                "- action: attempting auto login\n"
+                f"- auth_url: {auth_url}\n"
+                f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
+            ),
+            logger,
+        )
         user, pwd = pick_creds(cfg)
 
         try:
@@ -450,12 +507,34 @@ def main():
                 response_text = None
         state2 = detect_state(page, response_text=response_text)
         print(f"AFTER LOGIN STATE: {state2} | url={page.url}")
-        notify_telegram(cfg, f"🔐 CME auth check after login: {state2} | url={page.url}", logger)
+        notify_telegram(
+            cfg,
+            (
+                "🔐 CME auth check after login\n"
+                f"- state: {state2}\n"
+                f"- url: {page.url}"
+            ),
+            logger,
+        )
 
         if state2 == AuthState.AUTHENTICATED:
             print("✅ Login success")
             notify_telegram(cfg, "✅ CME auth check: login success", logger)
-            fetch_watchlist_html(page, cfg)
+            watchlist_summary = fetch_watchlist_html(page, cfg)
+            if watchlist_summary:
+                notify_telegram(
+                    cfg,
+                    (
+                        "📄 CME watchlist export (auto login)\n"
+                        f"- rows: {watchlist_summary['row_count']}\n"
+                        f"- json: {watchlist_summary['json_output']}\n"
+                        f"- csv: {watchlist_summary['csv_output']}\n"
+                        f"- html: {watchlist_summary['html_output']}\n"
+                        "🧾 json preview:\n"
+                        f"{watchlist_summary['json_preview']}"
+                    ),
+                    logger,
+                )
             context.close()
             return
 
@@ -473,12 +552,34 @@ def main():
                 response_text = None
         state3 = detect_state(page, response_text=response_text)
         print(f"AFTER MANUAL STATE: {state3} | url={page.url}")
-        notify_telegram(cfg, f"🔐 CME auth check after manual: {state3} | url={page.url}", logger)
+        notify_telegram(
+            cfg,
+            (
+                "🔐 CME auth check after manual\n"
+                f"- state: {state3}\n"
+                f"- url: {page.url}"
+            ),
+            logger,
+        )
 
         if state3 == AuthState.AUTHENTICATED:
             print("✅ Success after manual")
             notify_telegram(cfg, "✅ CME auth check: success after manual step", logger)
-            fetch_watchlist_html(page, cfg)
+            watchlist_summary = fetch_watchlist_html(page, cfg)
+            if watchlist_summary:
+                notify_telegram(
+                    cfg,
+                    (
+                        "📄 CME watchlist export (manual)\n"
+                        f"- rows: {watchlist_summary['row_count']}\n"
+                        f"- json: {watchlist_summary['json_output']}\n"
+                        f"- csv: {watchlist_summary['csv_output']}\n"
+                        f"- html: {watchlist_summary['html_output']}\n"
+                        "🧾 json preview:\n"
+                        f"{watchlist_summary['json_preview']}"
+                    ),
+                    logger,
+                )
             context.close()
             return
 
