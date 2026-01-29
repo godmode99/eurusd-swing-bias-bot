@@ -264,8 +264,13 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
             nonefilter_dir = outputs["nonefilter_dir"]
             save_unfiltered_watchlist(headers, rows, nonefilter_dir, timestamp, timestamp_iso)
             filtered_rows = filter_watchlist_rows(headers, rows)
-            payload = save_table_as_json(headers, filtered_rows, json_output, timestamp_iso)
-            save_table_as_csv(headers, filtered_rows, csv_output)
+            filtered_headers, filtered_rows = prune_watchlist_columns(
+                headers,
+                filtered_rows,
+                ["Chart URL", "Contract Code", "Product URL"],
+            )
+            payload = save_table_as_json(filtered_headers, filtered_rows, json_output, timestamp_iso)
+            save_table_as_csv(filtered_headers, filtered_rows, csv_output)
             if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
                 save_filtered_watchlists(payload, outputs["output_dir"], timestamp, timestamp_iso)
             row_count = len(filtered_rows)
@@ -425,6 +430,26 @@ def filter_watchlist_rows(headers: list[str], rows: list[list[str]]) -> list[lis
             continue
         filtered_rows.append(row)
     return filtered_rows
+
+def prune_watchlist_columns(
+    headers: list[str],
+    rows: list[list[str]],
+    drop_columns: list[str],
+) -> tuple[list[str], list[list[str]]]:
+    if not headers:
+        return headers, rows
+
+    drop_set = {name.strip().lower() for name in drop_columns}
+    keep_indices = [idx for idx, header in enumerate(headers) if header.strip().lower() not in drop_set]
+    if len(keep_indices) == len(headers):
+        return headers, rows
+
+    pruned_headers = [headers[idx] for idx in keep_indices]
+    pruned_rows = [
+        [row[idx] if idx < len(row) else "" for idx in keep_indices]
+        for row in rows
+    ]
+    return pruned_headers, pruned_rows
 
 def save_table_as_json(
     headers: list[str],
