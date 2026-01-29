@@ -11,7 +11,7 @@ from run_fred import run_with_config
 
 
 def main() -> None:
-    run_with_config("monthly_config.yaml", "Monthly")
+    run_with_config("app/monthly_config.yaml", "Monthly")
 
 
 if __name__ == "__main__":
