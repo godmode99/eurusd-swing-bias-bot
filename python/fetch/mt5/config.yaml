@@ -19,7 +19,7 @@ fetch:
   store_time_as_utc: true
 
 output:
-  data_dir: "raw_data_mt5"
+  data_dir: "../../Data/raw_data/mt5"
   logs_dir: "logs"
   overwrite_ohlc: true
 
