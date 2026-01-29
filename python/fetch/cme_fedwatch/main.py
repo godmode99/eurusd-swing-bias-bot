@@ -26,11 +26,25 @@ DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.17695868890
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
 DEFAULT_MAX_EXPIRY_YEAR = 2026
 DEFAULT_WATCHLIST_FILTERS = {
-    "daily": ["zq", "sr1", "sr3", "zt", "6e"],
-    "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
-    "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
+    "daily": {"zq": 6, "sr1": 3, "sr3": 3, "zt": 1, "6e": 1},
+    "weekly": {"zq": 6, "sr1": 3, "sr3": 3, "zn": 2, "6e": 1, "zt": 1, "zf": 1, "zb": 1},
+    "monthly": {"zq": 12, "sr1": 6, "sr3": 6, "zn": 3, "tn": 2, "zb": 2, "ub": 2, "twe": 1, "6e": 1, "e7": 1, "m6e": 1},
 }
 NAV_TIMEOUT = 60_000
+MONTH_ALIASES = {
+    "JAN": 1,
+    "FEB": 2,
+    "MAR": 3,
+    "APR": 4,
+    "MAY": 5,
+    "JUN": 6,
+    "JUL": 7,
+    "AUG": 8,
+    "SEP": 9,
+    "OCT": 10,
+    "NOV": 11,
+    "DEC": 12,
+}
 
 class AuthState(str, Enum):
     AUTHENTICATED = "AUTHENTICATED"
@@ -464,6 +478,52 @@ def parse_expiry_year(expiry: str) -> int | None:
             return int(token)
     return None
 
+def parse_expiry_month_year(expiry: str) -> tuple[int | None, int | None]:
+    if not expiry:
+        return None, None
+    tokens = expiry.replace("/", " ").replace("-", " ").split()
+    month_value = None
+    year_value = None
+    for token in tokens:
+        cleaned = token.strip().upper()
+        if cleaned in MONTH_ALIASES:
+            month_value = MONTH_ALIASES[cleaned]
+            continue
+        if cleaned.isdigit():
+            if len(cleaned) == 4:
+                year_value = int(cleaned)
+            else:
+                try:
+                    numeric = int(cleaned)
+                except ValueError:
+                    continue
+                if 1 <= numeric <= 12:
+                    month_value = numeric
+    return year_value, month_value
+
+def normalize_expiry_value(expiry: str) -> str:
+    if not expiry:
+        return expiry
+    year, month = parse_expiry_month_year(expiry)
+    if year and month:
+        return f"{month} {year}"
+    return expiry
+
+def expiry_month_distance(expiry: str, now: datetime) -> int | None:
+    year, month = parse_expiry_month_year(expiry)
+    if not year or not month:
+        return None
+    return (year - now.year) * 12 + (month - now.month)
+
+def normalize_expiry_in_item(item: dict) -> dict:
+    expiry_keys = [key for key in item.keys() if str(key).strip().lower() == "expiry"]
+    if not expiry_keys:
+        return item
+    updated = dict(item)
+    for key in expiry_keys:
+        updated[key] = normalize_expiry_value(str(item.get(key, "")))
+    return updated
+
 def filter_watchlist_rows(
     headers: list[str],
     rows: list[list[str]],
@@ -568,19 +628,49 @@ def extract_code_from_item(item: dict) -> str:
             return str(value).strip()
     return ""
 
-def filter_watchlist_by_prefix(
+def filter_watchlist_by_prefix_limits(
     payload: list[dict],
-    prefixes: list[str],
+    prefixes: dict[str, int | None],
+    now: datetime,
 ) -> list[dict]:
-    normalized_prefixes = [prefix.lower() for prefix in prefixes]
-    filtered: list[dict] = []
-    for item in payload:
-        code = extract_code_from_item(item).lower()
-        if not code:
-            continue
-        if any(code.startswith(prefix) for prefix in normalized_prefixes):
-            filtered.append(item)
-    return filtered
+    selected: list[dict] = []
+    seen_keys: set[tuple[tuple[str, str], ...]] = set()
+
+    for prefix, limit in prefixes.items():
+        normalized_prefix = prefix.lower()
+        candidates = []
+        for item in payload:
+            code = extract_code_from_item(item).lower()
+            if not code or not code.startswith(normalized_prefix):
+                continue
+            distance = expiry_month_distance(str(item.get("Expiry", "")), now)
+            if distance is None:
+                distance_key = (1, 9999)
+            else:
+                distance_key = (0 if distance >= 0 else 1, abs(distance))
+            candidates.append((distance_key, item))
+
+        candidates.sort(key=lambda entry: entry[0])
+        limit_count = int(limit) if limit is not None else None
+        if limit_count is not None and limit_count < 0:
+            limit_count = 0
+        count = 0
+        for _, item in candidates:
+            key_items = []
+            for k, v in item.items():
+                if k == "Front Month":
+                    continue
+                key_items.append((str(k), "" if v is None else str(v)))
+            key = tuple(sorted(key_items))
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            selected.append(item)
+            count += 1
+            if limit_count is not None and count >= limit_count:
+                break
+
+    return selected
 
 def normalize_front_month(value) -> bool:
     if value is None:
@@ -589,23 +679,50 @@ def normalize_front_month(value) -> bool:
         return value
     return str(value).strip().lower() == "true"
 
-def resolve_watchlist_filters(cfg: dict) -> dict[str, list[str]]:
+def resolve_watchlist_filters(cfg: dict) -> dict[str, dict[str, int | None]]:
     cfg_filters = cfg.get("watchlist_filters") or {}
-    resolved: dict[str, list[str]] = {}
+    resolved: dict[str, dict[str, int | None]] = {}
     for bucket, prefixes in DEFAULT_WATCHLIST_FILTERS.items():
         cfg_value = cfg_filters.get(bucket)
-        if isinstance(cfg_value, list):
-            cleaned = [str(prefix).strip().lower() for prefix in cfg_value if str(prefix).strip()]
+        if isinstance(cfg_value, dict):
+            cleaned: dict[str, int | None] = {}
+            for prefix, limit in cfg_value.items():
+                prefix_str = str(prefix).strip().lower()
+                if not prefix_str:
+                    continue
+                try:
+                    limit_value = int(limit) if limit is not None else None
+                except (TypeError, ValueError):
+                    limit_value = None
+                cleaned[prefix_str] = limit_value
+            resolved[bucket] = cleaned
+        elif isinstance(cfg_value, list):
+            cleaned = {
+                str(prefix).strip().lower(): None
+                for prefix in cfg_value
+                if str(prefix).strip()
+            }
             resolved[bucket] = cleaned
         else:
-            resolved[bucket] = list(prefixes)
+            resolved[bucket] = dict(prefixes)
     extra_filters = {
         key: value
         for key, value in cfg_filters.items()
-        if key not in resolved and isinstance(value, list)
+        if key not in resolved and isinstance(value, (list, dict))
     }
     for bucket, prefixes in extra_filters.items():
-        resolved[bucket] = [str(prefix).strip().lower() for prefix in prefixes if str(prefix).strip()]
+        if isinstance(prefixes, dict):
+            resolved[bucket] = {
+                str(prefix).strip().lower(): (int(limit) if limit is not None else None)
+                for prefix, limit in prefixes.items()
+                if str(prefix).strip()
+            }
+        else:
+            resolved[bucket] = {
+                str(prefix).strip().lower(): None
+                for prefix in prefixes
+                if str(prefix).strip()
+            }
     return resolved
 
 def drop_false_front_month_duplicates(payload: list[dict]) -> list[dict]:
@@ -634,15 +751,17 @@ def save_filtered_watchlists(
     output_dir: Path,
     timestamp: str,
     timestamp_iso: str,
-    filters: dict[str, list[str]],
+    filters: dict[str, dict[str, int | None]],
 ) -> dict[str, int]:
     counts: dict[str, int] = {}
+    now = datetime.now()
 
     for bucket, prefixes in filters.items():
         bucket_dir = output_dir / bucket
         bucket_dir.mkdir(parents=True, exist_ok=True)
-        filtered_payload = filter_watchlist_by_prefix(payload, prefixes)
+        filtered_payload = filter_watchlist_by_prefix_limits(payload, prefixes, now)
         filtered_payload = drop_false_front_month_duplicates(filtered_payload)
+        filtered_payload = [normalize_expiry_in_item(item) for item in filtered_payload]
         counts[bucket] = len(filtered_payload)
         output_path = append_timestamp_to_path(bucket_dir / "watchlist.json", timestamp)
         try:
