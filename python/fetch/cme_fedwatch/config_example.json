@@ -4,9 +4,9 @@
   "username": "your_email_or_userid",
   "password": "your_password",
   "watchlist_filters": {
-    "daily": ["zq", "sr1", "sr3", "zt", "6e"],
-    "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
-    "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"]
+    "daily": {"zq": "6", "sr1": "3", "sr3": "3", "zt": "1", "6e": "1"},
+    "weekly": {"zq": "6", "sr1": "3", "sr3": "3", "zn": "2", "6e": "1", "zt": "1", "zf": "1", "zb": "1"},
+    "monthly": {"zq": "12", "sr1": "6", "sr3": "6", "zn": "3", "tn": "2", "zb": "2", "ub": "2", "twe": "1", "6e": "1", "e7": "1", "m6e": "1"}
   },
   "default_max_expiry_year": 2026,
   "telegram": {
