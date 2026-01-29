@@ -350,7 +350,10 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
                         const productUrl = codeAnchor ? codeAnchor.href : '';
 
                         const expiryCell = row.querySelector('.second-column .expiration-month');
-                        const expiry = expiryCell ? expiryCell.innerText.trim() : '';
+                        let expiry = expiryCell ? expiryCell.innerText.trim() : '';
+                        if (expiry) {
+                            expiry = expiry.replace(/^FM\\b[\\s\\n]*/i, '').trim();
+                        }
 
                         const contractInput = row.querySelector('input[data-contract-code]');
                         const contractCode = contractInput
