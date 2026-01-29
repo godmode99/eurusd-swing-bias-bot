@@ -78,6 +78,19 @@
     "soloUrl": "/calendar/11-us-unemployment-claims"
   },
   {
+    "event_id": 152577,
+    "currency": "USD",
+    "impact": "medium",
+    "name": "President Trump Speaks",
+    "dateline_epoch": 1769722200,
+    "start_iso_bkk": "2026-01-30T04:00:00+07:00",
+    "end_iso_bkk": "2026-01-30T04:45:00+07:00",
+    "start_epoch": 1769720400,
+    "end_epoch": 1769723100,
+    "source": "forexfactory",
+    "soloUrl": "/calendar/645-us-president-trump-speaks"
+  },
+  {
     "event_id": 151114,
     "currency": "EUR",
     "impact": "medium",

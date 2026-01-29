@@ -1,5 +1,5 @@
 {
-  "run_id": "2026-01-29T15-27-08",
+  "run_id": "2026-01-29T20-46-43",
   "cwd": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot",
   "pair": "EURUSD",
   "merge_overlaps": true,
@@ -24,13 +24,13 @@
     "windows_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\ff\\no_trade_windows.json",
     "pipeline_meta": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\ff\\pipeline_run.meta.json"
   },
-  "events_count": 84,
+  "events_count": 85,
   "related_news": {
     "pair_currencies": [
       "EUR",
       "USD"
     ],
-    "total": 48,
+    "total": 50,
     "items": [
       "4:00pm EUR medium - GE ifo Business Climate",
       "6:00pm EUR low - GE Buba President Nagel Speaks",
@@ -44,6 +44,6 @@
       "9:00pm USD low - US HPI m/m"
     ]
   },
-  "windows_count": 9,
+  "windows_count": 10,
   "status": "OK"
 }

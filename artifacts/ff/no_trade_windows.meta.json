@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-01-29T08:27:17+00:00",
+  "generated_at_utc": "2026-01-29T13:46:59+00:00",
   "input_events": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\ff\\events.json",
   "pair": "EURUSD",
   "currencies": [
@@ -20,10 +20,10 @@
       "post": 0
     }
   },
-  "events_in": 84,
-  "events_filtered": 48,
-  "windows_raw": 14,
-  "windows_output": 9,
+  "events_in": 85,
+  "events_filtered": 50,
+  "windows_raw": 15,
+  "windows_output": 10,
   "output_windows": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\artifacts\\ff\\no_trade_windows.json",
   "merged_overlaps": true
 }
