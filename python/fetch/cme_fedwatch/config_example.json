@@ -3,6 +3,11 @@
   "auth_url": "https://login.cmegroup.com/sso/accountstatus/showAuth.action",
   "username": "your_email_or_userid",
   "password": "your_password",
+  "watchlist_filters": {
+    "daily": ["zq", "sr1", "sr3", "zt", "6e"],
+    "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
+    "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"]
+  },
   "telegram": {
     "enabled": true,
     "bot_token": "",
