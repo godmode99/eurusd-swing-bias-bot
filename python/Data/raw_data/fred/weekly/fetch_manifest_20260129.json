@@ -1,5 +1,5 @@
 {
-  "asof_utc": "2026-01-29T09:53:41Z",
+  "asof_utc": "2026-01-29T09:52:43Z",
   "sources": {
     "FRED_DGS2": {
       "ok": true,
@@ -40,6 +40,34 @@
       "ok": true,
       "rows": 4069,
       "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_DGS10": {
+      "ok": true,
+      "rows": 4018,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_DFII10": {
+      "ok": true,
+      "rows": 4018,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_BAMLH0A0HYM2": {
+      "ok": true,
+      "rows": 4196,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_T10YIE": {
+      "ok": true,
+      "rows": 4019,
+      "latest": "2026-01-28",
       "used_cache": false,
       "error": null
     }

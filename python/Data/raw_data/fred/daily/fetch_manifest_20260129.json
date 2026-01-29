@@ -1,5 +1,5 @@
 {
-  "asof_utc": "2026-01-29T09:30:39Z",
+  "asof_utc": "2026-01-29T09:53:41Z",
   "sources": {
     "FRED_DGS2": {
       "ok": true,
@@ -24,8 +24,8 @@
     },
     "FRED_ECBESTRVOLWGTTRMDMNRT": {
       "ok": true,
-      "rows": 1620,
-      "latest": "2026-01-27",
+      "rows": 1621,
+      "latest": "2026-01-28",
       "used_cache": false,
       "error": null
     },
