@@ -71,6 +71,10 @@ def date_utc_compact() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d")
 
 
+def datetime_utc_compact() -> str:
+    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
 def atomic_write_text(path: Path, text: str) -> None:
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(text, encoding="utf-8")

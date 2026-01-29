@@ -1,11 +1,43 @@
 fred:
   api_key: "" # ใช้จาก .env (FRED_API_KEY)
-  series_id: "DGS2"
   observation_start: "2010-01-01"
   timeout_seconds: 30
+  run_mode: "daily"
+  modes:
+    daily:
+      - DGS2
+      - EFFR
+      - ECBDFR
+      - ECBESTRVOLWGTTRMDMNRT
+      - DTWEXBGS
+      - VIXCLS
+    weekly:
+      - DGS2
+      - EFFR
+      - ECBDFR
+      - ECBESTRVOLWGTTRMDMNRT
+      - DTWEXBGS
+      - VIXCLS
+      - DGS10
+      - DFII10
+      - BAMLH0A0HYM2
+      - T10YIE
+    monthly:
+      - DGS2
+      - EFFR
+      - ECBDFR
+      - ECBESTRVOLWGTTRMDMNRT
+      - DTWEXBGS
+      - VIXCLS
+      - DGS10
+      - DFII10
+      - BAMLH0A0HYM2
+      - T10YIE
+      - CPILFESL
+      - PAYEMS
 
 output:
-  data_dir: "raw_data_macro"
+  data_dir: "../../Data/raw_data/fred"
   logs_dir: "logs"
   archive:
     keep_run_manifest: true
