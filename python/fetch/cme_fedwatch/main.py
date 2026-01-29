@@ -442,7 +442,10 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
     return None
 
 def resolve_max_expiry_year(cfg: dict) -> int | None:
-    raw_value = cfg.get("max_expiry_year", DEFAULT_MAX_EXPIRY_YEAR)
+    raw_value = cfg.get(
+        "max_expiry_year",
+        cfg.get("default_max_expiry_year", cfg.get("DEFAULT_MAX_EXPIRY_YEAR", DEFAULT_MAX_EXPIRY_YEAR)),
+    )
     if raw_value in (None, ""):
         return DEFAULT_MAX_EXPIRY_YEAR
     try:

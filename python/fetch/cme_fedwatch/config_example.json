@@ -8,6 +8,7 @@
     "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
     "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"]
   },
+  "default_max_expiry_year": 2026,
   "telegram": {
     "enabled": true,
     "bot_token": "",
