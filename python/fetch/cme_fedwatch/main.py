@@ -237,11 +237,12 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     else:
         headers, rows = table_data
         if rows:
-            payload = save_table_as_json(headers, rows, json_output)
-            save_table_as_csv(headers, rows, csv_output)
+            filtered_rows = filter_watchlist_rows(headers, rows)
+            payload = save_table_as_json(headers, filtered_rows, json_output)
+            save_table_as_csv(headers, filtered_rows, csv_output)
             if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
                 save_filtered_watchlists(payload, outputs["output_dir"])
-            row_count = len(rows)
+            row_count = len(filtered_rows)
         else:
             print("⚠️ watchlist table found but no rows to export")
 
@@ -378,6 +379,26 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
             rows = table_data.get("rows") or []
             return headers, rows
     return None
+
+def filter_watchlist_rows(headers: list[str], rows: list[list[str]]) -> list[list[str]]:
+    if not headers:
+        return rows
+
+    header_map = {header.strip().lower(): idx for idx, header in enumerate(headers)}
+    last_price_idx = header_map.get("last price")
+    volume_idx = header_map.get("volume")
+
+    if last_price_idx is None or volume_idx is None:
+        return rows
+
+    filtered_rows = []
+    for row in rows:
+        last_price = row[last_price_idx].strip() if last_price_idx < len(row) else ""
+        volume = row[volume_idx].strip() if volume_idx < len(row) else ""
+        if last_price == "-" and volume == "0":
+            continue
+        filtered_rows.append(row)
+    return filtered_rows
 
 def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: Path) -> list[dict] | list[list[str]]:
     payload = []
