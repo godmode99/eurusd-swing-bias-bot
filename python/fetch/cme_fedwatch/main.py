@@ -25,6 +25,11 @@ DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
 DEFAULT_MAX_EXPIRY_YEAR = 2026
+DEFAULT_WATCHLIST_FILTERS = {
+    "daily": ["zq", "sr1", "sr3", "zt", "6e"],
+    "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
+    "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
+}
 NAV_TIMEOUT = 60_000
 
 class AuthState(str, Enum):
@@ -287,11 +292,13 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
             payload = save_table_as_json(filtered_headers, filtered_rows, json_output, timestamp_iso)
             save_table_as_csv(filtered_headers, filtered_rows, csv_output)
             if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
+                filters = resolve_watchlist_filters(cfg)
                 filtered_counts = save_filtered_watchlists(
                     payload,
                     outputs["output_dir"],
                     timestamp,
                     timestamp_iso,
+                    filters,
                 )
             row_count = len(filtered_rows)
         else:
@@ -579,6 +586,25 @@ def normalize_front_month(value) -> bool:
         return value
     return str(value).strip().lower() == "true"
 
+def resolve_watchlist_filters(cfg: dict) -> dict[str, list[str]]:
+    cfg_filters = cfg.get("watchlist_filters") or {}
+    resolved: dict[str, list[str]] = {}
+    for bucket, prefixes in DEFAULT_WATCHLIST_FILTERS.items():
+        cfg_value = cfg_filters.get(bucket)
+        if isinstance(cfg_value, list):
+            cleaned = [str(prefix).strip().lower() for prefix in cfg_value if str(prefix).strip()]
+            resolved[bucket] = cleaned
+        else:
+            resolved[bucket] = list(prefixes)
+    extra_filters = {
+        key: value
+        for key, value in cfg_filters.items()
+        if key not in resolved and isinstance(value, list)
+    }
+    for bucket, prefixes in extra_filters.items():
+        resolved[bucket] = [str(prefix).strip().lower() for prefix in prefixes if str(prefix).strip()]
+    return resolved
+
 def drop_false_front_month_duplicates(payload: list[dict]) -> list[dict]:
     deduped: list[dict] = []
     seen: dict[tuple[tuple[str, str], ...], int] = {}
@@ -605,12 +631,8 @@ def save_filtered_watchlists(
     output_dir: Path,
     timestamp: str,
     timestamp_iso: str,
+    filters: dict[str, list[str]],
 ) -> dict[str, int]:
-    filters = {
-        "daily": ["zq", "sr1", "sr3", "zt", "6e"],
-        "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
-        "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
-    }
     counts: dict[str, int] = {}
 
     for bucket, prefixes in filters.items():
