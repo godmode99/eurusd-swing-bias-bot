@@ -1,5 +1,197 @@
 [
   {
+    "Name": "E-MINI EURO FX FUTURES",
+    "Code": "E7H6",
+    "Expiry": "FM\nMAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=E7&title=Chart%20-%20MAR%202026%20E-mini%20Euro%20FX&venue=1&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.19730",
+    "Change": "+0.00060",
+    "High": "1.20210",
+    "Low": "1.19630",
+    "Open": "1.19830",
+    "Volume": "2,065",
+    "Contract Code": "E7H6",
+    "Front Month": "true",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-mini-euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "E-MINI EURO FX FUTURES",
+    "Code": "E7H6",
+    "Expiry": "MAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=E7&title=Chart%20-%20MAR%202026%20E-mini%20Euro%20FX&venue=1&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.19730",
+    "Change": "+0.00060",
+    "High": "1.20210",
+    "Low": "1.19630",
+    "Open": "1.19830",
+    "Volume": "2,065",
+    "Contract Code": "E7H6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-mini-euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "E-MINI EURO FX FUTURES",
+    "Code": "E7M6",
+    "Expiry": "JUN 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=E7&title=Chart%20-%20JUN%202026%20E-mini%20Euro%20FX&venue=1&monthYear=M6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.20250",
+    "Change": "+0.00080",
+    "High": "1.20720",
+    "Low": "1.20160",
+    "Open": "1.20430",
+    "Volume": "34",
+    "Contract Code": "E7M6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-mini-euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "MICRO EUR/USD FUTURES",
+    "Code": "M6EH6",
+    "Expiry": "FM\nMAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=M6E&title=Chart%20-%20MAR%202026%20Micro%20EUR%2FUSD&venue=1&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.1973",
+    "Change": "+0.0006",
+    "High": "1.2022",
+    "Low": "1.1963",
+    "Open": "1.1981",
+    "Volume": "17,375",
+    "Contract Code": "M6EH6",
+    "Front Month": "true",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-micro-euro.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "MICRO EUR/USD FUTURES",
+    "Code": "M6EH6",
+    "Expiry": "MAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=M6E&title=Chart%20-%20MAR%202026%20Micro%20EUR%2FUSD&venue=1&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.1973",
+    "Change": "+0.0006",
+    "High": "1.2022",
+    "Low": "1.1963",
+    "Open": "1.1981",
+    "Volume": "17,375",
+    "Contract Code": "M6EH6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-micro-euro.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "MICRO EUR/USD FUTURES",
+    "Code": "M6EM6",
+    "Expiry": "JUN 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=M6E&title=Chart%20-%20JUN%202026%20Micro%20EUR%2FUSD&venue=1&monthYear=M6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
+    "Last Price": "1.2021",
+    "Change": "+0.0004",
+    "High": "1.2072",
+    "Low": "1.2015",
+    "Open": "1.203",
+    "Volume": "1,755",
+    "Contract Code": "M6EM6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/e-micro-euro.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA U.S. TREASURY BOND FUTURES",
+    "Code": "UBH6",
+    "Expiry": "FM\nMAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=UB&title=Chart%20-%20MAR%202026%20Ultra%20U.S.%20Treasury%20Bond&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "117'12",
+    "Change": "-0'08",
+    "High": "117'28",
+    "Low": "116'31",
+    "Open": "117'22",
+    "Volume": "75,982",
+    "Contract Code": "UBH6",
+    "Front Month": "true",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-t-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA U.S. TREASURY BOND FUTURES",
+    "Code": "UBH6",
+    "Expiry": "MAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=UB&title=Chart%20-%20MAR%202026%20Ultra%20U.S.%20Treasury%20Bond&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "117'12",
+    "Change": "-0'08",
+    "High": "117'28",
+    "Low": "116'31",
+    "Open": "117'22",
+    "Volume": "75,982",
+    "Contract Code": "UBH6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-t-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA U.S. TREASURY BOND FUTURES",
+    "Code": "UBM6",
+    "Expiry": "JUN 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=UB&title=Chart%20-%20JUN%202026%20Ultra%20U.S.%20Treasury%20Bond&venue=0&monthYear=M6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "116'21",
+    "Change": "-0'19",
+    "High": "116'28",
+    "Low": "116'21",
+    "Open": "116'28",
+    "Volume": "8",
+    "Contract Code": "UBM6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-t-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA 10-YEAR U.S. TREASURY NOTE FUTURES",
+    "Code": "TNH6",
+    "Expiry": "FM\nMAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=TN&title=Chart%20-%20MAR%202026%20Ultra%2010-Year%20U.S.%20Treasury%20Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "114'040",
+    "Change": "+0'010",
+    "High": "114'095",
+    "Low": "113'285",
+    "Open": "114'050",
+    "Volume": "150,897",
+    "Contract Code": "TNH6",
+    "Front Month": "true",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA 10-YEAR U.S. TREASURY NOTE FUTURES",
+    "Code": "TNH6",
+    "Expiry": "MAR 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=TN&title=Chart%20-%20MAR%202026%20Ultra%2010-Year%20U.S.%20Treasury%20Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "114'040",
+    "Change": "+0'010",
+    "High": "114'095",
+    "Low": "113'285",
+    "Open": "114'050",
+    "Volume": "150,897",
+    "Contract Code": "TNH6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
+    "Name": "ULTRA 10-YEAR U.S. TREASURY NOTE FUTURES",
+    "Code": "TNM6",
+    "Expiry": "JUN 2026",
+    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=TN&title=Chart%20-%20JUN%202026%20Ultra%2010-Year%20U.S.%20Treasury%20Note&venue=0&monthYear=M6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
+    "Last Price": "113'300",
+    "Change": "+0'020",
+    "High": "113'300",
+    "Low": "113'300",
+    "Open": "113'300",
+    "Volume": "8",
+    "Contract Code": "TNM6",
+    "Front Month": "false",
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
+  },
+  {
     "Name": "U.S. TREASURY BOND FUTURES",
     "Code": "ZBH6",
     "Expiry": "FM\nMAR 2026",
@@ -9,10 +201,11 @@
     "High": "115'09",
     "Low": "114'18",
     "Open": "115'04",
-    "Volume": "107,264",
+    "Volume": "109,726",
     "Contract Code": "ZBH6",
     "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "U.S. TREASURY BOND FUTURES",
@@ -24,10 +217,11 @@
     "High": "115'09",
     "Low": "114'18",
     "Open": "115'04",
-    "Volume": "107,264",
+    "Volume": "109,726",
     "Contract Code": "ZBH6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "U.S. TREASURY BOND FUTURES",
@@ -42,7 +236,8 @@
     "Volume": "122",
     "Contract Code": "ZBM6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "10-YEAR T-NOTE FUTURES",
@@ -54,10 +249,11 @@
     "High": "111'260",
     "Low": "111'165",
     "Open": "111'225",
-    "Volume": "412,629",
+    "Volume": "418,325",
     "Contract Code": "ZNH6",
     "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "10-YEAR T-NOTE FUTURES",
@@ -69,115 +265,75 @@
     "High": "111'260",
     "Low": "111'165",
     "Open": "111'225",
-    "Volume": "412,629",
+    "Volume": "418,325",
     "Contract Code": "ZNH6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "10-YEAR T-NOTE FUTURES",
     "Code": "ZNM6",
     "Expiry": "JUN 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZN&title=Chart%20-%20JUN%202026%2010-Year%20T-Note&venue=0&monthYear=M6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "111'165",
-    "Change": "+0'020",
+    "Last Price": "111'170",
+    "Change": "+0'025",
     "High": "111'200",
     "Low": "111'105",
     "Open": "111'170",
-    "Volume": "714",
+    "Volume": "715",
     "Contract Code": "ZNM6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html"
-  },
-  {
-    "Name": "5-YEAR T-NOTE FUTURES",
-    "Code": "ZFH6",
-    "Expiry": "FM\nMAR 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZF&title=Chart%20-%20MAR%202026%205-Year%20T-Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "108'255",
-    "Change": "+0'025",
-    "High": "108'267",
-    "Low": "108'220",
-    "Open": "108'245",
-    "Volume": "255,846",
-    "Contract Code": "ZFH6",
-    "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/5-year-us-treasury-note.html"
-  },
-  {
-    "Name": "5-YEAR T-NOTE FUTURES",
-    "Code": "ZFH6",
-    "Expiry": "MAR 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZF&title=Chart%20-%20MAR%202026%205-Year%20T-Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "108'255",
-    "Change": "+0'025",
-    "High": "108'267",
-    "Low": "108'220",
-    "Open": "108'245",
-    "Volume": "255,846",
-    "Contract Code": "ZFH6",
-    "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/5-year-us-treasury-note.html"
-  },
-  {
-    "Name": "5-YEAR T-NOTE FUTURES",
-    "Code": "ZFM6",
-    "Expiry": "JUN 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZF&title=Chart%20-%20JUN%202026%205-Year%20T-Note&venue=0&monthYear=M6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "108'235",
-    "Change": "+0'025",
-    "High": "108'240",
-    "Low": "108'210",
-    "Open": "108'232",
-    "Volume": "211",
-    "Contract Code": "ZFM6",
-    "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/5-year-us-treasury-note.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
     "Code": "6EH6",
     "Expiry": "FM\nMAR 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=6E&title=Chart%20-%20MAR%202026%20Euro%20FX&venue=0&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "1.19755",
-    "Change": "+0.0009",
+    "Last Price": "1.19725",
+    "Change": "+0.0006",
     "High": "1.2022",
     "Low": "1.1962",
     "Open": "1.1982",
-    "Volume": "99,393",
+    "Volume": "100,477",
     "Contract Code": "6EH6",
     "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
     "Code": "6EG6",
     "Expiry": "FEB 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=6E&title=Chart%20-%20FEB%202026%20Euro%20FX&venue=0&monthYear=G6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "1.1957",
-    "Change": "+0.00065",
+    "Last Price": "1.19545",
+    "Change": "+0.0004",
     "High": "1.20025",
     "Low": "1.1948",
     "Open": "1.19875",
-    "Volume": "633",
+    "Volume": "635",
     "Contract Code": "6EG6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
     "Code": "6EH6",
     "Expiry": "MAR 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=6E&title=Chart%20-%20MAR%202026%20Euro%20FX&venue=0&monthYear=H6&year=2026&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "1.19755",
-    "Change": "+0.0009",
+    "Last Price": "1.19725",
+    "Change": "+0.0006",
     "High": "1.2022",
     "Low": "1.1962",
     "Open": "1.1982",
-    "Volume": "99,393",
+    "Volume": "100,477",
     "Contract Code": "6EH6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
@@ -192,7 +348,8 @@
     "Volume": "136",
     "Contract Code": "6EJ6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
@@ -207,7 +364,8 @@
     "Volume": "800",
     "Contract Code": "6EM6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
@@ -222,7 +380,8 @@
     "Volume": "7",
     "Contract Code": "6EU6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
@@ -237,7 +396,8 @@
     "Volume": "180",
     "Contract Code": "6EZ6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "EURO FX FUTURES",
@@ -252,52 +412,8 @@
     "Volume": "1",
     "Contract Code": "6EM7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html"
-  },
-  {
-    "Name": "2-YEAR T-NOTE FUTURES",
-    "Code": "ZTH6",
-    "Expiry": "FM\nMAR 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZT&title=Chart%20-%20MAR%202026%202-Year%20T-Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "104'053",
-    "Change": "+0'006",
-    "High": "104'058",
-    "Low": "104'043",
-    "Open": "104'052",
-    "Volume": "138,975",
-    "Contract Code": "ZTH6",
-    "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/2-year-us-treasury-note.html"
-  },
-  {
-    "Name": "2-YEAR T-NOTE FUTURES",
-    "Code": "ZTH6",
-    "Expiry": "MAR 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZT&title=Chart%20-%20MAR%202026%202-Year%20T-Note&venue=0&monthYear=H6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "104'053",
-    "Change": "+0'006",
-    "High": "104'058",
-    "Low": "104'043",
-    "Open": "104'052",
-    "Volume": "138,975",
-    "Contract Code": "ZTH6",
-    "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/2-year-us-treasury-note.html"
-  },
-  {
-    "Name": "2-YEAR T-NOTE FUTURES",
-    "Code": "ZTM6",
-    "Expiry": "JUN 2026",
-    "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZT&title=Chart%20-%20JUN%202026%202-Year%20T-Note&venue=0&monthYear=M6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "104'066",
-    "Change": "-0'001",
-    "High": "104'078",
-    "Low": "104'066",
-    "Open": "104'078",
-    "Volume": "200",
-    "Contract Code": "ZTM6",
-    "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/us-treasury/2-year-us-treasury-note.html"
+    "Product URL": "https://www.cmegroup.com/markets/fx/g10/euro-fx.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -309,10 +425,11 @@
     "High": "96.545",
     "Low": "96.53",
     "Open": "96.54",
-    "Volume": "88,894",
+    "Volume": "95,806",
     "Contract Code": "SR3M6",
     "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -327,7 +444,8 @@
     "Volume": "2,028",
     "Contract Code": "SR3Z5",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -342,7 +460,8 @@
     "Volume": "37",
     "Contract Code": "SR3G6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -354,10 +473,11 @@
     "High": "96.375",
     "Low": "96.365",
     "Open": "96.37",
-    "Volume": "57,115",
+    "Volume": "59,691",
     "Contract Code": "SR3H6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -369,10 +489,11 @@
     "High": "96.545",
     "Low": "96.53",
     "Open": "96.54",
-    "Volume": "88,894",
+    "Volume": "95,806",
     "Contract Code": "SR3M6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -384,10 +505,11 @@
     "High": "96.72",
     "Low": "96.70",
     "Open": "96.715",
-    "Volume": "102,396",
+    "Volume": "104,844",
     "Contract Code": "SR3U6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -399,10 +521,11 @@
     "High": "96.78",
     "Low": "96.755",
     "Open": "96.77",
-    "Volume": "102,159",
+    "Volume": "106,092",
     "Contract Code": "SR3Z6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -414,25 +537,27 @@
     "High": "96.77",
     "Low": "96.75",
     "Open": "96.76",
-    "Volume": "54,479",
+    "Volume": "60,532",
     "Contract Code": "SR3H7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
     "Code": "SR3M7",
     "Expiry": "JUN 2027",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=SR3&title=Chart%20-%20JUN%202027%20Three-Month%20SOFR&venue=0&monthYear=M7&year=2027&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "96.73",
-    "Change": "+0.015",
+    "Last Price": "96.735",
+    "Change": "+0.02",
     "High": "96.74",
     "Low": "96.715",
     "Open": "96.73",
-    "Volume": "56,845",
+    "Volume": "59,078",
     "Contract Code": "SR3M7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -444,10 +569,11 @@
     "High": "96.695",
     "Low": "96.67",
     "Open": "96.685",
-    "Volume": "46,502",
+    "Volume": "48,123",
     "Contract Code": "SR3U7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -459,25 +585,27 @@
     "High": "96.645",
     "Low": "96.615",
     "Open": "96.63",
-    "Volume": "72,639",
+    "Volume": "74,274",
     "Contract Code": "SR3Z7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
     "Code": "SR3H8",
     "Expiry": "MAR 2028",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=SR3&title=Chart%20-%20MAR%202028%20Three-Month%20SOFR&venue=0&monthYear=H8&year=2028&exchangeCode=XCME&interval=1&dataWidget=true",
-    "Last Price": "96.58",
-    "Change": "+0.02",
+    "Last Price": "96.585",
+    "Change": "+0.025",
     "High": "96.59",
     "Low": "96.555",
     "Open": "96.575",
-    "Volume": "31,122",
+    "Volume": "32,175",
     "Contract Code": "SR3H8",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "THREE-MONTH SOFR FUTURES",
@@ -489,10 +617,11 @@
     "High": "96.535",
     "Low": "96.50",
     "Open": "96.515",
-    "Volume": "34,009",
+    "Volume": "35,152",
     "Contract Code": "SR3M8",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -504,10 +633,11 @@
     "High": "96.49",
     "Low": "96.485",
     "Open": "96.485",
-    "Volume": "2,822",
+    "Volume": "2,827",
     "Contract Code": "ZQM6",
     "Front Month": "true",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -522,22 +652,24 @@
     "Volume": "9,217",
     "Contract Code": "ZQF6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
     "Code": "ZQG6",
     "Expiry": "FEB 2026",
     "Chart URL": "https://www.cmegroup.com/apps/cmegroup/widgets/productLibs/esignal-charts.html?type=p&code=ZQ&title=Chart%20-%20FEB%202026%2030%20Day%20Federal%20Funds&venue=0&monthYear=G6&year=2026&exchangeCode=XCBT&interval=1&dataWidget=true",
-    "Last Price": "96.365",
-    "Change": "UNCH",
+    "Last Price": "96.36",
+    "Change": "-0.005",
     "High": "96.365",
     "Low": "96.36",
     "Open": "96.365",
-    "Volume": "1,404",
+    "Volume": "2,041",
     "Contract Code": "ZQG6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -549,10 +681,11 @@
     "High": "96.38",
     "Low": "96.375",
     "Open": "96.38",
-    "Volume": "1,007",
+    "Volume": "1,418",
     "Contract Code": "ZQH6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -567,7 +700,8 @@
     "Volume": "6,154",
     "Contract Code": "ZQJ6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -582,7 +716,8 @@
     "Volume": "6,028",
     "Contract Code": "ZQK6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -594,10 +729,11 @@
     "High": "96.49",
     "Low": "96.485",
     "Open": "96.485",
-    "Volume": "2,822",
+    "Volume": "2,827",
     "Contract Code": "ZQM6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -612,7 +748,8 @@
     "Volume": "3,707",
     "Contract Code": "ZQN6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -624,10 +761,11 @@
     "High": "96.635",
     "Low": "96.625",
     "Open": "96.63",
-    "Volume": "2,654",
+    "Volume": "2,659",
     "Contract Code": "ZQQ6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -642,7 +780,8 @@
     "Volume": "879",
     "Contract Code": "ZQU6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -657,7 +796,8 @@
     "Volume": "1,339",
     "Contract Code": "ZQV6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -672,7 +812,8 @@
     "Volume": "1,036",
     "Contract Code": "ZQX6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -684,10 +825,11 @@
     "High": "96.825",
     "Low": "96.815",
     "Open": "96.82",
-    "Volume": "287",
+    "Volume": "307",
     "Contract Code": "ZQZ6",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -699,10 +841,11 @@
     "High": "96.84",
     "Low": "96.825",
     "Open": "96.835",
-    "Volume": "753",
+    "Volume": "781",
     "Contract Code": "ZQF7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -714,10 +857,11 @@
     "High": "96.835",
     "Low": "96.83",
     "Open": "96.835",
-    "Volume": "362",
+    "Volume": "652",
     "Contract Code": "ZQG7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   },
   {
     "Name": "30 DAY FEDERAL FUNDS FUTURES",
@@ -729,9 +873,10 @@
     "High": "96.835",
     "Low": "96.82",
     "Open": "96.82",
-    "Volume": "78",
+    "Volume": "92",
     "Contract Code": "ZQJ7",
     "Front Month": "false",
-    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html"
+    "Product URL": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.html",
+    "timestamp": "2026-01-29T19:56:46"
   }
 ]
