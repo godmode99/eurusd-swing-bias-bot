@@ -237,6 +237,8 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     else:
         headers, rows = table_data
         if rows:
+            nonefilter_dir = outputs["output_dir"] / "nonefilter"
+            save_unfiltered_watchlist(headers, rows, nonefilter_dir)
             filtered_rows = filter_watchlist_rows(headers, rows)
             payload = save_table_as_json(headers, filtered_rows, json_output)
             save_table_as_csv(headers, filtered_rows, csv_output)
@@ -427,6 +429,14 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
         print(f"✅ saved watchlist csv: {output_path}")
     except Exception as exc:
         print(f"❌ write watchlist csv failed: {exc}")
+
+def save_unfiltered_watchlist(headers: list[str], rows: list[list[str]], output_dir: Path) -> dict[str, Path]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_output = output_dir / "watchlist.json"
+    csv_output = output_dir / "watchlist.csv"
+    save_table_as_json(headers, rows, json_output)
+    save_table_as_csv(headers, rows, csv_output)
+    return {"json_output": json_output, "csv_output": csv_output}
 
 def extract_code_from_item(item: dict) -> str:
     for key in ("Code", "code", "Contract Code", "contract_code", "contractCode"):
