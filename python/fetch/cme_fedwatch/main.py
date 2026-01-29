@@ -10,6 +10,14 @@ from enum import Enum
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
+from watchlist_filter import (
+    DEFAULT_FILTERED_DIRS as FILTERED_DIRS,
+    DEFAULT_OUTPUT_DIR as WATCHLIST_OUTPUT_DIR,
+    FILTER_PREFIXES as WATCHLIST_PREFIXES,
+    build_filtered_watchlists,
+    normalize_code,
+)
+
 BASE_DIR = Path(__file__).resolve().parent
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
 REPO_ROOT = PYTHON_DIR.parent
@@ -22,19 +30,11 @@ from telegram_notifier import send_telegram_message
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
-DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
-DEFAULT_FILTERED_DIRS = {
-    "daily": DEFAULT_OUTPUT_DIR / "daily",
-    "weekly": DEFAULT_OUTPUT_DIR / "weekly",
-    "monthly": DEFAULT_OUTPUT_DIR / "monthly",
-}
+DEFAULT_OUTPUT_DIR = WATCHLIST_OUTPUT_DIR
+DEFAULT_FILTERED_DIRS = FILTERED_DIRS
 NAV_TIMEOUT = 60_000
 
-FILTER_PREFIXES = {
-    "daily": ["zq", "sr1", "sr3", "zt", "6e"],
-    "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zn", "zb"],
-    "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
-}
+FILTER_PREFIXES = WATCHLIST_PREFIXES
 
 class AuthState(str, Enum):
     AUTHENTICATED = "AUTHENTICATED"
@@ -420,80 +420,6 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
         print(f"❌ write watchlist csv failed: {exc}")
 
 
-def normalize_code(value: str | None) -> str:
-    return (value or "").strip()
-
-
-def build_filtered_watchlists(
-    json_path: Path,
-    output_dirs: dict[str, Path] | None = None,
-    prefix_map: dict[str, list[str]] | None = None,
-) -> dict[str, dict[str, int | str]]:
-    output_dirs = output_dirs or DEFAULT_FILTERED_DIRS
-    prefix_map = prefix_map or FILTER_PREFIXES
-
-    try:
-        raw_items = json.loads(json_path.read_text(encoding="utf-8"))
-    except Exception as exc:
-        print(f"❌ read watchlist json failed: {exc}")
-        return {}
-
-    if not isinstance(raw_items, list):
-        print("⚠️ watchlist json is not a list")
-        return {}
-
-    summaries: dict[str, dict[str, int | str]] = {}
-
-    for cadence, prefixes in prefix_map.items():
-        prefix_tuple = tuple(p.lower() for p in prefixes)
-        filtered = []
-        for item in raw_items:
-            if not isinstance(item, dict):
-                continue
-            code = normalize_code(item.get("Code"))
-            if not code:
-                continue
-            if code.lower().startswith(prefix_tuple):
-                filtered.append(item)
-
-        out_dir = output_dirs.get(cadence, DEFAULT_OUTPUT_DIR / cadence)
-        out_dir.mkdir(parents=True, exist_ok=True)
-
-        main_path = out_dir / f"{cadence}_main.json"
-        config_path = out_dir / f"{cadence}_config.json"
-
-        unique_codes: list[str] = []
-        seen_codes: set[str] = set()
-        for item in filtered:
-            code = normalize_code(item.get("Code")).upper()
-            if not code or code in seen_codes:
-                continue
-            seen_codes.add(code)
-            unique_codes.append(code)
-
-        config_payload = {
-            "prefixes": [p.lower() for p in prefixes],
-            "codes": unique_codes,
-            "total_codes": len(unique_codes),
-            "total_items": len(filtered),
-        }
-
-        with open(main_path, "w", encoding="utf-8") as f:
-            json.dump(filtered, f, ensure_ascii=False, indent=2)
-        with open(config_path, "w", encoding="utf-8") as f:
-            json.dump(config_payload, f, ensure_ascii=False, indent=2)
-
-        summaries[cadence] = {
-            "items": len(filtered),
-            "codes": len(unique_codes),
-            "main": str(main_path),
-            "config": str(config_path),
-        }
-
-        print(f"✅ saved {cadence} watchlist: {main_path}")
-        print(f"✅ saved {cadence} config: {config_path}")
-
-    return summaries
 
 def main():
     cfg = load_config()
