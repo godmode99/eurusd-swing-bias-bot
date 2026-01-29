@@ -541,6 +541,34 @@ def filter_watchlist_by_prefix(
             filtered.append(item)
     return filtered
 
+def normalize_front_month(value) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() == "true"
+
+def drop_false_front_month_duplicates(payload: list[dict]) -> list[dict]:
+    deduped: list[dict] = []
+    seen: dict[tuple[tuple[str, str], ...], int] = {}
+    for item in payload:
+        key_items = []
+        for k, v in item.items():
+            if k == "Front Month":
+                continue
+            key_items.append((str(k), "" if v is None else str(v)))
+        key = tuple(sorted(key_items))
+        existing_idx = seen.get(key)
+        if existing_idx is None:
+            seen[key] = len(deduped)
+            deduped.append(item)
+            continue
+        if not normalize_front_month(deduped[existing_idx].get("Front Month")) and normalize_front_month(
+            item.get("Front Month")
+        ):
+            deduped[existing_idx] = item
+    return deduped
+
 def save_filtered_watchlists(
     payload: list[dict],
     output_dir: Path,
@@ -558,6 +586,7 @@ def save_filtered_watchlists(
         bucket_dir = output_dir / bucket
         bucket_dir.mkdir(parents=True, exist_ok=True)
         filtered_payload = filter_watchlist_by_prefix(payload, prefixes)
+        filtered_payload = drop_false_front_month_duplicates(filtered_payload)
         counts[bucket] = len(filtered_payload)
         output_path = append_timestamp_to_path(bucket_dir / "watchlist.json", timestamp)
         try:
