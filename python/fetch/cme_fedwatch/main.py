@@ -101,16 +101,17 @@ def queue_telegram(messages: list[str], message: str, logger: logging.Logger | N
     messages.append(message)
 
 
-def format_json_preview(payload: list[dict] | list[list[str]] | dict, max_chars: int = 1200) -> str:
-    preview = payload[:3] if isinstance(payload, list) else payload
-    try:
-        preview_text = json.dumps(preview, ensure_ascii=False, indent=2)
-    except TypeError:
-        preview_text = json.dumps(str(preview), ensure_ascii=False, indent=2)
-
-    if len(preview_text) > max_chars:
-        return preview_text[: max_chars - 3] + "..."
-    return preview_text
+def format_filtered_counts(counts: dict[str, int]) -> str:
+    daily_count = counts.get("daily", 0)
+    weekly_count = counts.get("weekly", 0)
+    monthly_count = counts.get("monthly", 0)
+    return (
+        "📊 json preview (array counts)\n"
+        f"- daily: {daily_count}\n"
+        f"- weekly: {weekly_count}\n"
+        f"- monthly: {monthly_count}\n"
+        "หมายเหตุ: หากค่าเป็น 0 = scrape ไม่ได้"
+    )
 
 def pick_creds(cfg: dict):
     # 1) config.json
@@ -256,6 +257,7 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     table_data = extract_watchlist_table(page)
     payload: list[dict] | list[list[str]] | dict = []
     row_count = 0
+    filtered_counts: dict[str, int] = {}
     if table_data is None:
         print("⚠️ watchlist table not found")
     else:
@@ -272,7 +274,12 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
             payload = save_table_as_json(filtered_headers, filtered_rows, json_output, timestamp_iso)
             save_table_as_csv(filtered_headers, filtered_rows, csv_output)
             if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
-                save_filtered_watchlists(payload, outputs["output_dir"], timestamp, timestamp_iso)
+                filtered_counts = save_filtered_watchlists(
+                    payload,
+                    outputs["output_dir"],
+                    timestamp,
+                    timestamp_iso,
+                )
             row_count = len(filtered_rows)
         else:
             print("⚠️ watchlist table found but no rows to export")
@@ -298,7 +305,7 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
         "html_output": str(output_path),
         "json_output": str(json_output),
         "csv_output": str(csv_output),
-        "json_preview": format_json_preview(payload) if payload else "[]",
+        "filtered_counts": filtered_counts,
     }
 
 def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
@@ -528,17 +535,19 @@ def save_filtered_watchlists(
     output_dir: Path,
     timestamp: str,
     timestamp_iso: str,
-) -> None:
+) -> dict[str, int]:
     filters = {
         "daily": ["zq", "sr1", "sr3", "zt", "6e"],
         "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
         "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
     }
+    counts: dict[str, int] = {}
 
     for bucket, prefixes in filters.items():
         bucket_dir = output_dir / bucket
         bucket_dir.mkdir(parents=True, exist_ok=True)
         filtered_payload = filter_watchlist_by_prefix(payload, prefixes)
+        counts[bucket] = len(filtered_payload)
         output_path = append_timestamp_to_path(bucket_dir / "watchlist.json", timestamp)
         try:
             filtered_payload = add_timestamp_to_payload(filtered_payload, timestamp_iso)
@@ -547,6 +556,7 @@ def save_filtered_watchlists(
             print(f"✅ saved {bucket} watchlist json: {output_path}")
         except Exception as exc:
             print(f"❌ write {bucket} watchlist json failed: {exc}")
+    return counts
 
 def main():
     cfg = load_config()
@@ -587,10 +597,7 @@ def main():
                     messages,
                     (
                         "🔐 CME auth check\n"
-                        f"- state: {state}\n"
-                        f"- url: {page.url}\n"
-                        f"- auth_url: {auth_url}\n"
-                        f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
+                        f"- state: {state}"
                     ),
                     logger,
                 )
@@ -608,8 +615,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                "🧾 json preview:\n"
-                                f"{watchlist_summary['json_preview']}"
+                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
                             ),
                             logger,
                         )
@@ -621,9 +627,7 @@ def main():
                     messages,
                     (
                         "⚠️ CME auth check: login required\n"
-                        "- action: attempting auto login\n"
-                        f"- auth_url: {auth_url}\n"
-                        f"- watchlist_url: {(cfg.get('watchlist_url') or DEFAULT_WATCHLIST_URL).strip()}"
+                        "- action: attempting auto login"
                     ),
                     logger,
                 )
@@ -662,8 +666,7 @@ def main():
                     messages,
                     (
                         "🔐 CME auth check after login\n"
-                        f"- state: {state2}\n"
-                        f"- url: {page.url}"
+                        f"- state: {state2}"
                     ),
                     logger,
                 )
@@ -681,8 +684,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                "🧾 json preview:\n"
-                                f"{watchlist_summary['json_preview']}"
+                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
                             ),
                             logger,
                         )
@@ -706,8 +708,7 @@ def main():
                     messages,
                     (
                         "🔐 CME auth check after manual\n"
-                        f"- state: {state3}\n"
-                        f"- url: {page.url}"
+                        f"- state: {state3}"
                     ),
                     logger,
                 )
@@ -725,8 +726,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                "🧾 json preview:\n"
-                                f"{watchlist_summary['json_preview']}"
+                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
                             ),
                             logger,
                         )
