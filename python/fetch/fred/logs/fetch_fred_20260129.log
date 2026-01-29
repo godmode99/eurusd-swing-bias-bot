@@ -4,3 +4,20 @@
 2026-01-29 15:28:19,676 | INFO | Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\fred\raw_data_macro\fetch_manifest.json
 2026-01-29 15:28:19,677 | INFO | Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\fred\raw_data_macro\fetch_manifest_20260129.json
 2026-01-29 15:28:19,678 | INFO | === FRED FETCH PIPELINE END ===
+2026-01-29 16:30:31,938 | INFO | === FRED FETCH PIPELINE START ===
+2026-01-29 16:30:31,940 | INFO | [daily] Fetching FRED series DGS2 from 2010-01-01...
+2026-01-29 16:30:33,307 | INFO | [daily] Fetched DGS2 rows=4018 latest_date=2026-01-27
+2026-01-29 16:30:33,307 | INFO | [daily] Fetching FRED series EFFR from 2010-01-01...
+2026-01-29 16:30:34,325 | INFO | [daily] Fetched EFFR rows=4035 latest_date=2026-01-27
+2026-01-29 16:30:34,326 | INFO | [daily] Fetching FRED series ECBDFR from 2010-01-01...
+2026-01-29 16:30:35,435 | INFO | [daily] Fetched ECBDFR rows=5872 latest_date=2026-01-28
+2026-01-29 16:30:35,435 | INFO | [daily] Fetching FRED series ECBESTRVOLWGTTRMDMNRT from 2010-01-01...
+2026-01-29 16:30:36,693 | INFO | [daily] Fetched ECBESTRVOLWGTTRMDMNRT rows=1620 latest_date=2026-01-27
+2026-01-29 16:30:36,694 | INFO | [daily] Fetching FRED series DTWEXBGS from 2010-01-01...
+2026-01-29 16:30:37,928 | INFO | [daily] Fetched DTWEXBGS rows=3997 latest_date=2026-01-23
+2026-01-29 16:30:37,928 | INFO | [daily] Fetching FRED series VIXCLS from 2010-01-01...
+2026-01-29 16:30:39,085 | INFO | [daily] Fetched VIXCLS rows=4069 latest_date=2026-01-27
+2026-01-29 16:30:39,111 | INFO | [daily] Saved snapshot: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\Data\raw_data\fred\daily\20260129_093031.json
+2026-01-29 16:30:39,118 | INFO | [daily] Wrote manifest latest: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\Data\raw_data\fred\daily\fetch_manifest.json
+2026-01-29 16:30:39,119 | INFO | [daily] Wrote manifest archive: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\Data\raw_data\fred\daily\fetch_manifest_20260129.json
+2026-01-29 16:30:39,122 | INFO | === FRED FETCH PIPELINE END ===

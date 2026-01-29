@@ -1,0 +1,49 @@
+{
+  "asof_utc": "2026-01-29T09:30:39Z",
+  "sources": {
+    "FRED_DGS2": {
+      "ok": true,
+      "rows": 4018,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_EFFR": {
+      "ok": true,
+      "rows": 4035,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_ECBDFR": {
+      "ok": true,
+      "rows": 5872,
+      "latest": "2026-01-28",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_ECBESTRVOLWGTTRMDMNRT": {
+      "ok": true,
+      "rows": 1620,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_DTWEXBGS": {
+      "ok": true,
+      "rows": 3997,
+      "latest": "2026-01-23",
+      "used_cache": false,
+      "error": null
+    },
+    "FRED_VIXCLS": {
+      "ok": true,
+      "rows": 4069,
+      "latest": "2026-01-27",
+      "used_cache": false,
+      "error": null
+    }
+  },
+  "stale_sources": [],
+  "notes": ""
+}
