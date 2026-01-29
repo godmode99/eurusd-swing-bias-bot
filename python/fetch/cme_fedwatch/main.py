@@ -239,6 +239,8 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
         if rows:
             payload = save_table_as_json(headers, rows, json_output)
             save_table_as_csv(headers, rows, csv_output)
+            if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
+                save_filtered_watchlists(payload, outputs["output_dir"])
             row_count = len(rows)
         else:
             print("⚠️ watchlist table found but no rows to export")
@@ -404,6 +406,46 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
         print(f"✅ saved watchlist csv: {output_path}")
     except Exception as exc:
         print(f"❌ write watchlist csv failed: {exc}")
+
+def extract_code_from_item(item: dict) -> str:
+    for key in ("Code", "code", "Contract Code", "contract_code", "contractCode"):
+        value = item.get(key)
+        if value:
+            return str(value).strip()
+    return ""
+
+def filter_watchlist_by_prefix(
+    payload: list[dict],
+    prefixes: list[str],
+) -> list[dict]:
+    normalized_prefixes = [prefix.lower() for prefix in prefixes]
+    filtered: list[dict] = []
+    for item in payload:
+        code = extract_code_from_item(item).lower()
+        if not code:
+            continue
+        if any(code.startswith(prefix) for prefix in normalized_prefixes):
+            filtered.append(item)
+    return filtered
+
+def save_filtered_watchlists(payload: list[dict], output_dir: Path) -> None:
+    filters = {
+        "daily": ["zq", "sr1", "sr3", "zt", "6e"],
+        "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
+        "monthly": ["zq", "sr1", "sr3", "zn", "tn", "zb", "ub", "twe", "6e", "e7", "m6e"],
+    }
+
+    for bucket, prefixes in filters.items():
+        bucket_dir = output_dir / bucket
+        bucket_dir.mkdir(parents=True, exist_ok=True)
+        filtered_payload = filter_watchlist_by_prefix(payload, prefixes)
+        output_path = bucket_dir / "watchlist.json"
+        try:
+            with open(output_path, "w", encoding="utf-8") as f:
+                json.dump(filtered_payload, f, ensure_ascii=False, indent=2)
+            print(f"✅ saved {bucket} watchlist json: {output_path}")
+        except Exception as exc:
+            print(f"❌ write {bucket} watchlist json failed: {exc}")
 
 def main():
     cfg = load_config()
