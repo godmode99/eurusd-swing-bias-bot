@@ -10,14 +10,6 @@ from enum import Enum
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
-from watchlist_filter import (
-    DEFAULT_FILTERED_DIRS as FILTERED_DIRS,
-    DEFAULT_OUTPUT_DIR as WATCHLIST_OUTPUT_DIR,
-    FILTER_PREFIXES as WATCHLIST_PREFIXES,
-    build_filtered_watchlists,
-    normalize_code,
-)
-
 BASE_DIR = Path(__file__).resolve().parent
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
 REPO_ROOT = PYTHON_DIR.parent
@@ -30,11 +22,8 @@ from telegram_notifier import send_telegram_message
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
-DEFAULT_OUTPUT_DIR = WATCHLIST_OUTPUT_DIR
-DEFAULT_FILTERED_DIRS = FILTERED_DIRS
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
 NAV_TIMEOUT = 60_000
-
-FILTER_PREFIXES = WATCHLIST_PREFIXES
 
 class AuthState(str, Enum):
     AUTHENTICATED = "AUTHENTICATED"
@@ -270,15 +259,12 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
         save_debug(page, "watchlist_write_failed")
         return None
 
-    filter_summary = build_filtered_watchlists(json_output)
-
     return {
         "row_count": row_count,
         "html_output": str(output_path),
         "json_output": str(json_output),
         "csv_output": str(csv_output),
         "json_preview": format_json_preview(payload) if payload else "[]",
-        "filter_summary": filter_summary,
     }
 
 def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
@@ -418,8 +404,6 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
         print(f"✅ saved watchlist csv: {output_path}")
     except Exception as exc:
         print(f"❌ write watchlist csv failed: {exc}")
-
-
 
 def main():
     cfg = load_config()
