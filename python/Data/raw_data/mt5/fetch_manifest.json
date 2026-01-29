@@ -1,0 +1,21 @@
+{
+  "asof_utc": "2026-01-29T10:01:59Z",
+  "sources": {
+    "EURUSD_D1": {
+      "ok": true,
+      "rows": 309,
+      "latest_time": "2026-01-29T00:00:00Z",
+      "used_cache": false,
+      "error": null
+    },
+    "EURUSD_H4": {
+      "ok": true,
+      "rows": 1200,
+      "latest_time": "2026-01-29T12:00:00Z",
+      "used_cache": false,
+      "error": null
+    }
+  },
+  "stale_sources": [],
+  "notes": ""
+}

@@ -1,3 +1,6 @@
-2026/01/28-17:44:45.017 63ac Reusing MANIFEST C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\cme_profile\Default\Session Storage/MANIFEST-000001
-2026/01/28-17:44:45.018 63ac Recovering log #3
-2026/01/28-17:44:45.022 63ac Reusing old log C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\cme_profile\Default\Session Storage/000003.log 
+2026/01/29-17:06:10.162 6940 Reusing MANIFEST C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\cme_profile\Default\Session Storage/MANIFEST-000001
+2026/01/29-17:06:10.164 6940 Recovering log #3
+2026/01/29-17:06:10.171 6940 Reusing old log C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\cme_profile\Default\Session Storage/000003.log 
+2026/01/29-17:06:12.651 1fe0 Level-0 table #5: started
+2026/01/29-17:06:12.659 1fe0 Level-0 table #5: 17627 bytes OK
+2026/01/29-17:06:12.662 1fe0 Delete type=0 #3
