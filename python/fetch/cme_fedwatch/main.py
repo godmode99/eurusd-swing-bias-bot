@@ -113,6 +113,17 @@ def format_filtered_counts(counts: dict[str, int]) -> str:
         "หมายเหตุ: หากค่าเป็น 0 = scrape ไม่ได้"
     )
 
+def format_watchlist_save_status(counts: dict[str, int]) -> str:
+    daily_count = counts.get("daily", 0)
+    weekly_count = counts.get("weekly", 0)
+    monthly_count = counts.get("monthly", 0)
+    return (
+        "🗂️ save watchlist files\n"
+        f"- daily: save ไฟล์สำเร็จ ({daily_count} rows)\n"
+        f"- weekly: save ไฟล์สำเร็จ ({weekly_count} rows)\n"
+        f"- monthly: save ไฟล์สำเร็จ ({monthly_count} rows)"
+    )
+
 def pick_creds(cfg: dict):
     # 1) config.json
     user = (cfg.get("username") or "").strip()
@@ -612,10 +623,7 @@ def main():
                             (
                                 "📄 CME watchlist export (authenticated)\n"
                                 f"- rows: {watchlist_summary['row_count']}\n"
-                                f"- json: {watchlist_summary['json_output']}\n"
-                                f"- csv: {watchlist_summary['csv_output']}\n"
-                                f"- html: {watchlist_summary['html_output']}\n"
-                                f"{format_filtered_counts(watchlist_summary['filtered_counts'])}"
+                                f"{format_watchlist_save_status(watchlist_summary['filtered_counts'])}"
                             ),
                             logger,
                         )
