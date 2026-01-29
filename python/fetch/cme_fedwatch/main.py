@@ -615,7 +615,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
+                                f"{format_filtered_counts(watchlist_summary['filtered_counts'])}"
                             ),
                             logger,
                         )
@@ -684,7 +684,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
+                                f"{format_filtered_counts(watchlist_summary['filtered_counts'])}"
                             ),
                             logger,
                         )
@@ -726,7 +726,7 @@ def main():
                                 f"- json: {watchlist_summary['json_output']}\n"
                                 f"- csv: {watchlist_summary['csv_output']}\n"
                                 f"- html: {watchlist_summary['html_output']}\n"
-                                f\"{format_filtered_counts(watchlist_summary['filtered_counts'])}\"
+                                f"{format_filtered_counts(watchlist_summary['filtered_counts'])}"
                             ),
                             logger,
                         )
