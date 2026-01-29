@@ -24,6 +24,7 @@ from telegram_notifier import send_telegram_message
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
+DEFAULT_MAX_EXPIRY_YEAR = 2026
 NAV_TIMEOUT = 60_000
 
 class AuthState(str, Enum):
@@ -276,7 +277,8 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
         if rows:
             nonefilter_dir = outputs["nonefilter_dir"]
             save_unfiltered_watchlist(headers, rows, nonefilter_dir, timestamp, timestamp_iso)
-            filtered_rows = filter_watchlist_rows(headers, rows)
+            max_expiry_year = resolve_max_expiry_year(cfg)
+            filtered_rows = filter_watchlist_rows(headers, rows, max_expiry_year=max_expiry_year)
             filtered_headers, filtered_rows = prune_watchlist_columns(
                 headers,
                 filtered_rows,
@@ -432,23 +434,52 @@ def extract_watchlist_table(page) -> tuple[list[str], list[list[str]]] | None:
             return headers, rows
     return None
 
-def filter_watchlist_rows(headers: list[str], rows: list[list[str]]) -> list[list[str]]:
+def resolve_max_expiry_year(cfg: dict) -> int | None:
+    raw_value = cfg.get("max_expiry_year", DEFAULT_MAX_EXPIRY_YEAR)
+    if raw_value in (None, ""):
+        return DEFAULT_MAX_EXPIRY_YEAR
+    try:
+        max_year = int(raw_value)
+    except (TypeError, ValueError):
+        return DEFAULT_MAX_EXPIRY_YEAR
+    if max_year <= 0:
+        return None
+    return max_year
+
+def parse_expiry_year(expiry: str) -> int | None:
+    if not expiry:
+        return None
+    for token in expiry.replace("/", " ").replace("-", " ").split():
+        if token.isdigit() and len(token) == 4:
+            return int(token)
+    return None
+
+def filter_watchlist_rows(
+    headers: list[str],
+    rows: list[list[str]],
+    max_expiry_year: int | None = None,
+) -> list[list[str]]:
     if not headers:
         return rows
 
     header_map = {header.strip().lower(): idx for idx, header in enumerate(headers)}
     last_price_idx = header_map.get("last price")
     volume_idx = header_map.get("volume")
+    expiry_idx = header_map.get("expiry")
 
-    if last_price_idx is None or volume_idx is None:
-        return rows
+    has_price_volume = last_price_idx is not None and volume_idx is not None
 
     filtered_rows = []
     for row in rows:
-        last_price = row[last_price_idx].strip() if last_price_idx < len(row) else ""
-        volume = row[volume_idx].strip() if volume_idx < len(row) else ""
-        if last_price == "-" and volume == "0":
-            continue
+        if has_price_volume:
+            last_price = row[last_price_idx].strip() if last_price_idx < len(row) else ""
+            volume = row[volume_idx].strip() if volume_idx < len(row) else ""
+            if last_price == "-" and volume == "0":
+                continue
+        if max_expiry_year and expiry_idx is not None and expiry_idx < len(row):
+            expiry_year = parse_expiry_year(row[expiry_idx].strip())
+            if expiry_year and expiry_year > max_expiry_year:
+                continue
         filtered_rows.append(row)
     return filtered_rows
 
