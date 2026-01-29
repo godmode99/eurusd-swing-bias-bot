@@ -7,6 +7,7 @@ import sys
 import getpass
 import logging
 from enum import Enum
+from datetime import datetime
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 
@@ -100,7 +101,7 @@ def queue_telegram(messages: list[str], message: str, logger: logging.Logger | N
     messages.append(message)
 
 
-def format_json_preview(payload: list[dict] | list[list[str]], max_chars: int = 1200) -> str:
+def format_json_preview(payload: list[dict] | list[list[str]] | dict, max_chars: int = 1200) -> str:
     preview = payload[:3] if isinstance(payload, list) else payload
     try:
         preview_text = json.dumps(preview, ensure_ascii=False, indent=2)
@@ -196,9 +197,12 @@ def resolve_output_paths(cfg: dict) -> dict[str, Path]:
     output_dir = Path(cfg.get("watchlist_output_dir", DEFAULT_OUTPUT_DIR))
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    html_output = Path(cfg.get("watchlist_output", output_dir / "watchlist.html"))
-    json_output = Path(cfg.get("watchlist_json_output", output_dir / "watchlist.json"))
-    csv_output = Path(cfg.get("watchlist_csv_output", output_dir / "watchlist.csv"))
+    nonefilter_dir = output_dir / "nonefilter"
+    nonefilter_dir.mkdir(parents=True, exist_ok=True)
+
+    html_output = Path(cfg.get("watchlist_output", nonefilter_dir / "watchlist.html"))
+    json_output = Path(cfg.get("watchlist_json_output", nonefilter_dir / "watchlist_filtered.json"))
+    csv_output = Path(cfg.get("watchlist_csv_output", nonefilter_dir / "watchlist_filtered.csv"))
 
     if not html_output.is_absolute():
         html_output = output_dir / html_output
@@ -209,10 +213,28 @@ def resolve_output_paths(cfg: dict) -> dict[str, Path]:
 
     return {
         "output_dir": output_dir,
+        "nonefilter_dir": nonefilter_dir,
         "html_output": html_output,
         "json_output": json_output,
         "csv_output": csv_output,
     }
+
+def build_timestamp() -> tuple[str, str]:
+    now = datetime.now()
+    return now.strftime("%Y%m%d_%H%M%S"), now.isoformat(timespec="seconds")
+
+def append_timestamp_to_path(path: Path, timestamp: str) -> Path:
+    return path.with_name(f"{path.stem}_{timestamp}{path.suffix}")
+
+def add_timestamp_to_payload(payload: list[dict] | list[list[str]], timestamp_iso: str):
+    if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
+        stamped_payload = []
+        for item in payload:
+            stamped_item = dict(item)
+            stamped_item["timestamp"] = timestamp_iso
+            stamped_payload.append(stamped_item)
+        return stamped_payload
+    return {"timestamp": timestamp_iso, "data": payload}
 
 def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     watchlist_url = (cfg.get("watchlist_url") or DEFAULT_WATCHLIST_URL).strip()
@@ -220,6 +242,8 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
     output_path = outputs["html_output"]
     json_output = outputs["json_output"]
     csv_output = outputs["csv_output"]
+    timestamp, timestamp_iso = build_timestamp()
+    json_output = append_timestamp_to_path(json_output, timestamp)
 
     try:
         page.goto(watchlist_url, wait_until="domcontentloaded", timeout=NAV_TIMEOUT)
@@ -230,20 +254,20 @@ def fetch_watchlist_html(page, cfg: dict) -> dict[str, str | int] | None:
         return None
 
     table_data = extract_watchlist_table(page)
-    payload: list[dict] | list[list[str]] = []
+    payload: list[dict] | list[list[str]] | dict = []
     row_count = 0
     if table_data is None:
         print("⚠️ watchlist table not found")
     else:
         headers, rows = table_data
         if rows:
-            nonefilter_dir = outputs["output_dir"] / "nonefilter"
-            save_unfiltered_watchlist(headers, rows, nonefilter_dir)
+            nonefilter_dir = outputs["nonefilter_dir"]
+            save_unfiltered_watchlist(headers, rows, nonefilter_dir, timestamp, timestamp_iso)
             filtered_rows = filter_watchlist_rows(headers, rows)
-            payload = save_table_as_json(headers, filtered_rows, json_output)
+            payload = save_table_as_json(headers, filtered_rows, json_output, timestamp_iso)
             save_table_as_csv(headers, filtered_rows, csv_output)
             if isinstance(payload, list) and all(isinstance(item, dict) for item in payload):
-                save_filtered_watchlists(payload, outputs["output_dir"])
+                save_filtered_watchlists(payload, outputs["output_dir"], timestamp, timestamp_iso)
             row_count = len(filtered_rows)
         else:
             print("⚠️ watchlist table found but no rows to export")
@@ -402,7 +426,12 @@ def filter_watchlist_rows(headers: list[str], rows: list[list[str]]) -> list[lis
         filtered_rows.append(row)
     return filtered_rows
 
-def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: Path) -> list[dict] | list[list[str]]:
+def save_table_as_json(
+    headers: list[str],
+    rows: list[list[str]],
+    output_path: Path,
+    timestamp_iso: str,
+) -> list[dict] | list[list[str]] | dict:
     payload = []
     if headers:
         for row in rows:
@@ -412,6 +441,7 @@ def save_table_as_json(headers: list[str], rows: list[list[str]], output_path: P
         payload = rows
 
     try:
+        payload = add_timestamp_to_payload(payload, timestamp_iso)
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
         print(f"✅ saved watchlist json: {output_path}")
@@ -430,11 +460,17 @@ def save_table_as_csv(headers: list[str], rows: list[list[str]], output_path: Pa
     except Exception as exc:
         print(f"❌ write watchlist csv failed: {exc}")
 
-def save_unfiltered_watchlist(headers: list[str], rows: list[list[str]], output_dir: Path) -> dict[str, Path]:
+def save_unfiltered_watchlist(
+    headers: list[str],
+    rows: list[list[str]],
+    output_dir: Path,
+    timestamp: str,
+    timestamp_iso: str,
+) -> dict[str, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
-    json_output = output_dir / "watchlist.json"
-    csv_output = output_dir / "watchlist.csv"
-    save_table_as_json(headers, rows, json_output)
+    json_output = append_timestamp_to_path(output_dir / "watchlist_unfiltered.json", timestamp)
+    csv_output = output_dir / "watchlist_unfiltered.csv"
+    save_table_as_json(headers, rows, json_output, timestamp_iso)
     save_table_as_csv(headers, rows, csv_output)
     return {"json_output": json_output, "csv_output": csv_output}
 
@@ -459,7 +495,12 @@ def filter_watchlist_by_prefix(
             filtered.append(item)
     return filtered
 
-def save_filtered_watchlists(payload: list[dict], output_dir: Path) -> None:
+def save_filtered_watchlists(
+    payload: list[dict],
+    output_dir: Path,
+    timestamp: str,
+    timestamp_iso: str,
+) -> None:
     filters = {
         "daily": ["zq", "sr1", "sr3", "zt", "6e"],
         "weekly": ["zq", "sr1", "sr3", "zn", "6e", "zt", "zf", "zb"],
@@ -470,8 +511,9 @@ def save_filtered_watchlists(payload: list[dict], output_dir: Path) -> None:
         bucket_dir = output_dir / bucket
         bucket_dir.mkdir(parents=True, exist_ok=True)
         filtered_payload = filter_watchlist_by_prefix(payload, prefixes)
-        output_path = bucket_dir / "watchlist.json"
+        output_path = append_timestamp_to_path(bucket_dir / "watchlist.json", timestamp)
         try:
+            filtered_payload = add_timestamp_to_payload(filtered_payload, timestamp_iso)
             with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(filtered_payload, f, ensure_ascii=False, indent=2)
             print(f"✅ saved {bucket} watchlist json: {output_path}")
