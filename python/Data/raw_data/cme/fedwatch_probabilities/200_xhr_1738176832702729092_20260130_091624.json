@@ -188,25 +188,25 @@
         {
           "codecs": "avc1,mp4a",
           "ext_x_version": "4",
-          "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/master.m3u8?fastly_token=NmI1ZGExOTdfNDI1Y2ZjYzZmMGRkMWY0NTFiOTQyZjFiZWE1OTEwYmRkZWJlYTA4Njk3ZjdlOWI3OTk1M2IyN2EyYmE2MjdkYg%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/master.m3u8?fastly_token=NmI1ZGJkMjRfODJlYmE4NDQ5M2VmYjFiYmEwNGJjZThhZDg1YmFhNzA1YTE1YjE1OGY0YzA2NGYyNzA5NzMxMzgxNGM1NDExMQ%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "codecs": "avc1,mp4a",
           "ext_x_version": "4",
-          "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/master.m3u8?fastly_token=NmI1ZGExOTdfNDI1Y2ZjYzZmMGRkMWY0NTFiOTQyZjFiZWE1OTEwYmRkZWJlYTA4Njk3ZjdlOWI3OTk1M2IyN2EyYmE2MjdkYg%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/master.m3u8?fastly_token=NmI1ZGJkMjRfODJlYmE4NDQ5M2VmYjFiYmEwNGJjZThhZDg1YmFhNzA1YTE1YjE1OGY0YzA2NGYyNzA5NzMxMzgxNGM1NDExMQ%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "codecs": "avc1,mp4a",
           "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
-          "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/6s/manifest.mpd?fastly_token=NmI1ZGExOTdfMGMxYjlmODg4ZWNkMzNiY2ZhNGMwM2MxMTQ3ZjExZDAyMWIwZTMxNmMyZDFlODVhMDYxNjU1MzI0NmVjOGRkNw%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/6s/manifest.mpd?fastly_token=NmI1ZGJkMjRfYjc3ZTI3NGQzNmQyYmI2N2Q1NTIxN2E3YjI3YjczZDIyMjIyNmZkMTQwODE1YjZiZjdhNDljMTI4YTg0M2MyOA%3D%3D",
           "type": "application/dash+xml"
         },
         {
           "codecs": "avc1,mp4a",
           "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
-          "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/6s/manifest.mpd?fastly_token=NmI1ZGExOTdfMGMxYjlmODg4ZWNkMzNiY2ZhNGMwM2MxMTQ3ZjExZDAyMWIwZTMxNmMyZDFlODVhMDYxNjU1MzI0NmVjOGRkNw%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/6s/manifest.mpd?fastly_token=NmI1ZGJkMjRfYjc3ZTI3NGQzNmQyYmI2N2Q1NTIxN2E3YjI3YjczZDIyMjIyNmZkMTQwODE1YjZiZjdhNDljMTI4YTg0M2MyOA%3D%3D",
           "type": "application/dash+xml"
         },
         {
@@ -216,7 +216,7 @@
           "duration": 146954,
           "height": 720,
           "size": 37733320,
-          "src": "http://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/a3b3890e-eacb-4ca0-9210-8a9e8706910a/main.mp4?fastly_token=NmI1ZGExOTdfNjQ2OWNjNzcyNWE1ZDBmNWM2NGQyNjdjYjgxZmYyNTFkMDQ3MzlkNTU0MTBjYmMwMWM0Y2Q3YjRlMWZmODBkMl8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvMGIwZWJhZTgtYzcwOC00YWYyLWE5NGMtMTljNDE5Y2EyNzhmL2EzYjM4OTBlLWVhY2ItNGNhMC05MjEwLThhOWU4NzA2OTEwYS9tYWluLm1wNA%3D%3D",
+          "src": "http://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/a3b3890e-eacb-4ca0-9210-8a9e8706910a/main.mp4?fastly_token=NmI1ZGJkMjRfNmNiMTQyZmE5ZWIyODUxYTFhMmQyNDM1NjllYTEwMTg2YTZkZmVmYWMxNzZmMjhkOTlmNTE3MmI1NjZmYzc1Yl8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvMGIwZWJhZTgtYzcwOC00YWYyLWE5NGMtMTljNDE5Y2EyNzhmL2EzYjM4OTBlLWVhY2ItNGNhMC05MjEwLThhOWU4NzA2OTEwYS9tYWluLm1wNA%3D%3D",
           "width": 1280
         },
         {
@@ -226,19 +226,19 @@
           "duration": 146954,
           "height": 720,
           "size": 37733320,
-          "src": "https://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/a3b3890e-eacb-4ca0-9210-8a9e8706910a/main.mp4?fastly_token=NmI1ZGExOTdfNjQ2OWNjNzcyNWE1ZDBmNWM2NGQyNjdjYjgxZmYyNTFkMDQ3MzlkNTU0MTBjYmMwMWM0Y2Q3YjRlMWZmODBkMl8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvMGIwZWJhZTgtYzcwOC00YWYyLWE5NGMtMTljNDE5Y2EyNzhmL2EzYjM4OTBlLWVhY2ItNGNhMC05MjEwLThhOWU4NzA2OTEwYS9tYWluLm1wNA%3D%3D",
+          "src": "https://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/a3b3890e-eacb-4ca0-9210-8a9e8706910a/main.mp4?fastly_token=NmI1ZGJkMjRfNmNiMTQyZmE5ZWIyODUxYTFhMmQyNDM1NjllYTEwMTg2YTZkZmVmYWMxNzZmMjhkOTlmNTE3MmI1NjZmYzc1Yl8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvMGIwZWJhZTgtYzcwOC00YWYyLWE5NGMtMTljNDE5Y2EyNzhmL2EzYjM4OTBlLWVhY2ItNGNhMC05MjEwLThhOWU4NzA2OTEwYS9tYWluLm1wNA%3D%3D",
           "width": 1280
         }
       ],
       "video_preview": [
         {
           "ext_x_version": "7",
-          "src": "http://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/preview.m3u8?fastly_token=NmI1ZGExOTdfNWE3NzVlMGYyM2Y2NjRjZWJkY2JiZWJiYjIyMDNmYjE0MjUzYWFmZWVhZmU0YzM5ZjE0NDJhZDdlNGE5NDA0Mg%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/preview.m3u8?fastly_token=NmI1ZGJkMjRfODRjNjBmN2U3OWRlMmI3MTA5OGYxNWM0ODhhYjdkZDc4N2EzMzM1Yjc3ODRlN2U0NzIxOTAyY2U2OTA3YWY0ZQ%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "ext_x_version": "7",
-          "src": "https://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/preview.m3u8?fastly_token=NmI1ZGExOTdfNWE3NzVlMGYyM2Y2NjRjZWJkY2JiZWJiYjIyMDNmYjE0MjUzYWFmZWVhZmU0YzM5ZjE0NDJhZDdlNGE5NDA0Mg%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/10s/preview.m3u8?fastly_token=NmI1ZGJkMjRfODRjNjBmN2U3OWRlMmI3MTA5OGYxNWM0ODhhYjdkZDc4N2EzMzM1Yjc3ODRlN2U0NzIxOTAyY2U2OTA3YWY0ZQ%3D%3D",
           "type": "application/x-mpegURL"
         }
       ],
@@ -251,7 +251,7 @@
         {
           "id": null,
           "account_id": "49919183001",
-          "src": "http://manifest.prod.boltdns.net/thumbnail/v1/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/443964ef-f11d-41b1-93b4-3ee18f1983e4/thumbnail.webvtt?fastly_token=NmI1ZGExOTdfYjYxYjg2MTBlYzM0M2UyZDllOGU5MmI0ZmNhYWU2YTE0MmZhZmJkNTEyOTg1ZmViOGQyNzYwNTc1NjkwNTMwMw%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/thumbnail/v1/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/443964ef-f11d-41b1-93b4-3ee18f1983e4/thumbnail.webvtt?fastly_token=NmI1ZGJkMjRfOWZjZTg4ZDM2ZjVjM2UzNjk0ZGE5MDY4M2Q1ZjlkYTUyMzgxNmJkNDM4OTkxM2YzZjMyMTJlNDhmZDY5MGI0ZA%3D%3D",
           "srclang": null,
           "label": "thumbnails",
           "kind": "metadata",
@@ -266,7 +266,7 @@
         {
           "id": null,
           "account_id": "49919183001",
-          "src": "https://manifest.prod.boltdns.net/thumbnail/v1/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/443964ef-f11d-41b1-93b4-3ee18f1983e4/thumbnail.webvtt?fastly_token=NmI1ZGExOTdfYjYxYjg2MTBlYzM0M2UyZDllOGU5MmI0ZmNhYWU2YTE0MmZhZmJkNTEyOTg1ZmViOGQyNzYwNTc1NjkwNTMwMw%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/thumbnail/v1/49919183001/0b0ebae8-c708-4af2-a94c-19c419ca278f/443964ef-f11d-41b1-93b4-3ee18f1983e4/thumbnail.webvtt?fastly_token=NmI1ZGJkMjRfOWZjZTg4ZDM2ZjVjM2UzNjk0ZGE5MDY4M2Q1ZjlkYTUyMzgxNmJkNDM4OTkxM2YzZjMyMTJlNDhmZDY5MGI0ZA%3D%3D",
           "srclang": null,
           "label": "thumbnails",
           "kind": "metadata",
@@ -470,25 +470,25 @@
         {
           "codecs": "avc1,mp4a",
           "ext_x_version": "4",
-          "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/master.m3u8?fastly_token=NmI1ZGExOTZfYWQ0YmY5ZGQwMDljOTZmNzc1YmFjMWU4MDU0Y2E2NjFhZmI1YWEzNDk2YTUxODlkNTY1ZmE4ODY3YWI0NmI1NQ%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/master.m3u8?fastly_token=NmI1ZGJkOTdfNDI1NzViNTg2ODQ5MzcxOWE3MGRkODIxZTY4NWMzMGM0NGIxNTcwY2QzMWIwNjNmMTliZDNhNjc4YTI1ZjQzYg%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "codecs": "avc1,mp4a",
           "ext_x_version": "4",
-          "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/master.m3u8?fastly_token=NmI1ZGExOTZfYWQ0YmY5ZGQwMDljOTZmNzc1YmFjMWU4MDU0Y2E2NjFhZmI1YWEzNDk2YTUxODlkNTY1ZmE4ODY3YWI0NmI1NQ%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/master.m3u8?fastly_token=NmI1ZGJkOTdfNDI1NzViNTg2ODQ5MzcxOWE3MGRkODIxZTY4NWMzMGM0NGIxNTcwY2QzMWIwNjNmMTliZDNhNjc4YTI1ZjQzYg%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "codecs": "avc1,mp4a",
           "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
-          "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/6s/manifest.mpd?fastly_token=NmI1ZGExOTZfZDZkMmJiMTYwMjE1MjA5NTcyMjBlOWRkOTY3MzA5Y2NiN2Y3ZjllNWVkMTlmODdkMjg1YzgyNDRiOTQ4YmM4NQ%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/6s/manifest.mpd?fastly_token=NmI1ZGJkOTdfYjRiNTIwNzE3ZGNmODYzMTU3MGI5MGE5NDA2OTFiMmY2YzgyOWY5OTE5OGEzZjUzMDQzM2MzMjlmNGI1MDg3ZA%3D%3D",
           "type": "application/dash+xml"
         },
         {
           "codecs": "avc1,mp4a",
           "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
-          "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/6s/manifest.mpd?fastly_token=NmI1ZGExOTZfZDZkMmJiMTYwMjE1MjA5NTcyMjBlOWRkOTY3MzA5Y2NiN2Y3ZjllNWVkMTlmODdkMjg1YzgyNDRiOTQ4YmM4NQ%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/6s/manifest.mpd?fastly_token=NmI1ZGJkOTdfYjRiNTIwNzE3ZGNmODYzMTU3MGI5MGE5NDA2OTFiMmY2YzgyOWY5OTE5OGEzZjUzMDQzM2MzMjlmNGI1MDg3ZA%3D%3D",
           "type": "application/dash+xml"
         },
         {
@@ -498,7 +498,7 @@
           "duration": 146463,
           "height": 720,
           "size": 37373241,
-          "src": "http://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/3b57994e-91c0-4e8c-90d7-a85dfec2128f/main.mp4?fastly_token=NmI1ZGExOTZfYTA5MDgxZTE1NjQ1MDliOTM4ZWZhNWYwNDhmNjM0NjYzZWQyMDgxZTgyOTRmNjZmZTA1ZjdkYWRlMzQyMWE1Y18vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDQ3ZWU2ODktYzc0MS00NmM5LWJkYzAtZGQ2YjE5ODRhOTFkLzNiNTc5OTRlLTkxYzAtNGU4Yy05MGQ3LWE4NWRmZWMyMTI4Zi9tYWluLm1wNA%3D%3D",
+          "src": "http://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/3b57994e-91c0-4e8c-90d7-a85dfec2128f/main.mp4?fastly_token=NmI1ZGJkOTdfZWZmNmEwN2U0MDA5YTJhY2RiNmY4M2NkZjE4Yzc0ODcwZjg1YTU0Njc3NzBkZThkMmY3NjkwNDNlZGY1YmNmMV8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDQ3ZWU2ODktYzc0MS00NmM5LWJkYzAtZGQ2YjE5ODRhOTFkLzNiNTc5OTRlLTkxYzAtNGU4Yy05MGQ3LWE4NWRmZWMyMTI4Zi9tYWluLm1wNA%3D%3D",
           "width": 1280
         },
         {
@@ -508,19 +508,19 @@
           "duration": 146463,
           "height": 720,
           "size": 37373241,
-          "src": "https://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/3b57994e-91c0-4e8c-90d7-a85dfec2128f/main.mp4?fastly_token=NmI1ZGExOTZfYTA5MDgxZTE1NjQ1MDliOTM4ZWZhNWYwNDhmNjM0NjYzZWQyMDgxZTgyOTRmNjZmZTA1ZjdkYWRlMzQyMWE1Y18vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDQ3ZWU2ODktYzc0MS00NmM5LWJkYzAtZGQ2YjE5ODRhOTFkLzNiNTc5OTRlLTkxYzAtNGU4Yy05MGQ3LWE4NWRmZWMyMTI4Zi9tYWluLm1wNA%3D%3D",
+          "src": "https://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/3b57994e-91c0-4e8c-90d7-a85dfec2128f/main.mp4?fastly_token=NmI1ZGJkOTdfZWZmNmEwN2U0MDA5YTJhY2RiNmY4M2NkZjE4Yzc0ODcwZjg1YTU0Njc3NzBkZThkMmY3NjkwNDNlZGY1YmNmMV8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDQ3ZWU2ODktYzc0MS00NmM5LWJkYzAtZGQ2YjE5ODRhOTFkLzNiNTc5OTRlLTkxYzAtNGU4Yy05MGQ3LWE4NWRmZWMyMTI4Zi9tYWluLm1wNA%3D%3D",
           "width": 1280
         }
       ],
       "video_preview": [
         {
           "ext_x_version": "7",
-          "src": "http://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/preview.m3u8?fastly_token=NmI1ZGExOTZfYWQwZTc2ZDEyODMyOTk1ZWU0NGIzZGQ0MmQ2MTQyNzdmZjNlYzUwYjUzNmM2OWRiNjY1ZjRjMjgyZjU5ZjMzZA%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/preview.m3u8?fastly_token=NmI1ZGJkOTdfYjQzN2M3NzEyNTNlNWYxYzdjNDZkYmE4ZDlmYzBhNmNmYzEyYmYwMDJkYWYxNmI1OGIwOWU2YTA5MmU3Y2Y0ZA%3D%3D",
           "type": "application/x-mpegURL"
         },
         {
           "ext_x_version": "7",
-          "src": "https://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/preview.m3u8?fastly_token=NmI1ZGExOTZfYWQwZTc2ZDEyODMyOTk1ZWU0NGIzZGQ0MmQ2MTQyNzdmZjNlYzUwYjUzNmM2OWRiNjY1ZjRjMjgyZjU5ZjMzZA%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/10s/preview.m3u8?fastly_token=NmI1ZGJkOTdfYjQzN2M3NzEyNTNlNWYxYzdjNDZkYmE4ZDlmYzBhNmNmYzEyYmYwMDJkYWYxNmI1OGIwOWU2YTA5MmU3Y2Y0ZA%3D%3D",
           "type": "application/x-mpegURL"
         }
       ],
@@ -533,7 +533,7 @@
         {
           "id": null,
           "account_id": "49919183001",
-          "src": "http://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/369cb7ce-9f35-48f1-8f11-97ff129c83b0/thumbnail.webvtt?fastly_token=NmI1ZGExOTZfZDgyYWY0NjM5ZjZiNzBkYTJlMDVkYWZlOTFkNTExNjc0YmRkYTA2YjEwMzM5YWE4YTVmZWY4NWVjMjQwNzU2MA%3D%3D",
+          "src": "http://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/369cb7ce-9f35-48f1-8f11-97ff129c83b0/thumbnail.webvtt?fastly_token=NmI1ZGJkOTdfNmE3MDc0ZTZlNGYxNDgwNGE3ODM5ZTE0NzZjYWQ0MjBiNGE4MzJlMzJiZGJmMzE5YzY0YmU5NzJlMzU1ODdiMg%3D%3D",
           "srclang": null,
           "label": "thumbnails",
           "kind": "metadata",
@@ -548,7 +548,7 @@
         {
           "id": null,
           "account_id": "49919183001",
-          "src": "https://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/369cb7ce-9f35-48f1-8f11-97ff129c83b0/thumbnail.webvtt?fastly_token=NmI1ZGExOTZfZDgyYWY0NjM5ZjZiNzBkYTJlMDVkYWZlOTFkNTExNjc0YmRkYTA2YjEwMzM5YWE4YTVmZWY4NWVjMjQwNzU2MA%3D%3D",
+          "src": "https://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d47ee689-c741-46c9-bdc0-dd6b1984a91d/369cb7ce-9f35-48f1-8f11-97ff129c83b0/thumbnail.webvtt?fastly_token=NmI1ZGJkOTdfNmE3MDc0ZTZlNGYxNDgwNGE3ODM5ZTE0NzZjYWQ0MjBiNGE4MzJlMzJiZGJmMzE5YzY0YmU5NzJlMzU1ODdiMg%3D%3D",
           "srclang": null,
           "label": "thumbnails",
           "kind": "metadata",

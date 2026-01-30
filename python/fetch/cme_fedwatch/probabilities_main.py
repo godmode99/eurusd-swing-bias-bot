@@ -169,7 +169,7 @@ async def run_once(
 async def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--url", default="https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html")
-    ap.add_argument("--out", default="artifacts/cme_fedwatch_capture")
+    ap.add_argument("--out", default="python/Data/raw_data/cme/fedwatch_probabilities")
     ap.add_argument("--wait", type=int, default=20)
     ap.add_argument("--save_har", action="store_true")
     ap.add_argument("--timeout_ms", type=int, default=60000)
