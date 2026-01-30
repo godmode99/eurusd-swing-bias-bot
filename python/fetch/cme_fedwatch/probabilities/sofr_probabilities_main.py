@@ -40,6 +40,12 @@ INTERESTING_URL_RE = re.compile(
     re.IGNORECASE,
 )
 
+# เก็บเฉพาะ HTML ที่มี keyword สำคัญ (SOFRWatch payload ที่ต้องการ)
+REQUIRED_HTML_KEYWORDS = (
+    'id="doc3"',
+    '<div id="doc3" class="do-mobile">',
+)
+
 # network error ที่ควร fallback
 FATAL_NAV_SIGNS = (
     "ERR_HTTP2_PROTOCOL_ERROR",
@@ -104,6 +110,12 @@ def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_byt
     if len(body_bytes) > 15 * 1024 * 1024:
         return
 
+    html_text: Optional[str] = None
+    if "text/html" in ctype:
+        html_text = body_bytes.decode("utf-8", errors="replace")
+        if not all(keyword in html_text for keyword in REQUIRED_HTML_KEYWORDS):
+            return
+
     base = safe_filename_from_url(url)
     ts = time.strftime("%Y%m%d_%H%M%S")
 
@@ -141,7 +153,7 @@ def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_byt
     is_texty = any(x in ctype for x in ["text/", "application/javascript", "application/xml", "text/html"])
     if is_texty:
         out_path = resp_dir / f"{ts}__{base}.txt"
-        out_path.write_text(body_bytes.decode("utf-8", errors="replace"), encoding="utf-8")
+        out_path.write_text(html_text or body_bytes.decode("utf-8", errors="replace"), encoding="utf-8")
         print(f"[SAVE][txt] {status} {url} -> {out_path.name}")
     else:
         out_path = resp_dir / f"{ts}__{base}.bin"
