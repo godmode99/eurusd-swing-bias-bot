@@ -19,7 +19,7 @@ except ImportError:  # pragma: no cover - Python < 3.9
     ZoneInfo = None
 
 BASE_DIR = Path(__file__).resolve().parent
-PYTHON_DIR = BASE_DIR.parents[1].resolve()
+PYTHON_DIR = BASE_DIR.parents[2].resolve()
 REPO_ROOT = PYTHON_DIR.parent
 TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
 
