@@ -19,6 +19,7 @@ import hashlib
 import json
 import re
 import time
+from urllib.parse import urlparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, Tuple
@@ -26,6 +27,7 @@ from typing import Optional, Tuple
 from playwright.sync_api import sync_playwright
 
 TARGET_URL = "https://www.cmegroup.com/markets/interest-rates/cme-sofrwatch.html"
+DEFAULT_OUTDIR = Path("python/Data/raw_data/cme/fedwatch_probabilities/sofr")
 
 DEFAULT_UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -87,6 +89,12 @@ def safe_filename_from_url(url: str, max_len: int = 120) -> str:
     return f"{clean}__{h}"
 
 
+def build_output_stem(url: str, ts: str) -> str:
+    parsed = urlparse(url)
+    host = parsed.hostname or "unknown_host"
+    return f"sofrwatch_{host}_{ts}__{safe_filename_from_url(url)}"
+
+
 def is_fatal_nav_error(e: Exception) -> bool:
     msg = str(e)
     return any(sig in msg for sig in FATAL_NAV_SIGNS)
@@ -118,8 +126,8 @@ def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_byt
     if not all(keyword in html_text for keyword in REQUIRED_HTML_KEYWORDS):
         return
 
-    base = safe_filename_from_url(url)
     ts = time.strftime("%Y%m%d_%H%M%S")
+    base = build_output_stem(url, ts)
 
     meta_path = cfg.outdir / "meta" / f"{ts}__{base}.json"
     meta = {
@@ -325,7 +333,7 @@ def parse_args() -> RunConfig:
                     help="Chromium channel (use installed Chrome/Edge). Works only with --browser chromium/auto.")
     ap.add_argument("--headless", type=str, default="true", help="true/false")
     ap.add_argument("--wait_s", type=float, default=20.0)
-    ap.add_argument("--outdir", type=str, default="sofrwatch_dump")
+    ap.add_argument("--outdir", type=str, default=str(DEFAULT_OUTDIR))
     ap.add_argument("--save_har", action="store_true")
     ap.add_argument("--ua", type=str, default=DEFAULT_UA)
     ap.add_argument("--strict_filter", action="store_true")
