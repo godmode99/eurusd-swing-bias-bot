@@ -1,7 +1,11 @@
 {
   "source": "cme_quikstrike_view_html",
   "as_of": {
-    "text": "30 Jan 2026 04:05:44 CT",
+    "text": "30 Jan 2026 17:11:08",
+    "timezone": "Asia/Bangkok"
+  },
+  "as_of_source": {
+    "text": "30 Jan 2026 04:11:08 CT",
     "timezone": "CT"
   },
   "meeting": {
