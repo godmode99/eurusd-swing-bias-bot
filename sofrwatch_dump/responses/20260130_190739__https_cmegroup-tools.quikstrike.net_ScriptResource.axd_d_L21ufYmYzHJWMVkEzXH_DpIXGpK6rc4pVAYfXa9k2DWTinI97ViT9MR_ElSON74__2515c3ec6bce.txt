@@ -1,0 +1,14 @@
+﻿$(document).ready(function () 
+{
+    mobile_initMobile();
+});
+
+function mobile_initMobile()
+{
+    if (mobile_isInitialLoad(true))
+        return;
+
+    // redirect
+    mobile_redirect();
+}
+

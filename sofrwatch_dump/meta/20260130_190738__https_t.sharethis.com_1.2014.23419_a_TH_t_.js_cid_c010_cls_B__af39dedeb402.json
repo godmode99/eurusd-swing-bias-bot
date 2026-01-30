@@ -1,0 +1,18 @@
+{
+  "timestamp": "20260130_190738",
+  "url": "https://t.sharethis.com/1.2014.23419/a/TH/t_.js?cid=c010&cls=B",
+  "status": 200,
+  "content_type": "text/javascript",
+  "headers": {
+    "content-length": "10853",
+    "cache-control": "max-age=604800",
+    "expires": "Fri, 06 Feb 2026 12:07:38 GMT",
+    "date": "Fri, 30 Jan 2026 12:07:38 GMT",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=2628000 ; includeSubDomains",
+    "content-encoding": "gzip",
+    "content-type": "text/javascript",
+    "x-robots-tag": "noindex, nofollow"
+  },
+  "size_bytes": 35969
+}

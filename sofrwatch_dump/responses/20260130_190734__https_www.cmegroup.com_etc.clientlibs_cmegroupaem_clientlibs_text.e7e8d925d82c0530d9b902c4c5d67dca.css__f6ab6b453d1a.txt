@@ -1,0 +1,2 @@
+.component.text .table-wrapper{box-sizing:content-box;overflow-x:auto;width:100%}.component.text .table-wrapper table{box-sizing:border-box;min-width:100%;width:auto!important}.component.text .table-wrapper table td{border:.0625rem solid #c2cace}.component.text .table-wrapper table p,.component.text .table-wrapper table td{white-space:normal}
+/*# sourceMappingURL=text.css.map*/

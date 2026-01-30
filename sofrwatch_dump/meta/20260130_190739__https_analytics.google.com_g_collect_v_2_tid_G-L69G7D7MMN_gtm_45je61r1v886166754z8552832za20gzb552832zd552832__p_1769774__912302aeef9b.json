@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260130_190739",
+  "url": "https://analytics.google.com/g/collect?v=2&tid=G-L69G7D7MMN&gtm=45je61r1v886166754z8552832za20gzb552832zd552832&_p=1769774854145&_gaz=1&gcs=G1--&gcd=13l3l3R3l5l1&npa=0&dma=0&gdid=dYWJhMj&cid=327581291.1769774857&ul=en-us&sr=1280x720&frm=0&pscdl=noapi&_eu=AAAAAGA&_s=1&tag_exp=103116026~103200004~104527906~104528501~104684208~104684211~115616985~115938466~115938469~116185181~116185182~116988316~117041588&sid=1769774859&sct=1&seg=0&dl=https%3A%2F%2Fwww.cmegroup.com%2Fmarkets%2Finterest-rates%2Fcme-sofrwatch.html&dt=SOFRWatch%20-%20CME%20Group&en=page_view&_fv=1&_ss=1&epn.page_word_count=222&ep.clean_page_path=%2Fmarkets%2Finterest-rates%2Fcme-sofrwatch.html&ep.aem_tags=Both%2CSTIRs%2CSOFR%2CProduct%20Information%2CInterest%20Rates%2CInterest%20Rates%2CTools%20and%20Analytics%2CMarket%20Data%2CTool%2CCME%20Group%2CEnglish%20(EN)&ep.page_template=contentpage&ep.is_iframe=false&ep.url_fragment=&ep.previous_page=&up.login_company=(not%20set)&up.login_company_type=(not%20set)&up.login_job_role=(not%20set)&up.login_country=(not%20set)&up.known_unknown=Unknown&up.reg_element_clicked=(not%20set)&up.reg_tooltip_text=(not%20set)&up.client_id=327581291.1769774857&tfd=6703",
+  "status": 204,
+  "content_type": "text/plain",
+  "headers": {
+    "access-control-allow-origin": "https://www.cmegroup.com",
+    "date": "Fri, 30 Jan 2026 12:07:39 GMT",
+    "pragma": "no-cache",
+    "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+    "cache-control": "no-cache, no-store, must-revalidate",
+    "access-control-allow-credentials": "true",
+    "content-type": "text/plain",
+    "cross-origin-resource-policy": "cross-origin",
+    "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:171:0",
+    "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:171:0",
+    "report-to": "{\"group\":\"ascnsrsggc:171:0\", \"max_age\":2592000, \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:171:0\"}], }",
+    "server": "Golfe2",
+    "content-length": "0",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 0
+}

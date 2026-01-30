@@ -1,0 +1,20 @@
+{
+  "timestamp": "20260130_190742",
+  "url": "https://cmegroup-tools.quikstrike.net/ScriptResource.axd?d=tymr6N-mSk90XYxoWv-GZDao7Cg8I3-502mDJJtZK5hF6xG7NKR0Z-CGJWLaaCm3odhJHJbW3W7lXWvJxUcDPVHa_w1FeY5WpznH1HSbbOkOqPr8OMJk7KhFhYFJ0to8xw3jLpZrhJSrJ4-q6D3jAw2qqElAt98r3btUoF1vCLRWpuxmjlVfSP5HbPksRHBz-DP4XgpNwxu61YLv6K-AXw2&t=ffffffffe7cd5960",
+  "status": 200,
+  "content_type": "text/javascript",
+  "headers": {
+    "cache-control": "public",
+    "content-type": "text/javascript",
+    "content-encoding": "gzip",
+    "expires": "Sat, 30 Jan 2027 09:30:29 GMT",
+    "last-modified": "Fri, 30 Jan 2026 09:30:29 GMT",
+    "server": "Microsoft-IIS/10.0",
+    "x-aspnet-version": "4.0.30319",
+    "x-powered-by": "ASP.NET",
+    "p3p": "CP=\"policy string goes here\"",
+    "date": "Fri, 30 Jan 2026 12:07:41 GMT",
+    "content-length": "428"
+  },
+  "size_bytes": 1109
+}

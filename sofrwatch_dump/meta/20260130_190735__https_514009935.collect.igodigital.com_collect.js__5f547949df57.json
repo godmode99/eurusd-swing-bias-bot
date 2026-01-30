@@ -1,0 +1,15 @@
+{
+  "timestamp": "20260130_190735",
+  "url": "https://514009935.collect.igodigital.com/collect.js",
+  "status": 200,
+  "content_type": "application/javascript",
+  "headers": {
+    "date": "Fri, 30 Jan 2026 12:07:35 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Tue, 27 Jan 2026 21:58:42 GMT",
+    "vary": "Accept-Encoding",
+    "content-encoding": "gzip",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 8440
+}

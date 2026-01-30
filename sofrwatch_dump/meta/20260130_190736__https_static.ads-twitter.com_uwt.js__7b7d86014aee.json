@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://static.ads-twitter.com/uwt.js",
+  "status": 200,
+  "content_type": "application/javascript; charset=utf-8",
+  "headers": {
+    "last-modified": "Sat, 22 Nov 2025 04:33:58 GMT",
+    "x-amz-server-side-encryption": "AES256",
+    "cache-control": "no-cache",
+    "content-type": "application/javascript; charset=utf-8",
+    "content-encoding": "gzip",
+    "etag": "\"69a7ed3b506e6df98df4f32a1f87bf09+gzip+gzip\"",
+    "accept-ranges": "bytes",
+    "date": "Fri, 30 Jan 2026 12:07:36 GMT",
+    "x-served-by": "cache-iad-kjyo7100106-IAD, cache-sin-wsss1830031-SIN",
+    "x-cache": "HIT",
+    "vary": "Accept-Encoding, Host",
+    "p3p": "CP=\"CAO DSP LAW CURa ADMa DEVa TAIa PSAa PSDa IVAa IVDa OUR BUS IND UNI COM NAV INT\"",
+    "x-tw-cdn": "FT",
+    "content-length": "15523",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 55693
+}

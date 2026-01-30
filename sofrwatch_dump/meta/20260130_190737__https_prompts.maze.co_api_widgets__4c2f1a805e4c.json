@@ -1,0 +1,16 @@
+{
+  "timestamp": "20260130_190737",
+  "url": "https://prompts.maze.co/api/widgets",
+  "status": 200,
+  "content_type": "application/json; charset=utf-8",
+  "headers": {
+    "date": "Fri, 30 Jan 2026 12:07:38 GMT",
+    "content-type": "application/json; charset=utf-8",
+    "content-length": "2106",
+    "x-powered-by": "Express",
+    "access-control-allow-origin": "*",
+    "etag": "W/\"83a-glHGOJ6j4q9W7bEU9oZBXtPtgSM\"",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 2106
+}

@@ -1,0 +1,152 @@
+﻿Highcharts.setOptions({
+    credits: {
+        enabled: false,
+        href: null,
+        text: 'QuikStrike &copy; 2004-2025',
+        position: { y: -5, align: 'left', x: 10 },
+        style: { fontSize: '10px' }
+    },
+    chart: {
+        style: {
+            fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif'
+        }
+    },
+    title: {
+        align: 'left',
+        margin: 12,
+        text: '',
+        style: {
+            fontFamily: 'arial, helvetica, clean, sans-serif',
+            //textTransform: 'uppercase',
+            fontSize: '16px',
+            fontWeight: 'normal'
+        }
+    },
+    subtitle: {
+        align: 'center',
+        y: 35
+    },
+    xAxis: {
+        dateTimeLabelFormats: {
+            month: '%b<br/>%Y',
+            week: '%b %e<br/>%Y',
+            day: '%b %e',
+            hour: '%l %P',
+            minute: '%l:%M %P',
+            second: '%l:%M:%S %P',
+            millisecond: '%l:%M:%S %P'
+        },
+        labels: {
+            distance: 8,
+            style: {
+                fontSize: '11px'
+            }
+        },
+        gridLineWidth: 0 //**TAV2
+    },
+    yAxis: {
+        showEmpty: false,
+        labels: {
+            distance: 8,
+            style: {
+                fontSize: '11px'
+            }
+        },
+        crosshair: {
+            snap: false,
+            label: {
+                padding: 4
+            }
+        },
+        lineWidth: 1,
+        gridLineWidth: 2,  //**TAV2
+        gridLineDashStyle: 'dot' //**TAV2
+    },
+    tooltip: {
+        split: true,
+        shape: 'square',
+        borderWidth: 0,
+        shadow: false,
+        padding: 3,
+        dateTimeLabelFormats: {
+            hour: '%a %l %P',
+            minute: '%a %l:%M %P',
+            second: '%a, %b %e, %l:%M:%S %P',
+            day: '%a, %b %e, %Y'
+
+        }
+    },
+    plotOptions: {
+        series: {
+            turboThreshold: 10000,
+            dataGrouping: {
+                enabled: false
+            },
+            states: {
+                inactive: {
+                    opacity: 1
+                }
+            },
+            dataLabels: {
+                style: {
+                    fontSize: '13px'
+                }
+            }
+        },
+        line: {
+            lineWidth: 1
+        },
+        candlestick: {
+            maxPointWidth: 25
+        },
+        ohlc: {
+            maxPointWidth: 25
+        },
+        column: {
+            maxPointWidth: 25
+        }
+        // These don't work because indicator.js is conditionally loaded, if this script gets
+        // executed when indicator.js has not been included then "sma" gets ignored
+        //sma: {
+        //    lineWidth: 1,
+        //    enableMouseTracking: false,
+        //    showInLegend: true
+        //}
+    },
+    legend: {
+        itemStyle: {
+            fontSize: '11px',
+            fontWeight: 'normal'
+        },
+        padding: 6,
+        margin: 8
+        //verticalAlign: 'top',
+        //align: 'right',
+        //floating: true,
+        //y: -40,
+        //x: -30
+    },
+    navigator: {
+        xAxis: {
+            dateTimeLabelFormats: {
+                month: '%b %e, %Y',
+                week: '%b %e, %Y',
+                day: '%b %e',
+                hour: '%l %P',
+                minute: '%l:%M %P'
+            }
+        },
+        series: {
+            type: 'line'
+        }
+    },
+    exporting: {
+        //buttons: {
+        //    contextButton: {
+        //        menuItems: ['viewFullscreen', 'printChart', 'separator', 'downloadPNG', 'downloadJPEG', 'downloadPDF', 'downloadSVG']
+        //    }
+        //}
+        sourceWidth: 1000
+        //sourceHeight: 600
+    }
+});

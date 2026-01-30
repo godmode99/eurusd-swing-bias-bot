@@ -1,0 +1,22 @@
+{
+  "timestamp": "20260130_190734",
+  "url": "https://js.clrt.ai/564.js",
+  "status": 200,
+  "content_type": "text/javascript",
+  "headers": {
+    "date": "Fri, 30 Jan 2026 12:07:34 GMT",
+    "content-type": "text/javascript",
+    "content-encoding": "br",
+    "cache-control": "public, max-age=43200",
+    "etag": "W/\"f7a7787cd37a7a6875bd4b7fdc47fd63\"",
+    "last-modified": "Fri, 17 Oct 2025 14:20:01 GMT",
+    "vary": "Accept-Encoding",
+    "cf-cache-status": "HIT",
+    "expires": "Sat, 31 Jan 2026 00:07:34 GMT",
+    "server": "cloudflare",
+    "cf-ray": "9c60d9867af2ce36-SIN",
+    "alt-svc": "h3=\":443\"; ma=86400",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 129040
+}

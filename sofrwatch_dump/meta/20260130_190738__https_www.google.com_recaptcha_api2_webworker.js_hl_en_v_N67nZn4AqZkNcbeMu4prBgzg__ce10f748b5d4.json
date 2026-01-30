@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260130_190738",
+  "url": "https://www.google.com/recaptcha/api2/webworker.js?hl=en&v=N67nZn4AqZkNcbeMu4prBgzg",
+  "status": 200,
+  "content_type": "text/javascript; charset=utf-8",
+  "headers": {
+    "content-type": "text/javascript; charset=utf-8",
+    "cross-origin-embedder-policy": "require-corp",
+    "report-to": "{\"group\":\"recaptcha\", \"max_age\":2592000, \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/recaptcha\"}]}, {\"group\":\"coop_38fac9d5b82543fc4729580d18ff2d3d\", \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/38fac9d5b82543fc4729580d18ff2d3d\"}]}",
+    "expires": "Fri, 30 Jan 2026 12:07:38 GMT",
+    "date": "Fri, 30 Jan 2026 12:07:38 GMT",
+    "cache-control": "private, max-age=300",
+    "cross-origin-resource-policy": "same-site",
+    "cross-origin-opener-policy-report-only": "same-origin; report-to=\"coop_38fac9d5b82543fc4729580d18ff2d3d\"",
+    "content-encoding": "gzip",
+    "server": "ESF",
+    "x-xss-protection": "0",
+    "x-frame-options": "SAMEORIGIN",
+    "x-content-type-options": "nosniff",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-http3": "h3"
+  },
+  "size_bytes": 102
+}

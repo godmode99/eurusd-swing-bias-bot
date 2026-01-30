@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://platform-api.sharethis.com/powr.js?platform=sharethis",
+  "status": 200,
+  "content_type": "application/javascript; charset=utf-8",
+  "headers": {
+    "server": "CloudFront",
+    "content-type": "application/javascript; charset=UTF-8",
+    "content-encoding": "gzip",
+    "x-frame-options": "SAMEORIGIN",
+    "accept-ranges": "bytes",
+    "last-modified": "Mon, 26 Jan 2026 19:48:35 GMT",
+    "date": "Fri, 30 Jan 2026 11:30:53 GMT",
+    "cache-control": "public, max-age=3600",
+    "etag": "W/\"31cc-19bfbd9d238\"",
+    "vary": "accept-encoding",
+    "x-cache": "Hit from cloudfront",
+    "via": "1.1 cacc7c90af18aaf8799b5c80772a88e6.cloudfront.net (CloudFront)",
+    "x-amz-cf-pop": "BKK50-P3",
+    "x-amz-cf-id": "vWGhgpomecXw__pcbg3u7ufbmQ4UQHUxukVICP_tcfeKUx-_7tDh_Q==",
+    "age": "2205",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 12748
+}

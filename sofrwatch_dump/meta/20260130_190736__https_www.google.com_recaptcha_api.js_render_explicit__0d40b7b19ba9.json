@@ -1,0 +1,23 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://www.google.com/recaptcha/api.js?render=explicit",
+  "status": 200,
+  "content_type": "text/javascript; charset=utf-8",
+  "headers": {
+    "content-type": "text/javascript; charset=utf-8",
+    "expires": "Fri, 30 Jan 2026 12:07:36 GMT",
+    "date": "Fri, 30 Jan 2026 12:07:36 GMT",
+    "cache-control": "private, max-age=300",
+    "cross-origin-resource-policy": "cross-origin",
+    "report-to": "{\"group\":\"coop_38fac9d5b82543fc4729580d18ff2d3d\", \"max_age\":2592000, \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/38fac9d5b82543fc4729580d18ff2d3d\"}]}",
+    "cross-origin-opener-policy-report-only": "same-origin; report-to=\"coop_38fac9d5b82543fc4729580d18ff2d3d\"",
+    "content-encoding": "gzip",
+    "server": "ESF",
+    "x-xss-protection": "0",
+    "x-frame-options": "SAMEORIGIN",
+    "x-content-type-options": "nosniff",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 1591
+}

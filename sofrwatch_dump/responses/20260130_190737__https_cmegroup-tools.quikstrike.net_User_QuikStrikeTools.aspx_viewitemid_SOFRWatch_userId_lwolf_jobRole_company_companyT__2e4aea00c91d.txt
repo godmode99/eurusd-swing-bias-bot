@@ -1,0 +1,65 @@
+
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>
+
+</title>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.0.min.js" type="text/javascript"></script>
+    
+    <script src="../Scripts/json2.js" type="text/javascript"></script>
+</head>
+<body>
+    <form method="post" action="./QuikStrikeTools.aspx?viewitemid=SOFRWatch&amp;userId=lwolf&amp;userId=lwolf&amp;jobRole=&amp;jobRole=&amp;company=&amp;company=&amp;companyType=&amp;companyType=&amp;insid=207009776&amp;qsid=27edc0f3-67e8-4ec5-847c-d65804684a24" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTExMTc4OTg5MjNkZAbkMC0xv6WW9V+tjFlmzkNYFrMQeghlukHjfYeVy+fV" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=ZR2fX1ml1LInOLNs89K0w32PRXLtsWF9OuMTbuVDyHt-WX8OHN4Qjfdl3f7pJq-odMEKim_W4re_C9FNXneVHLdo1gSGCRZAcZX5OgIHctU1&amp;t=637823149705833095" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=ZEzZgfdhb59AGAJMDmv1X6poUZXb6ndNJHu1S4wVhTej4jCbA221EKMc3DEW06D18IkRa6WFBqLSbgdTymVsjO_DsFBPi_QIxzUvPodKoguBQLiwH9tKLZ6IJGz8ltoS0&amp;t=f2cd5c5" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=SB_5o26WhhuDXWfqSrb9JjHzmjPckcgRn7em81AYPBuUFuWga-UJiHes22p_PmQPR_IecXgKwPwnMahuLYfiS7BN7uej9uoPAokxFr06yhMQjJ8JwYf54sVbQUVzJUemUu5jGZbt-PpAqa4ko6351w2&amp;t=f2cd5c5" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=4rATJWVX2HRtstKb4kVQ8UcZMjJKuf4JUS7NgvhTpeqlRyRVmtoYUjXZgIgNTya3Jw6Hj4Bee-pDNZDcFKC918Xuw_sPCtFgclCufOQjBTMZ-jyv2yYh3pUt47oduVkAoATaIPYe2EKNUv4cZOTFix6qO_GOW_C_aqzmePYTJH41&amp;t=ffffffffe7cd5960" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=L21ufYmYzHJWMVkEzXH_DpIXGpK6rc4pVAYfXa9k2DWTinI97ViT9MR_ElSON74osfo1hANfvzTfrulvsHFmatoC452veny0YBdvO0L64I-EebHHnLP3Q5226q3ccIYV3HXyBUgJbVbnntgtXO-XDpNQ7KV48kjYbzWsQEfGcR81&amp;t=ffffffffe7cd5960" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="7BF928CC" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAOE3rCjriBZN21b/x6FZAmeX2W3Ja/AXkY0Jrzf6ThzmMM/oXFCF5K8lz7fVyW08YGyWOK/TktCze+MVxnv+QwNDkiG4CEEUVrfaKyB5ynzfg==" />
+</div>
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('smMain', 'form1', [], [], [], 90, '');
+//]]>
+</script>
+
+    <input id="global_applicationPath" type="hidden" value="/" />
+    <input id="global_instanceCache" type="hidden" value="insid=207009776&qsid=27edc0f3-67e8-4ec5-847c-d65804684a24" />
+    <input name="global_attributes" type="hidden" id="global_attributes" />
+    <input name="global_mobile" type="hidden" id="global_mobile" />
+    <div style="display:none">
+        Loading View...   
+    </div>
+    </form>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260130_190737",
+  "url": "https://www.google.com/ccm/collect?frm=0&en=page_view&dl=https%3A%2F%2Fwww.cmegroup.com%2Fmarkets%2Finterest-rates%2Fcme-sofrwatch.html&scrsrc=www.googletagmanager.com&rnd=1322023977.1769774857&dt=SOFRWatch%20-%20CME%20Group&auid=364241780.1769774857&navt=n&npa=0&ep.user_data_mode=a&gtm=45fe61r1v9190061296z8552832za20gzb552832zd552832xec&gcd=13l3l3l3l1l1&dma=0&tag_exp=103116026~103200004~104527906~104528500~104684208~104684211~115938466~115938468~116185181~116185182~116988315~117041588&apve=1&apvf=f&apvc=1&tids=DC-12589192&tid=DC-12589192&tft=1769774856876&tfd=4495",
+  "status": 200,
+  "content_type": "text/plain",
+  "headers": {
+    "pragma": "no-cache",
+    "cache-control": "no-cache, no-store, must-revalidate",
+    "date": "Fri, 30 Jan 2026 12:07:37 GMT",
+    "content-type": "text/plain",
+    "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+    "vary": "Origin, X-Origin, Referer",
+    "server": "scaffolding on HTTPServer2",
+    "content-length": "0",
+    "x-xss-protection": "0",
+    "x-frame-options": "SAMEORIGIN",
+    "x-content-type-options": "nosniff",
+    "access-control-allow-origin": "https://www.cmegroup.com",
+    "access-control-expose-headers": "date, vary, server, content-length",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-http3": "h3"
+  },
+  "size_bytes": 0
+}

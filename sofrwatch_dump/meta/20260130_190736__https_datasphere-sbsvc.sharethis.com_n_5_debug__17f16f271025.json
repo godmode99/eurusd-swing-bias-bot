@@ -1,0 +1,23 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://datasphere-sbsvc.sharethis.com/?n=5&debug",
+  "status": 200,
+  "content_type": "application/json",
+  "headers": {
+    "content-type": "application/json",
+    "content-length": "65",
+    "date": "Fri, 30 Jan 2026 11:21:14 GMT",
+    "x-amzn-trace-id": "Root=1-697c942a-43efce7636146dfd337a7d77;Parent=4e0df510187dc686;Sampled=0;Lineage=1:2d869282:0",
+    "x-amzn-requestid": "b9b7c0ef-0af8-47db-808e-d994719ea13f",
+    "access-control-allow-origin": "*",
+    "access-control-allow-headers": "*",
+    "access-control-allow-methods": "GET, OPTIONS",
+    "x-cache": "Hit from cloudfront",
+    "via": "1.1 b4418be88026da7922e88a76b042f634.cloudfront.net (CloudFront)",
+    "x-amz-cf-pop": "BKK51-P1",
+    "x-amz-cf-id": "b34def5uTGSnu3kOZPUbMi9lxHznY8G9RhJSclIwHFU6wfukr_frOA==",
+    "age": "2782",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 65
+}

@@ -1,0 +1,1 @@
+.highcharts-tooltip-header path{fill:rgba(247,247,247,0.85);stroke:#666}.highcharts-container,.highcharts-container svg{width:100% !important}

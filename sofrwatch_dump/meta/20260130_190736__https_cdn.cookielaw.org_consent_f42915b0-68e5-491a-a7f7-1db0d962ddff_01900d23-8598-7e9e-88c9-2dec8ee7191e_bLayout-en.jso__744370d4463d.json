@@ -1,0 +1,33 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://cdn.cookielaw.org/consent/f42915b0-68e5-491a-a7f7-1db0d962ddff/01900d23-8598-7e9e-88c9-2dec8ee7191e/bLayout-en.json",
+  "status": 200,
+  "content_type": "application/json",
+  "headers": {
+    "date": "Fri, 30 Jan 2026 12:07:36 GMT",
+    "content-type": "application/json",
+    "server": "cloudflare",
+    "cf-ray": "9c60d9967af540fd-SIN",
+    "cf-cache-status": "HIT",
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "age": "29268",
+    "cache-control": "public, max-age=86400",
+    "content-encoding": "gzip",
+    "etag": "0x8DE2C17A6D95B26",
+    "expires": "Sat, 31 Jan 2026 12:07:36 GMT",
+    "last-modified": "Tue, 25 Nov 2025 11:42:02 GMT",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "vary": "Accept-Encoding",
+    "access-control-expose-headers": "x-ms-request-id, Server, x-ms-version, Content-Type, Content-Encoding, Cache-Control, ETag, Last-Modified, x-ms-lease-status, x-ms-blob-type, Content-Length, Date, Transfer-Encoding, X-OneTrust-IsBot",
+    "cross-origin-resource-policy": "cross-origin",
+    "x-content-type-options": "nosniff",
+    "x-onetrust-isbot": "false",
+    "x-ms-blob-type": "BlockBlob",
+    "x-ms-lease-status": "unlocked",
+    "x-ms-request-id": "f24993e6-301e-00a5-3102-5ea893000000",
+    "x-ms-version": "2009-09-19",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 16319
+}

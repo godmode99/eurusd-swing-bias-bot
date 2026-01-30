@@ -1,0 +1,20 @@
+{
+  "timestamp": "20260130_190740",
+  "url": "https://cmegroup-tools.quikstrike.net/Styles/default.less?77",
+  "status": 200,
+  "content_type": "text/css; charset=utf-8",
+  "headers": {
+    "cache-control": "public",
+    "content-type": "text/css; charset=utf-8",
+    "content-encoding": "gzip",
+    "expires": "Fri, 06 Feb 2026 10:09:27 GMT",
+    "vary": "*",
+    "server": "Microsoft-IIS/10.0",
+    "x-aspnet-version": "4.0.30319",
+    "x-powered-by": "ASP.NET",
+    "p3p": "CP=\"policy string goes here\"",
+    "date": "Fri, 30 Jan 2026 12:07:39 GMT",
+    "content-length": "11986"
+  },
+  "size_bytes": 60199
+}

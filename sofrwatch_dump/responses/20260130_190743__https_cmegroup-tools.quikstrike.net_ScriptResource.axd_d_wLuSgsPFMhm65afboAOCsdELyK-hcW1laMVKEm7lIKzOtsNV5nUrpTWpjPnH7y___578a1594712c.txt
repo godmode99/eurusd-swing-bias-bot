@@ -1,0 +1,53 @@
+﻿Type.registerNamespace('UserControlsV2.SOFRPredictor.Fixings.Chart');
+
+UserControlsV2.SOFRPredictor.Fixings.Chart = function (element) {
+    UserControlsV2.SOFRPredictor.Fixings.Chart.initializeBase(this, [element]);
+
+}
+
+UserControlsV2.SOFRPredictor.Fixings.Chart.prototype =
+{
+    initialize: function () {
+        UserControlsV2.SOFRPredictor.Fixings.Chart.callBaseMethod(this, 'initialize');
+
+        var settings = this.Settings;
+
+        var options = {
+            xAxis: {
+                type: 'datetime',
+                labels: {
+                    enabled: true
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Rate'
+                }
+            },
+            legend: {
+                align: 'center',
+                verticalAlign: 'top',
+                enabled: true
+            }
+        };
+
+        this.initBase(options);
+
+
+        this.fnCreateChart = function () {
+            var chart = Highcharts.chart(settings.ContainerId, options);
+        };
+
+        this.createChart();
+
+    },
+
+    dispose: function () {
+        UserControlsV2.SOFRPredictor.Fixings.Chart.callBaseMethod(this, 'dispose');
+    }
+}
+
+UserControlsV2.SOFRPredictor.Fixings.Chart.registerClass('UserControlsV2.SOFRPredictor.Fixings.Chart', QuikStrike.Highcharts.ChartControl);
+
+
+

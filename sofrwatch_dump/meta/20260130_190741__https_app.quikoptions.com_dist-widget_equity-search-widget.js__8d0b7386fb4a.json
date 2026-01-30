@@ -1,0 +1,21 @@
+{
+  "timestamp": "20260130_190741",
+  "url": "https://app.quikoptions.com/dist-widget/equity-search-widget.js",
+  "status": 200,
+  "content_type": "text/javascript",
+  "headers": {
+    "content-length": "127375",
+    "content-type": "text/javascript",
+    "date": "Fri, 30 Jan 2026 12:07:42 GMT",
+    "server": "Kestrel",
+    "accept-ranges": "bytes",
+    "cache-control": "no-cache",
+    "content-encoding": "br",
+    "etag": "\"VoPZWPB3QSCv0nNvDTHTgSpjqUYg2HZhXMZubaySCSk=\", W/\"qXWJSYwXilpHdlkMS2/FnK/FZElwmS/VxFF0SWOymJI=\"",
+    "last-modified": "Thu, 18 Dec 2025 23:22:59 GMT",
+    "vary": "Content-Encoding",
+    "strict-transport-security": "max-age=2592000",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 481477
+}

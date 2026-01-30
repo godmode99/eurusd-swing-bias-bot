@@ -1,0 +1,24 @@
+{
+  "timestamp": "20260130_190737",
+  "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-K5RBZ8QKRC&gtm=45je61r1v889964581z8552832za20gzb552832zd552832&_p=1769774854145&gcd=13l3l3l3l1l1&npa=0&dma=0&cid=327581291.1769774857&ul=en-us&sr=1280x720&frm=0&pscdl=noapi&_s=1&tag_exp=103116026~103200004~104527906~104528501~104684208~104684211~115616986~115938466~115938469~116185181~116185182~116988315~117041587&sid=1769774857&sct=1&seg=0&dl=https%3A%2F%2Fwww.cmegroup.com%2Fmarkets%2Finterest-rates%2Fcme-sofrwatch.html&dt=SOFRWatch%20-%20CME%20Group&en=page_view&_fv=1&_nsi=1&_ss=1&ep.clean_page_path=%2Fmarkets%2Finterest-rates%2Fcme-sofrwatch.html&tfd=4906",
+  "status": 204,
+  "content_type": "text/plain",
+  "headers": {
+    "access-control-allow-origin": "https://www.cmegroup.com",
+    "date": "Fri, 30 Jan 2026 12:07:38 GMT",
+    "pragma": "no-cache",
+    "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+    "cache-control": "no-cache, no-store, must-revalidate",
+    "access-control-allow-credentials": "true",
+    "content-type": "text/plain",
+    "cross-origin-resource-policy": "cross-origin",
+    "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsggc:113:0",
+    "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsggc:113:0",
+    "report-to": "{\"group\":\"ascnsrsggc:113:0\", \"max_age\":2592000, \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsggc:113:0\"}], }",
+    "server": "Golfe2",
+    "content-length": "0",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 0
+}

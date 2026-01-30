@@ -1,0 +1,30 @@
+{
+  "timestamp": "20260130_190736",
+  "url": "https://cdn.cookielaw.org/scripttemplates/202505.1.0/assets/otCommonStyles.css",
+  "status": 200,
+  "content_type": "text/css",
+  "headers": {
+    "date": "Fri, 30 Jan 2026 12:07:36 GMT",
+    "content-type": "text/css",
+    "content-encoding": "gzip",
+    "content-md5": "dIH5shy27L66mhu4/gDB5Q==",
+    "last-modified": "Tue, 17 Jun 2025 03:21:58 GMT",
+    "x-ms-request-id": "93064e59-401e-004f-3426-f35792000000",
+    "x-ms-version": "2009-09-19",
+    "x-ms-lease-status": "unlocked",
+    "x-ms-blob-type": "BlockBlob",
+    "access-control-expose-headers": "x-ms-request-id, Server, x-ms-version, Content-Type, Last-Modified, ETag, Content-MD5, x-ms-lease-status, x-ms-blob-type, Content-Length, Date, Transfer-Encoding",
+    "access-control-allow-origin": "*",
+    "cache-control": "max-age=86400",
+    "cf-cache-status": "HIT",
+    "age": "29099",
+    "vary": "Accept-Encoding",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "x-content-type-options": "nosniff",
+    "cross-origin-resource-policy": "cross-origin",
+    "server": "cloudflare",
+    "cf-ray": "9c60d9968af840fd-SIN",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 25850
+}

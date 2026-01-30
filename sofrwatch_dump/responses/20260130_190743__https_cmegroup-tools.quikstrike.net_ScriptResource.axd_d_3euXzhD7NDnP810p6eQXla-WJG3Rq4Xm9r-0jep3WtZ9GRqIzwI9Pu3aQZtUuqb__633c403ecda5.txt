@@ -1,0 +1,60 @@
+﻿Type.registerNamespace('UserControlsV2.SOFRPredictor.Term.Chart');
+
+UserControlsV2.SOFRPredictor.Term.Chart = function (element) {
+    UserControlsV2.SOFRPredictor.Term.Chart.initializeBase(this, [element]);
+
+}
+
+UserControlsV2.SOFRPredictor.Term.Chart.prototype =
+{
+    initialize: function () {
+        UserControlsV2.SOFRPredictor.Term.Chart.callBaseMethod(this, 'initialize');
+
+        var settings = this.Settings;
+
+        var options = {
+            xAxis: {
+                
+                type: 'category'
+            },
+            yAxis: [
+                {
+                crosshair: false,
+                height: '80%',
+                title: { text: 'Price' }
+                },
+                {
+                labels: { enabled: false },
+                crosshair: false,
+                top: '80%',
+                height: '20%',
+                offset: 0,
+                title: { enabled: false }
+            }],
+            legend: {
+                align: 'center',
+                verticalAlign: 'top',
+                enabled: true
+            }
+        };
+
+        this.initBase(options);
+
+
+        this.fnCreateChart = function () {
+            var chart = Highcharts.chart(settings.ContainerId, options);
+        };
+
+        this.createChart();
+
+    },
+
+    dispose: function () {
+        UserControlsV2.SOFRPredictor.Term.Chart.callBaseMethod(this, 'dispose');
+    }
+}
+
+UserControlsV2.SOFRPredictor.Term.Chart.registerClass('UserControlsV2.SOFRPredictor.Term.Chart', QuikStrike.Highcharts.ChartControl);
+
+
+

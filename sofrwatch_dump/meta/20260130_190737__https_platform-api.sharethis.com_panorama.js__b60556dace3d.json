@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260130_190737",
+  "url": "https://platform-api.sharethis.com/panorama.js",
+  "status": 200,
+  "content_type": "application/javascript; charset=utf-8",
+  "headers": {
+    "server": "CloudFront",
+    "content-type": "application/javascript; charset=UTF-8",
+    "content-encoding": "gzip",
+    "x-frame-options": "SAMEORIGIN",
+    "accept-ranges": "bytes",
+    "last-modified": "Mon, 26 Jan 2026 19:48:35 GMT",
+    "date": "Fri, 30 Jan 2026 11:17:41 GMT",
+    "cache-control": "public, max-age=3600",
+    "etag": "W/\"ab60-19bfbd9d238\"",
+    "vary": "accept-encoding",
+    "x-cache": "Hit from cloudfront",
+    "via": "1.1 cacc7c90af18aaf8799b5c80772a88e6.cloudfront.net (CloudFront)",
+    "x-amz-cf-pop": "BKK50-P3",
+    "x-amz-cf-id": "9O3OGG-M06hTiyqLp-jM9xtxa8_Af5IS0Og7Miq-KaTSStYL9Zqu0g==",
+    "age": "2996",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "x-firefox-spdy": "h2"
+  },
+  "size_bytes": 43872
+}

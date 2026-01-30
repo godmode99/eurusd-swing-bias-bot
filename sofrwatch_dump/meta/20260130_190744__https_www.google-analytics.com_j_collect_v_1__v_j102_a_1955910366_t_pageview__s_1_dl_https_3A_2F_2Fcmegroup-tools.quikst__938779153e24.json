@@ -1,0 +1,26 @@
+{
+  "timestamp": "20260130_190744",
+  "url": "https://www.google-analytics.com/j/collect?v=1&_v=j102&a=1955910366&t=pageview&_s=1&dl=https%3A%2F%2Fcmegroup-tools.quikstrike.net%2FUser%2FQuikStrikeView.aspx%3Fviewitemid%3DSOFRWatch%26userId%3Dlwolf%26jobRole%3D%26company%3D%26companyType%3D%26userId%3Dlwolf%26jobRole%3D%26company%3D%26companyType%3D%26insid%3D207009776%26qsid%3D27edc0f3-67e8-4ec5-847c-d65804684a24&ul=en-us&dt=null&sr=1280x720&vp=1104x1250&_utma=160235837.367457340.1769774864.1769774864.1769774864.1&_utmz=160235837.1769774864.1.1.utmcsr%3D(direct)%7Cutmccn%3D(direct)%7Cutmcmd%3D(none)&_utmht=1769774864751&_u=YQBCAEABAAAAACACI~&jid=706103326&gjid=115200421&cid=367457340.1769774864&tid=UA-153066563-1&_gid=2057022573.1769774865&_r=1&_slc=1&gtm=45He61r1n81M3HGHS6v812567636za200zd812567636&cd1=SOFRWatch&cd2=lwolf&cd3=&cd4=&cd5=&gcd=13l3l3l3l1l1&dma=0&tag_exp=102015666~103116026~103200004~104527906~104528501~104684208~104684211~115616985~115938466~115938468~116185181~116185182~116988315~117041588&z=1058015159",
+  "status": 200,
+  "content_type": "text/plain",
+  "headers": {
+    "access-control-allow-origin": "https://cmegroup-tools.quikstrike.net",
+    "date": "Fri, 30 Jan 2026 12:07:45 GMT",
+    "pragma": "no-cache",
+    "expires": "Fri, 01 Jan 1990 00:00:00 GMT",
+    "cache-control": "no-cache, no-store, must-revalidate",
+    "last-modified": "Sun, 17 May 1998 03:00:00 GMT",
+    "access-control-allow-credentials": "true",
+    "x-content-type-options": "nosniff",
+    "content-type": "text/plain",
+    "cross-origin-resource-policy": "cross-origin",
+    "content-security-policy-report-only": "script-src 'none'; form-action 'none'; frame-src 'none'; report-uri https://csp.withgoogle.com/csp/scaffolding/ascnsrsgac:210:0",
+    "cross-origin-opener-policy-report-only": "same-origin; report-to=ascnsrsgac:210:0",
+    "report-to": "{\"group\":\"ascnsrsgac:210:0\", \"max_age\":2592000, \"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/scaffolding/ascnsrsgac:210:0\"}], }",
+    "server": "Golfe2",
+    "content-length": "3",
+    "alt-svc": "h3=\":443\"; ma=2592000, h3-29=\":443\"; ma=2592000",
+    "x-firefox-http3": "h3"
+  },
+  "size_bytes": 3
+}
