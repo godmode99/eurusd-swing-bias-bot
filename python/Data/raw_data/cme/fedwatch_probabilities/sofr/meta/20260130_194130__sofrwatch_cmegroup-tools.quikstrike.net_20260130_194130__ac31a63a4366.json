@@ -1,6 +1,6 @@
 {
-  "timestamp": "20260130_193330",
-  "url": "https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=SOFRWatch&userId=lwolf&jobRole=&company=&companyType=&userId=lwolf&jobRole=&company=&companyType=&insid=207013656&qsid=d9a29745-5d0d-4cdf-b040-0fc3956762c3",
+  "timestamp": "20260130_194130",
+  "url": "https://cmegroup-tools.quikstrike.net/User/QuikStrikeView.aspx?viewitemid=SOFRWatch&userId=lwolf&jobRole=&company=&companyType=&userId=lwolf&jobRole=&company=&companyType=&insid=207014944&qsid=a0587a60-4c73-4000-b42e-838d72365467",
   "status": 200,
   "content_type": "text/html; charset=utf-8",
   "headers": {
@@ -14,8 +14,8 @@
     "x-aspnet-version": "4.0.30319",
     "x-powered-by": "ASP.NET",
     "p3p": "CP=\"policy string goes here\"",
-    "date": "Fri, 30 Jan 2026 12:33:30 GMT",
-    "content-length": "29381"
+    "date": "Fri, 30 Jan 2026 12:41:30 GMT",
+    "content-length": "29426"
   },
-  "size_bytes": 221949
+  "size_bytes": 221943
 }
