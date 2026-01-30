@@ -15,12 +15,14 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import re
 import time
 from urllib.parse import urlparse
 from dataclasses import dataclass
+from html import unescape
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -79,6 +81,7 @@ def ensure_outdir(outdir: Path) -> None:
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / "responses").mkdir(parents=True, exist_ok=True)
     (outdir / "meta").mkdir(parents=True, exist_ok=True)
+    (outdir / "json").mkdir(parents=True, exist_ok=True)
 
 
 def safe_filename_from_url(url: str, max_len: int = 120) -> str:
@@ -102,6 +105,58 @@ def build_output_stem(url: str, ts: str, max_len: int = 120) -> str:
         if len(prefix) + len(slug) > max_len:
             slug = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
     return f"{prefix}{slug}"
+
+
+def strip_tags(raw: str) -> str:
+    cleaned = re.sub(r"<[^>]+>", "", raw)
+    cleaned = unescape(cleaned)
+    return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def parse_number(raw: str) -> Optional[float]:
+    cleaned = strip_tags(raw).replace(",", "")
+    if not cleaned:
+        return None
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
+
+
+def parse_sofr_tables(html_text: str) -> dict[str, list[dict[str, Optional[float]]]]:
+    tables: dict[str, list[dict[str, Optional[float]]]] = {}
+    table_blocks = re.findall(r"<table[^>]*class=\"grid-thm[^>]*>.*?</table>", html_text, re.DOTALL | re.IGNORECASE)
+    for table_html in table_blocks:
+        header_match = re.search(r"<th[^>]*colspan=[\"']?5[\"']?>(.*?)</th>", table_html, re.DOTALL | re.IGNORECASE)
+        if not header_match:
+            continue
+        table_name = strip_tags(header_match.group(1))
+        if not table_name:
+            continue
+
+        rows: list[dict[str, Optional[float]]] = []
+        for row_html in re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, re.DOTALL | re.IGNORECASE):
+            if re.search(r"<th", row_html, re.IGNORECASE):
+                continue
+            cells = re.findall(r"<td[^>]*>(.*?)</td>", row_html, re.DOTALL | re.IGNORECASE)
+            if len(cells) < 5:
+                continue
+            symbol = strip_tags(cells[0])
+            contract_month = strip_tags(cells[1])
+            if not symbol or not contract_month:
+                continue
+            rows.append(
+                {
+                    "symbol": symbol,
+                    "contract_month": contract_month,
+                    "prediction": parse_number(cells[2]),
+                    "current": parse_number(cells[3]),
+                    "diff": parse_number(cells[4]),
+                }
+            )
+        if rows:
+            tables[table_name] = rows
+    return tables
 
 
 def is_fatal_nav_error(e: Exception) -> bool:
@@ -177,6 +232,17 @@ def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_byt
         out_path = resp_dir / f"{ts}__{base}.txt"
         out_path.write_text(html_text or body_bytes.decode("utf-8", errors="replace"), encoding="utf-8")
         print(f"[SAVE][txt] {status} {url} -> {out_path.name}")
+        if html_text:
+            tables = parse_sofr_tables(html_text)
+            if tables:
+                json_out = cfg.outdir / "json" / f"{ts}__{base}.json"
+                payload = {
+                    "source_file": out_path.name,
+                    "parsed_at_utc": datetime.now(timezone.utc).isoformat(),
+                    "tables": tables,
+                }
+                json_out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+                print(f"[SAVE][parsed-json] {status} {url} -> {json_out.name}")
     else:
         out_path = resp_dir / f"{ts}__{base}.bin"
         out_path.write_bytes(body_bytes)
