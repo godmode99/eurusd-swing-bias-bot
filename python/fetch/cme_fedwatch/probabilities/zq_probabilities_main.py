@@ -572,9 +572,9 @@ def format_telegram_message(
     error: str | None = None,
 ) -> str:
     if status == "OK":
-        head = "✅ <b>CME FedWatch Probabilities</b>"
+        head = "✅ <b>ZQ FedWatch Probabilities</b>"
     else:
-        head = "❌ <b>CME FedWatch Probabilities</b>"
+        head = "❌ <b>ZQ FedWatch Probabilities</b>"
 
     captures = (stats or {}).get("captures", 0)
     json_files = (stats or {}).get("json_files", 0)
