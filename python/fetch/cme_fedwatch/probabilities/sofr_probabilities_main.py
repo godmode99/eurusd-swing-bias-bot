@@ -83,16 +83,25 @@ def ensure_outdir(outdir: Path) -> None:
 
 def safe_filename_from_url(url: str, max_len: int = 120) -> str:
     clean = re.sub(r"[^a-zA-Z0-9._-]+", "_", url)
+    if max_len < 1:
+        max_len = 1
     if len(clean) > max_len:
         clean = clean[:max_len]
     h = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
     return f"{clean}__{h}"
 
 
-def build_output_stem(url: str, ts: str) -> str:
+def build_output_stem(url: str, ts: str, max_len: int = 120) -> str:
     parsed = urlparse(url)
     host = parsed.hostname or "unknown_host"
-    return f"sofrwatch_{host}_{ts}__{safe_filename_from_url(url)}"
+    prefix = f"sofrwatch_{host}_{ts}__"
+    slug = safe_filename_from_url(url, max_len=max_len)
+    if len(prefix) + len(slug) > max_len:
+        max_slug_len = max_len - len(prefix)
+        slug = safe_filename_from_url(url, max_len=max_slug_len)
+        if len(prefix) + len(slug) > max_len:
+            slug = hashlib.sha256(url.encode("utf-8")).hexdigest()[:12]
+    return f"{prefix}{slug}"
 
 
 def is_fatal_nav_error(e: Exception) -> bool:
@@ -109,6 +118,9 @@ def route_filter(route) -> None:
 
 def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_bytes: bytes) -> None:
     ctype = (headers.get("content-type") or headers.get("Content-Type") or "").lower()
+
+    if 300 <= status < 400:
+        return
 
     # strict filter = เซฟเฉพาะ URL ที่ดูเข้าข่ายข้อมูลสำคัญ
     if cfg.strict_filter and not INTERESTING_URL_RE.search(url):
@@ -234,6 +246,8 @@ def build_context(browser, cfg: RunConfig):
 def attach_sniffer(page, cfg: RunConfig):
     def on_response(resp):
         try:
+            if 300 <= resp.status < 400:
+                return
             url = resp.url
             status = resp.status
             headers = resp.headers
