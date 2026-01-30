@@ -29,6 +29,11 @@ if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in os.sys.path:
 from telegram_notifier import send_telegram_message
 
 DEFAULT_TZ = "Asia/Bangkok"
+SOURCE_TZ_MAP = {
+    "CT": "America/Chicago",
+    "CST": "America/Chicago",
+    "CDT": "America/Chicago",
+}
 
 
 def time_stamp(tzinfo: tzinfo) -> str:
@@ -195,6 +200,26 @@ def parse_column_header(text: str) -> dict:
     return entry
 
 
+def convert_as_of_to_thai(as_of_text: str, timezone_text: str) -> Optional[tuple[str, str]]:
+    if not as_of_text or not timezone_text:
+        return None
+    source_zone = SOURCE_TZ_MAP.get(timezone_text.strip().upper())
+    if not source_zone or not ZoneInfo:
+        return None
+    match = re.match(r"^(.*)\s([A-Za-z]{2,4})$", as_of_text.strip())
+    if not match:
+        return None
+    date_part = match.group(1).strip()
+    try:
+        parsed = datetime.strptime(date_part, "%d %b %Y %H:%M:%S")
+    except ValueError:
+        return None
+    localized = parsed.replace(tzinfo=ZoneInfo(source_zone))
+    target_tz = ZoneInfo(DEFAULT_TZ)
+    converted = localized.astimezone(target_tz)
+    return converted.strftime("%d %b %Y %H:%M:%S"), DEFAULT_TZ
+
+
 def parse_quikstrike_html(body: str) -> Optional[dict]:
     if DOC3_MARKER not in body:
         return None
@@ -257,6 +282,7 @@ def parse_quikstrike_html(body: str) -> Optional[dict]:
     as_of_match = re.search(r"Data as of\s*([^<]+)", target_table, re.S)
     as_of_text = strip_tags(as_of_match.group(1)) if as_of_match else ""
     timezone_text = as_of_text.split()[-1] if as_of_text else ""
+    as_of_thai = convert_as_of_to_thai(as_of_text, timezone_text)
 
     if not meeting_row or not prob_row:
         return None
@@ -266,7 +292,11 @@ def parse_quikstrike_html(body: str) -> Optional[dict]:
 
     return {
         "source": "cme_quikstrike_view_html",
-        "as_of": {"text": as_of_text, "timezone": timezone_text},
+        "as_of": {
+            "text": as_of_thai[0] if as_of_thai else as_of_text,
+            "timezone": as_of_thai[1] if as_of_thai else timezone_text,
+        },
+        "as_of_source": {"text": as_of_text, "timezone": timezone_text},
         "meeting": {
             "date": meeting_date,
             "current_target_rate_bps_range": current_target_rate,
