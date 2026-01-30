@@ -206,28 +206,31 @@ def format_telegram_message(
     engine = summary.engine_used or cfg.browser
     lines = [
         f"{status_icon} <b>SOFRZQ Fed Watch Probabilities</b>",
-        f"<b>engine</b>: {html_escape(str(engine))}",
-        f"<b>time_utc</b>: {datetime.now(timezone.utc).isoformat()}",
+        (
+            f"<b>engine</b>: {html_escape(str(engine))} | "
+            f"<b>time_utc</b>: {datetime.now(timezone.utc).isoformat()}"
+        ),
         f"<b>outdir</b>: {html_escape(str(cfg.outdir))}",
     ]
 
     if summary.steps:
-        lines.append("<b>steps</b>:")
+        step_bits = []
         for step in summary.steps:
             icon = "✅" if step.ok else "❌"
-            detail = f" - {html_escape(step.detail)}" if step.detail else ""
-            lines.append(f"• {icon} {html_escape(step.name)}{detail}")
+            detail = f" ({html_escape(step.detail)})" if step.detail else ""
+            step_bits.append(f"{icon} {html_escape(step.name)}{detail}")
+        lines.append(f"<b>steps</b>: {' | '.join(step_bits)}")
 
-    lines.append("<b>json_summary</b>:")
     lines.append(
-        f"• parsed_tables={len(summary.parsed_tables)}, "
-        f"parsed_json_saved={summary.parsed_json_saved}, "
-        f"json_saved={summary.json_saved}, raw_saved={summary.raw_saved}"
+        "<b>json_summary</b>: "
+        f"parsed_tables={len(summary.parsed_tables)} | "
+        f"parsed_json_saved={summary.parsed_json_saved} | "
+        f"json_saved={summary.json_saved} | raw_saved={summary.raw_saved}"
     )
     if summary.parsed_tables:
-        lines.append("• fields: symbol, contract_month, prediction, current, diff")
+        lines.append("<b>fields</b>: symbol, contract_month, prediction, current, diff")
         for table_name, info in summary.parsed_tables.items():
-            line = f"• {html_escape(table_name)}: rows={info.rows}"
+            line = f"• <b>{html_escape(table_name)}</b>: rows={info.rows}"
             if info.sample:
                 sample = info.sample
                 sample_bits = []
