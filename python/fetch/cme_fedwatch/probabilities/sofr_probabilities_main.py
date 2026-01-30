@@ -111,10 +111,12 @@ def dump_response(cfg: RunConfig, url: str, status: int, headers: dict, body_byt
         return
 
     html_text: Optional[str] = None
-    if "text/html" in ctype:
-        html_text = body_bytes.decode("utf-8", errors="replace")
-        if not all(keyword in html_text for keyword in REQUIRED_HTML_KEYWORDS):
-            return
+    if "text/html" not in ctype:
+        return
+
+    html_text = body_bytes.decode("utf-8", errors="replace")
+    if not all(keyword in html_text for keyword in REQUIRED_HTML_KEYWORDS):
+        return
 
     base = safe_filename_from_url(url)
     ts = time.strftime("%Y%m%d_%H%M%S")
