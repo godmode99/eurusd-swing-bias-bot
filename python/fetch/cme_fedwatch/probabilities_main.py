@@ -20,6 +20,9 @@ def safe_name(s: str, max_len: int = 120) -> str:
     return s[:max_len].strip("_") or "resp"
 
 
+DOC3_MARKER = '<div id="doc3" class="do-mobile min-width-template">'
+
+
 def ensure_dir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
 
@@ -51,14 +54,18 @@ async def dump_response(resp: Response, out_dir: Path) -> Optional[Path]:
         suffix = ".json" if "json" in ctype.lower() else ".txt"
         path = out_dir / f"{base}_{utc_stamp()}{suffix}"
 
+        body = await resp.text()
+        if DOC3_MARKER not in body:
+            return None
+
         # Try JSON first if content-type suggests it, otherwise try text.
         if "json" in ctype.lower():
-            data = await resp.json()
+            data = json.loads(body)
+            path = path.with_suffix(".json")
             path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
             return path
 
         # Some endpoints lie about content-type; try parse json anyway
-        body = await resp.text()
         body_strip = body.strip()
         if (body_strip.startswith("{") and body_strip.endswith("}")) or (body_strip.startswith("[") and body_strip.endswith("]")):
             try:
