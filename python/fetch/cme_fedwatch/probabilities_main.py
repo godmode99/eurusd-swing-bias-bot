@@ -8,6 +8,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Sequence
+from urllib.parse import urlparse
 
 from playwright.async_api import async_playwright, Browser, Page, Response, Error as PWError
 
@@ -19,6 +20,15 @@ def utc_stamp() -> str:
 def safe_name(s: str, max_len: int = 120) -> str:
     s = re.sub(r"[^a-zA-Z0-9._-]+", "_", s)
     return s[:max_len].strip("_") or "resp"
+
+
+def build_capture_name(url: str, status: int, rtype: str, ctype: str) -> str:
+    parsed = urlparse(url)
+    endpoint = Path(parsed.path).name or parsed.netloc or "response"
+    suffix = ".json" if "json" in ctype.lower() else ".txt"
+    timestamp = utc_stamp()
+    base = safe_name(f"fedwatch_{rtype}_{endpoint}_{status}_{timestamp}")
+    return f"{base}{suffix}"
 
 
 DOC3_MARKER = '<div id="doc3" class="do-mobile min-width-template">'
@@ -214,9 +224,8 @@ async def dump_response(resp: Response, out_dir: Path) -> Optional[Path]:
             return None
 
         # Create a stable-ish filename
-        base = safe_name(f"{status}_{rtype}_{url.split('?')[0].split('/')[-1]}")
-        suffix = ".json" if "json" in ctype.lower() else ".txt"
-        path = out_dir / f"{base}_{utc_stamp()}{suffix}"
+        filename = build_capture_name(url=url, status=status, rtype=rtype, ctype=ctype)
+        path = out_dir / filename
 
         body = await resp.text()
         if DOC3_MARKER not in body:
