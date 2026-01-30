@@ -23,7 +23,7 @@ from telegram_notifier import send_telegram_message
 
 DEFAULT_AUTH_URL = "https://login.cmegroup.com/sso/accountstatus/showAuth.action"
 DEFAULT_WATCHLIST_URL = "https://www.cmegroup.com/watchlists/details.1769586889025783750.C.html"
-DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme"
+DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parents[2] / "Data" / "raw_data" / "cme" / "fedwatch_quotes"
 DEFAULT_MAX_EXPIRY_YEAR = 2026
 DEFAULT_WATCHLIST_FILTERS = {
     "daily": {"zq": 6, "sr1": 3, "sr3": 3, "zt": 1, "6e": 1},
