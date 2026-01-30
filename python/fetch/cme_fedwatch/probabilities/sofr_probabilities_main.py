@@ -205,7 +205,7 @@ def format_telegram_message(
     status_icon = "✅" if ok else "❌"
     engine = summary.engine_used or cfg.browser
     lines = [
-        f"{status_icon} <b>SOFRWatch Sniffer</b>",
+        f"{status_icon} <b>SOFRZQ Fed Watch Probabilities</b>",
         f"<b>engine</b>: {html_escape(str(engine))}",
         f"<b>time_utc</b>: {datetime.now(timezone.utc).isoformat()}",
         f"<b>outdir</b>: {html_escape(str(cfg.outdir))}",
