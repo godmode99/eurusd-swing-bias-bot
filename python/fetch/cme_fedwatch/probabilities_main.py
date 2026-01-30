@@ -320,7 +320,7 @@ def parse_quikstrike_html(body: str) -> Optional[dict]:
     }
 
 
-async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Optional[Path]:
+async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Optional[tuple[Path, bool]]:
     """
     Save XHR/fetch responses to disk.
     - If JSON: save pretty JSON
@@ -355,7 +355,7 @@ async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Option
             data = json.loads(body)
             path = path.with_suffix(".json")
             path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-            return path
+            return path, True
 
         # Some endpoints lie about content-type; try parse json anyway
         body_strip = body.strip()
@@ -364,7 +364,7 @@ async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Option
                 data = json.loads(body_strip)
                 path = path.with_suffix(".json")
                 path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-                return path
+                return path, True
             except Exception:
                 pass
 
@@ -373,7 +373,8 @@ async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Option
         if parsed:
             json_path = path.with_suffix(".json")
             json_path.write_text(json.dumps(parsed, ensure_ascii=False, indent=2), encoding="utf-8")
-        return path
+            return path, True
+        return path, False
 
     except Exception:
         return None
@@ -383,10 +384,11 @@ async def attach_sniffer(page: Page, out_dir: Path, tzinfo: tzinfo, stats: dict)
     async def on_response(resp: Response) -> None:
         saved = await dump_response(resp, out_dir, tzinfo)
         if saved:
+            saved_path, has_json = saved
             stats["captures"] += 1
-            if saved.suffix == ".json":
+            if has_json:
                 stats["json_files"] += 1
-            print(f"[CAPTURE] {resp.status} {resp.request.resource_type:8s} -> {saved.name}")
+            print(f"[CAPTURE] {resp.status} {resp.request.resource_type:8s} -> {saved_path.name}")
 
     page.on("response", on_response)
 
