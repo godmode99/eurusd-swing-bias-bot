@@ -3,18 +3,107 @@ import argparse
 import asyncio
 import html
 import json
+import logging
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta, tzinfo
 from pathlib import Path
 from typing import Optional, Sequence
 from urllib.parse import urlparse
 
 from playwright.async_api import async_playwright, Browser, Page, Response, Error as PWError
 
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:  # pragma: no cover - Python < 3.9
+    ZoneInfo = None
 
-def utc_stamp() -> str:
-    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+BASE_DIR = Path(__file__).resolve().parent
+PYTHON_DIR = BASE_DIR.parents[1].resolve()
+REPO_ROOT = PYTHON_DIR.parent
+TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
+
+if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in os.sys.path:
+    os.sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
+
+from telegram_notifier import send_telegram_message
+
+DEFAULT_TZ = "Asia/Bangkok"
+
+
+def time_stamp(tzinfo: tzinfo) -> str:
+    return datetime.now(tzinfo).strftime("%Y%m%d_%H%M%S")
+
+
+def now_local_iso(tzinfo: tzinfo) -> str:
+    return datetime.now(tzinfo).replace(microsecond=0).isoformat()
+
+
+def load_env_file(start_dir: Path) -> None:
+    for parent in (start_dir, *start_dir.parents):
+        env_path = parent / ".env"
+        if env_path.exists():
+            for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                value = value.strip().strip('"').strip("'")
+                if key:
+                    os.environ[key] = value
+            break
+
+
+def inject_telegram_env(cfg: dict) -> dict:
+    cfg = dict(cfg or {})
+    telegram = cfg.get("telegram", {}) or {}
+
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    if tg_token:
+        telegram["bot_token"] = tg_token
+
+    tg_chat = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if tg_chat:
+        telegram["chat_id"] = tg_chat
+
+    cfg["telegram"] = telegram
+    return cfg
+
+
+def load_config(config_path: Path) -> dict:
+    load_env_file(REPO_ROOT)
+    cfg = {"timezone": DEFAULT_TZ, "telegram": {"enabled": True}}
+    if config_path.exists():
+        with open(config_path, "r", encoding="utf-8") as f:
+            loaded = json.load(f)
+        cfg.update(loaded or {})
+        if "telegram" in loaded:
+            cfg["telegram"] = loaded.get("telegram") or cfg.get("telegram", {})
+    return inject_telegram_env(cfg)
+
+
+def resolve_timezone(cfg: dict, logger: logging.Logger | None = None) -> tuple[tzinfo, str]:
+    tz_name = (cfg.get("timezone") or DEFAULT_TZ).strip()
+    if ZoneInfo:
+        try:
+            return ZoneInfo(tz_name), tz_name
+        except Exception as exc:
+            if logger:
+                logger.warning("Invalid timezone %s; fallback to Asia/Bangkok: %s", tz_name, exc)
+    return timezone(timedelta(hours=7)), DEFAULT_TZ
+
+
+def setup_logger() -> logging.Logger:
+    logger = logging.getLogger("cme_fedwatch_probabilities")
+    if logger.handlers:
+        return logger
+    logger.setLevel(logging.INFO)
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    return logger
 
 
 def safe_name(s: str, max_len: int = 120) -> str:
@@ -22,11 +111,11 @@ def safe_name(s: str, max_len: int = 120) -> str:
     return s[:max_len].strip("_") or "resp"
 
 
-def build_capture_name(url: str, status: int, rtype: str, ctype: str) -> str:
+def build_capture_name(url: str, status: int, rtype: str, ctype: str, tzinfo: tzinfo) -> str:
     parsed = urlparse(url)
     endpoint = Path(parsed.path).name or parsed.netloc or "response"
     suffix = ".json" if "json" in ctype.lower() else ".txt"
-    timestamp = utc_stamp()
+    timestamp = time_stamp(tzinfo)
     base = safe_name(f"fedwatch_{rtype}_{endpoint}_{status}_{timestamp}")
     return f"{base}{suffix}"
 
@@ -201,7 +290,7 @@ def parse_quikstrike_html(body: str) -> Optional[dict]:
     }
 
 
-async def dump_response(resp: Response, out_dir: Path) -> Optional[Path]:
+async def dump_response(resp: Response, out_dir: Path, tzinfo: tzinfo) -> Optional[Path]:
     """
     Save XHR/fetch responses to disk.
     - If JSON: save pretty JSON
@@ -224,7 +313,7 @@ async def dump_response(resp: Response, out_dir: Path) -> Optional[Path]:
             return None
 
         # Create a stable-ish filename
-        filename = build_capture_name(url=url, status=status, rtype=rtype, ctype=ctype)
+        filename = build_capture_name(url=url, status=status, rtype=rtype, ctype=ctype, tzinfo=tzinfo)
         path = out_dir / filename
 
         body = await resp.text()
@@ -260,10 +349,13 @@ async def dump_response(resp: Response, out_dir: Path) -> Optional[Path]:
         return None
 
 
-async def attach_sniffer(page: Page, out_dir: Path) -> None:
+async def attach_sniffer(page: Page, out_dir: Path, tzinfo: tzinfo, stats: dict) -> None:
     async def on_response(resp: Response) -> None:
-        saved = await dump_response(resp, out_dir)
+        saved = await dump_response(resp, out_dir, tzinfo)
         if saved:
+            stats["captures"] += 1
+            if saved.suffix == ".json":
+                stats["json_files"] += 1
             print(f"[CAPTURE] {resp.status} {resp.request.resource_type:8s} -> {saved.name}")
 
     page.on("response", on_response)
@@ -297,8 +389,10 @@ async def run_once(
     save_har: bool,
     timeout_ms: int,
     headed: bool,
+    tzinfo: tzinfo,
 ) -> None:
     ensure_dir(out_dir)
+    stats = {"captures": 0, "json_files": 0}
 
     async with async_playwright() as p:
         bt = {"chromium": p.chromium, "firefox": p.firefox, "webkit": p.webkit}[browser_name]
@@ -316,7 +410,7 @@ async def run_once(
             args=launch_args if launch_args else None,
         )
 
-        har_path = out_dir / f"fedwatch_{browser_name}_{utc_stamp()}.har" if save_har else None
+        har_path = out_dir / f"fedwatch_{browser_name}_{time_stamp(tzinfo)}.har" if save_har else None
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             ignore_https_errors=True,
@@ -334,7 +428,7 @@ async def run_once(
 
         await context.route("**/*", route_filter)
 
-        await attach_sniffer(page, out_dir)
+        await attach_sniffer(page, out_dir, tzinfo, stats)
 
         print(f"[INFO] Opening: {url}")
         await goto_with_fallback(page, url, timeout_ms=timeout_ms)
@@ -349,6 +443,8 @@ async def run_once(
         if har_path:
             print(f"[INFO] HAR saved: {har_path}")
 
+    return stats, har_path
+
 
 async def main():
     ap = argparse.ArgumentParser()
@@ -360,6 +456,7 @@ async def main():
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--browser", choices=["auto", "chromium", "firefox", "webkit"], default="auto")
     ap.add_argument("--parse_raw", help="Parse a raw QuikStrike HTML file to JSON and exit.")
+    ap.add_argument("--config", default=str(BASE_DIR / "probabilities_config.json"))
     args = ap.parse_args()
 
     if args.parse_raw:
@@ -373,15 +470,21 @@ async def main():
         print(f"[DONE] Parsed JSON saved: {json_path}")
         return
 
+    logger = setup_logger()
+    cfg = load_config(Path(args.config))
+    tzinfo, tz_label = resolve_timezone(cfg, logger=logger)
+
     out_dir = Path(args.out)
     ensure_dir(out_dir)
 
     browsers = ["chromium", "firefox"] if args.browser == "auto" else [args.browser]
 
     last_err = None
+    stats = None
+    har_path = None
     for b in browsers:
         try:
-            await run_once(
+            stats, har_path = await run_once(
                 browser_name=b,
                 url=args.url,
                 out_dir=out_dir,
@@ -389,8 +492,20 @@ async def main():
                 save_har=args.save_har,
                 timeout_ms=args.timeout_ms,
                 headed=args.headed,
+                tzinfo=tzinfo,
             )
             print("[DONE] capture complete.")
+            if cfg.get("telegram", {}).get("enabled"):
+                message = format_telegram_message(
+                    status="OK",
+                    url=args.url,
+                    out_dir=out_dir,
+                    tz_label=tz_label,
+                    tzinfo=tzinfo,
+                    stats=stats,
+                    har_path=har_path,
+                )
+                send_telegram_message(cfg, message, logger=logger)
             return
         except PWError as e:
             last_err = e
@@ -399,7 +514,53 @@ async def main():
             last_err = e
             print(f"[FAIL] {b} failed (non-playwright): {e}")
 
+    if cfg.get("telegram", {}).get("enabled"):
+        message = format_telegram_message(
+            status="ERROR",
+            url=args.url,
+            out_dir=out_dir,
+            tz_label=tz_label,
+            tzinfo=tzinfo,
+            stats=stats,
+            har_path=har_path,
+            error=str(last_err),
+        )
+        send_telegram_message(cfg, message, logger=logger)
     raise SystemExit(f"All browsers failed. Last error: {last_err}")
+
+
+def format_telegram_message(
+    status: str,
+    url: str,
+    out_dir: Path,
+    tz_label: str,
+    tzinfo: tzinfo,
+    stats: dict | None,
+    har_path: Path | None,
+    error: str | None = None,
+) -> str:
+    if status == "OK":
+        head = "✅ <b>CME FedWatch Probabilities</b>"
+    else:
+        head = "❌ <b>CME FedWatch Probabilities</b>"
+
+    captures = (stats or {}).get("captures", 0)
+    json_files = (stats or {}).get("json_files", 0)
+    lines = [
+        head,
+        f"<b>เวลา</b>: {now_local_iso(tzinfo)}",
+        f"<b>Timezone</b>: {tz_label}",
+        f"<b>URL</b>: {url}",
+        f"<b>Output</b>: {out_dir}",
+        f"<b>Captures</b>: {captures}",
+        f"<b>JSON</b>: {json_files}",
+    ]
+    if har_path:
+        lines.append(f"<b>HAR</b>: {har_path}")
+    if error:
+        lines.append(f"<b>Error</b>: {error}")
+    lines.append("หมายเหตุ: ถ้า Captures = 0 แปลว่าไม่พบ response ที่ต้องการ")
+    return "\n".join(lines)
 
 
 if __name__ == "__main__":
