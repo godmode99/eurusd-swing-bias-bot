@@ -1,0 +1,220 @@
+{
+  "poster": "https://cf-images.us-east-1.prod.boltdns.net/v1/static/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/29117ba1-d38f-4b88-b5d0-4bfa4aec5fc6/1280x720/match/image.jpg",
+  "thumbnail": "https://cf-images.us-east-1.prod.boltdns.net/v1/static/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/6b8f305e-654b-4e36-867c-0869a68730b0/160x90/match/image.jpg",
+  "poster_sources": [
+    {
+      "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/static/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/29117ba1-d38f-4b88-b5d0-4bfa4aec5fc6/1280x720/match/image.jpg"
+    }
+  ],
+  "thumbnail_sources": [
+    {
+      "src": "https://cf-images.us-east-1.prod.boltdns.net/v1/static/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/6b8f305e-654b-4e36-867c-0869a68730b0/160x90/match/image.jpg"
+    }
+  ],
+  "description": "FedWatch Tool",
+  "tags": [
+    "dotsub_marketedu",
+    "fedwatch"
+  ],
+  "cue_points": [],
+  "custom_fields": {},
+  "account_id": "49919183001",
+  "sources": [
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "4",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/10s/master.m3u8?fastly_token=NmI1ZGFiOTBfZTY0MjcxZDUwZDI4NTFjYWUxMDU4ZjgzYTI4YjRjOTVhM2FmNDJlY2E4NjIzMjFmZDlhNDIzYTBkYzE3ZmRlNA%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "ext_x_version": "4",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/hls/v4/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/10s/master.m3u8?fastly_token=NmI1ZGFiOTBfZTY0MjcxZDUwZDI4NTFjYWUxMDU4ZjgzYTI4YjRjOTVhM2FmNDJlY2E4NjIzMjFmZDlhNDIzYTBkYzE3ZmRlNA%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "http://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/6s/manifest.mpd?fastly_token=NmI1ZGFiOTBfNWMzYmExZGFlM2ZmYThhMjljZjQwOWEzZDA3N2VjZmNlMTkzMWFkOTVkOTg3YmI4MWE4MjNjYTY5N2JiMDg0Mw%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "codecs": "avc1,mp4a",
+      "profiles": "urn:mpeg:dash:profile:isoff-live:2011",
+      "src": "https://manifest.prod.boltdns.net/manifest/v1/dash/live-baseurl/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/6s/manifest.mpd?fastly_token=NmI1ZGFiOTBfNWMzYmExZGFlM2ZmYThhMjljZjQwOWEzZDA3N2VjZmNlMTkzMWFkOTVkOTg3YmI4MWE4MjNjYTY5N2JiMDg0Mw%3D%3D",
+      "type": "application/dash+xml"
+    },
+    {
+      "avg_bitrate": 2105000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 178996,
+      "height": 720,
+      "size": 47203445,
+      "src": "http://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/42a55c4f-240e-40c7-bddf-4813cba466ea/main.mp4?fastly_token=NmI1ZGFiOTBfM2UyYmYzNjRmMmIzY2M2MmVkMTYwNWE3YWQ1MWRmNGZiMTBjMDRiZGUzNGIzYjVmNzU1MGEyOTQxNTJiMGJhZV8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDU2ZDk1MDEtYTg1Yi00NjkxLTlkYWQtMTkyYjY2NTZmZDcwLzQyYTU1YzRmLTI0MGUtNDBjNy1iZGRmLTQ4MTNjYmE0NjZlYS9tYWluLm1wNA%3D%3D",
+      "width": 1280
+    },
+    {
+      "avg_bitrate": 2105000,
+      "codec": "H264",
+      "container": "MP4",
+      "duration": 178996,
+      "height": 720,
+      "size": 47203445,
+      "src": "https://house-fastly-signed-us-east-1-prod.brightcovecdn.com/media/v1/pmp4/static/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/42a55c4f-240e-40c7-bddf-4813cba466ea/main.mp4?fastly_token=NmI1ZGFiOTBfM2UyYmYzNjRmMmIzY2M2MmVkMTYwNWE3YWQ1MWRmNGZiMTBjMDRiZGUzNGIzYjVmNzU1MGEyOTQxNTJiMGJhZV8vL2hvdXNlLWZhc3RseS1zaWduZWQtdXMtZWFzdC0xLXByb2QuYnJpZ2h0Y292ZWNkbi5jb20vbWVkaWEvdjEvcG1wNC9zdGF0aWMvY2xlYXIvNDk5MTkxODMwMDEvZDU2ZDk1MDEtYTg1Yi00NjkxLTlkYWQtMTkyYjY2NTZmZDcwLzQyYTU1YzRmLTI0MGUtNDBjNy1iZGRmLTQ4MTNjYmE0NjZlYS9tYWluLm1wNA%3D%3D",
+      "width": 1280
+    }
+  ],
+  "video_preview": [
+    {
+      "ext_x_version": "7",
+      "src": "http://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/10s/preview.m3u8?fastly_token=NmI1ZGFiOTBfZTI5MTAxMzFkNzBlODc2MzA2YTg2MjljYjI1NjQ1ZmFhZTljNzliYzkzOTY2OTQ4MGMzNmVhYmEyNThiNGIzMg%3D%3D",
+      "type": "application/x-mpegURL"
+    },
+    {
+      "ext_x_version": "7",
+      "src": "https://manifest.prod.boltdns.net/manifest/v2/hls/v7/clear/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/10s/preview.m3u8?fastly_token=NmI1ZGFiOTBfZTI5MTAxMzFkNzBlODc2MzA2YTg2MjljYjI1NjQ1ZmFhZTljNzliYzkzOTY2OTQ4MGMzNmVhYmEyNThiNGIzMg%3D%3D",
+      "type": "application/x-mpegURL"
+    }
+  ],
+  "name": "Introduction to CME FedWatch",
+  "reference_id": "170329FedWatchTool",
+  "long_description": "Gain a better understanding of our most popular tool, the CME FedWatch tool, which uses 30-Day Fed Fund futures prices to gauge the probability of an upcoming rate hike.  ",
+  "duration": 179051,
+  "economics": "FREE",
+  "text_tracks": [
+    {
+      "id": "0a0f8d2c-4844-4f9a-9edf-5ad58185cd7b",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/chi_hans/vtt",
+      "srclang": "chi_hans",
+      "label": "Chinese (Simplified)",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/chi_hans/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": "6ceb40c9-906e-480b-8afb-0ab809354d7d",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/chi_hant/vtt",
+      "srclang": "chi_hant",
+      "label": "Chinese (Traditional)",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/chi_hant/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": "bdd92882-b09c-4a68-8fe7-ef127dc95173",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/eng/vtt",
+      "srclang": "en",
+      "label": "English",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/eng/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": "078a8458-8840-4ec4-a7f1-db53178ef55c",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/jpn/vtt",
+      "srclang": "jpn",
+      "label": "Japanese",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/jpn/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": "0c00d69e-fca0-48f9-8c57-4bbae970ad4d",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/kor/vtt",
+      "srclang": "ko",
+      "label": "Korean",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/kor/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": "e40694d7-f9a4-4c79-ac46-67a8ed3e6ab0",
+      "account_id": "49919183001",
+      "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/por_br/vtt",
+      "srclang": "por_br",
+      "label": "Portuguese (Brazil)",
+      "kind": "captions",
+      "mime_type": "text/vtt",
+      "asset_id": null,
+      "sources": [
+        {
+          "src": "https://dotsub.com/media/d2777fb9-2b1f-4adb-825b-6fd7c8573f7c/c/por_br/vtt"
+        }
+      ],
+      "default": false
+    },
+    {
+      "id": null,
+      "account_id": "49919183001",
+      "src": "http://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/128ccffd-2683-438a-b1c4-cfdf8b044364/thumbnail.webvtt?fastly_token=NmI1ZGFiOTBfZGM3MzFiY2Y4NzQ4MzE5NzgwZGFmMzZmZTlhNGM1MTdmODJhN2I3YmIwYmViMWM4MzdiMGQxYzBiY2M3OWY1Mg%3D%3D",
+      "srclang": null,
+      "label": "thumbnails",
+      "kind": "metadata",
+      "mime_type": "text/webvtt",
+      "asset_id": null,
+      "sources": null,
+      "default": false,
+      "width": 480,
+      "height": 270,
+      "bandwidth": 444
+    },
+    {
+      "id": null,
+      "account_id": "49919183001",
+      "src": "https://manifest.prod.boltdns.net/thumbnail/v1/49919183001/d56d9501-a85b-4691-9dad-192b6656fd70/128ccffd-2683-438a-b1c4-cfdf8b044364/thumbnail.webvtt?fastly_token=NmI1ZGFiOTBfZGM3MzFiY2Y4NzQ4MzE5NzgwZGFmMzZmZTlhNGM1MTdmODJhN2I3YmIwYmViMWM4MzdiMGQxYzBiY2M3OWY1Mg%3D%3D",
+      "srclang": null,
+      "label": "thumbnails",
+      "kind": "metadata",
+      "mime_type": "text/webvtt",
+      "asset_id": null,
+      "sources": null,
+      "default": false,
+      "width": 480,
+      "height": 270,
+      "bandwidth": 444
+    }
+  ],
+  "published_at": "2017-04-19T14:28:19.371Z",
+  "created_at": "2017-04-19T14:26:18.560Z",
+  "updated_at": "2017-08-09T14:41:39.135Z",
+  "offline_enabled": false,
+  "link": null,
+  "id": "5403329907001",
+  "ad_keys": null
+}

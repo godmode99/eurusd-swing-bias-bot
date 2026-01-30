@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1244529c-e6c4-40fe-bd8d-6ff4a9bf77c4",
+    "uuid": "1244529c-e6c4-40fe-bd8d-6ff4a9bf77c4",
+    "createdAt": "2024-10-18T20:55:10.582Z",
+    "updatedAt": "2024-12-11T01:08:53.949Z",
+    "teamId": "47043332",
+    "mazeId": [
+      "296476643"
+    ],
+    "mode": "NEWTAB",
+    "domain": "www.cmegroup.com",
+    "name": "Term €STR Beta Page - Within BottomRight",
+    "title": "How would you use Term €STR?",
+    "body": "Complete our 4 question survey and receive results from all survey takers.",
+    "startButtonLabel": "Share Your Thoughts",
+    "removeBranding": true,
+    "paths": [
+      "/market-data/cme-group-benchmark-administration/term-estr-rate.html"
+    ],
+    "styles": {
+      "buttonTextColor": "#FFFFFF",
+      "buttonBackgroundColor": "#006EB6",
+      "buttonBorderRadius": "8px",
+      "position": "BOTTOM_RIGHT"
+    }
+  },
+  {
+    "id": "192a01f2-bc5e-4eb8-94e8-a6cfc74470cd",
+    "uuid": "192a01f2-bc5e-4eb8-94e8-a6cfc74470cd",
+    "createdAt": "2024-10-18T20:52:05.050Z",
+    "updatedAt": "2024-12-11T01:08:36.672Z",
+    "teamId": "47043332",
+    "mazeId": [
+      "296476643"
+    ],
+    "mode": "NEWTAB",
+    "domain": "www.cmegroup.com",
+    "name": "Term €STR Beta Page - Within BottomLeft",
+    "title": "How would you use Term €STR?",
+    "body": "Complete our 4 question survey and receive results from all survey takers.",
+    "startButtonLabel": "Share Your Thoughts",
+    "removeBranding": true,
+    "paths": [
+      "/market-data/cme-group-benchmark-administration/term-estr-rate.html"
+    ],
+    "styles": {
+      "buttonTextColor": "#FFFFFF",
+      "buttonBackgroundColor": "#006EB6",
+      "buttonBorderRadius": "8px",
+      "position": "BOTTOM_LEFT"
+    }
+  },
+  {
+    "id": "af834469-67c0-4a21-a078-a3c2c1ae95e3",
+    "uuid": "af834469-67c0-4a21-a078-a3c2c1ae95e3",
+    "createdAt": "2024-10-18T20:50:25.610Z",
+    "updatedAt": "2024-12-11T01:05:30.813Z",
+    "teamId": "47043332",
+    "mazeId": [
+      "296476643"
+    ],
+    "mode": "NEWTAB",
+    "domain": "www.cmegroup.com",
+    "name": "Term €STR Beta Page - New Tab MidRight",
+    "title": "How would you use Term €STR?",
+    "body": "Complete our 4 question survey and receive results from all survey takers.",
+    "startButtonLabel": "Share Your Thoughts",
+    "removeBranding": true,
+    "paths": [
+      "/market-data/cme-group-benchmark-administration/term-estr-rate.html"
+    ],
+    "styles": {
+      "buttonTextColor": "#FFFFFF",
+      "buttonBackgroundColor": "#006EB6",
+      "buttonBorderRadius": "8px",
+      "position": "MIDDLE_RIGHT"
+    }
+  }
+]
