@@ -2,26 +2,8 @@ fred:
   api_key: "" # ใช้จาก .env (FRED_API_KEY)
   observation_start: "2010-01-01"
   timeout_seconds: 30
-  run_mode: "weekly"
+  run_mode: "monthly"
   modes:
-    daily:
-      - DGS2
-      - EFFR
-      - ECBDFR
-      - ECBESTRVOLWGTTRMDMNRT
-      - DTWEXBGS
-      - VIXCLS
-    weekly:
-      - DGS2
-      - EFFR
-      - ECBDFR
-      - ECBESTRVOLWGTTRMDMNRT
-      - DTWEXBGS
-      - VIXCLS
-      - DGS10
-      - DFII10
-      - BAMLH0A0HYM2
-      - T10YIE
     monthly:
       - DGS2
       - EFFR
