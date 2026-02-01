@@ -16,7 +16,8 @@ STATE_PATH = Path("ff_storage.json")
 ART_DIR = Path("artifacts") / "ff"
 
 MARKER = "window.calendarComponentStates[1] ="
-STATE_RE = re.compile(r"window\.calendarComponentStates\[\d+\]\s*=")
+STATE_RE = re.compile(r"(?:window\.)?calendarComponentStates\[\d+\]\s*=")
+STATE_MAP_RE = re.compile(r"(?:window\.)?calendarComponentStates\s*=\s*\{")
 BKK = ZoneInfo("Asia/Bangkok")
 
 IMPACT_SCORE = {"high": 3, "medium": 2, "low": 1}
@@ -407,17 +408,40 @@ def normalize_events(data: dict) -> list[dict]:
     return rows
 
 
-def extract_calendar_state(html: str) -> str:
+def extract_calendar_state(html: str) -> str | dict:
     match = STATE_RE.search(html)
+    if match:
+        return extract_object_literal(html, match.group(0))
+
+    match = STATE_MAP_RE.search(html)
     if not match:
-        raise RuntimeError("Marker not found: window.calendarComponentStates[...] =")
-    return extract_object_literal(html, match.group(0))
+        raise RuntimeError("Marker not found: calendarComponentStates")
+
+    map_literal = extract_object_literal(html, match.group(0))
+    json_text = js_object_to_json_text(map_literal)
+    data = json.loads(json_text)
+
+    if isinstance(data, dict):
+        if "days" in data:
+            return data
+        for value in data.values():
+            if isinstance(value, dict) and "days" in value:
+                return value
+    if isinstance(data, list):
+        for value in data:
+            if isinstance(value, dict) and "days" in value:
+                return value
+
+    raise RuntimeError("calendarComponentStates parsed but no days data found")
 
 
 def parse_calendar_html(html: str) -> list[dict]:
-    js_obj = extract_calendar_state(html)
-    json_text = js_object_to_json_text(js_obj)
-    data = json.loads(json_text)
+    state = extract_calendar_state(html)
+    if isinstance(state, str):
+        json_text = js_object_to_json_text(state)
+        data = json.loads(json_text)
+    else:
+        data = state
     return normalize_events(data)
 
 
