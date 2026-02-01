@@ -9,9 +9,10 @@ import pandas as pd
 from utils import (
     ensure_dir,
     utc_now_iso,
+    thai_now_iso,
     atomic_write_json,
-    date_utc_compact,
-    datetime_utc_compact,
+    date_th_compact,
+    datetime_th_compact,
     retry,
 )
 from fred_client import fetch_fred_series_observations
@@ -36,8 +37,8 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     """
     data_dir = ensure_dir((base_dir / cfg["output"]["data_dir"]).resolve())
 
-    run_tag_date = date_utc_compact()
-    run_tag_datetime = datetime_utc_compact()
+    run_tag_date = date_th_compact()
+    run_tag_datetime = datetime_th_compact()
 
     keep_run_manifest = cfg.get("output", {}).get("archive", {}).get("keep_run_manifest", True)
     keep_error_report = cfg.get("output", {}).get("archive", {}).get("keep_error_report", True)
@@ -120,6 +121,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 output_path,
                 {
                     "asof_utc": utc_now_iso(),
+                    "asof_th": thai_now_iso(),
                     "mode": mode,
                     "series": series_payload,
                 },
@@ -133,6 +135,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 error_path_archive,
                 {
                     "asof_utc": utc_now_iso(),
+                    "asof_th": thai_now_iso(),
                     "mode": mode,
                     "errors": error_items,
                 },
@@ -140,6 +143,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
         manifest = {
             "asof_utc": utc_now_iso(),
+            "asof_th": thai_now_iso(),
             "sources": mode_sources,
             "stale_sources": mode_stale,
             "notes": "" if not error_items else f"FRED fetch failed for {len(error_items)} series.",
@@ -160,6 +164,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     overall_manifest = {
         "asof_utc": utc_now_iso(),
+        "asof_th": thai_now_iso(),
         "sources": overall_sources,
         "stale_sources": overall_stale,
         "notes": "; ".join(note for note in overall_notes if note),
