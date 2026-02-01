@@ -2,7 +2,7 @@ fred:
   api_key: "" # ใช้จาก .env (FRED_API_KEY)
   observation_start: "2010-01-01"
   timeout_seconds: 30
-  run_mode: "daily"
+  run_mode: "weekly"
   modes:
     daily:
       - DGS2
