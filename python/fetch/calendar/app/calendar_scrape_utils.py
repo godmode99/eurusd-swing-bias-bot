@@ -18,6 +18,7 @@ ART_DIR = Path("artifacts") / "ff"
 MARKER = "window.calendarComponentStates[1] ="
 STATE_RE = re.compile(r"(?:window\.)?calendarComponentStates\[\d+\]\s*=")
 STATE_MAP_RE = re.compile(r"(?:window\.)?calendarComponentStates\s*=\s*\{")
+STATE_ANY_RE = re.compile(r"calendarComponentStates\s*[:=]")
 BKK = ZoneInfo("Asia/Bangkok")
 
 IMPACT_SCORE = {"high": 3, "medium": 2, "low": 1}
@@ -60,14 +61,24 @@ def extract_object_literal(html: str, marker: str) -> str:
     if i == -1:
         raise RuntimeError("Marker not found: " + marker)
 
-    j = html.find("{", i)
-    if j == -1:
-        raise RuntimeError("Object start '{' not found after marker")
+    obj_idx = html.find("{", i)
+    arr_idx = html.find("[", i)
+    if obj_idx == -1 and arr_idx == -1:
+        raise RuntimeError("Object/array start not found after marker")
+
+    if obj_idx == -1:
+        j = arr_idx
+    elif arr_idx == -1:
+        j = obj_idx
+    else:
+        j = min(obj_idx, arr_idx)
 
     in_str = False
     esc = False
     quote = ""
-    depth = 0
+    stack: list[str] = []
+    pairs = {"{": "}", "[": "]"}
+    closing = set(pairs.values())
 
     for k in range(j, len(html)):
         ch = html[k]
@@ -86,12 +97,17 @@ def extract_object_literal(html: str, marker: str) -> str:
             quote = ch
             continue
 
-        if ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                return html[j : k + 1]
+        if ch in pairs:
+            stack.append(pairs[ch])
+            continue
+        if ch in closing:
+            if stack:
+                expected = stack.pop()
+                if ch != expected:
+                    raise RuntimeError("Unbalanced braces while extracting object")
+                if not stack:
+                    return html[j : k + 1]
+            continue
 
     raise RuntimeError("Unbalanced braces while extracting object")
 
@@ -408,19 +424,7 @@ def normalize_events(data: dict) -> list[dict]:
     return rows
 
 
-def extract_calendar_state(html: str) -> str | dict:
-    match = STATE_RE.search(html)
-    if match:
-        return extract_object_literal(html, match.group(0))
-
-    match = STATE_MAP_RE.search(html)
-    if not match:
-        raise RuntimeError("Marker not found: calendarComponentStates")
-
-    map_literal = extract_object_literal(html, match.group(0))
-    json_text = js_object_to_json_text(map_literal)
-    data = json.loads(json_text)
-
+def find_calendar_state(data: object) -> dict | None:
     if isinstance(data, dict):
         if "days" in data:
             return data
@@ -431,17 +435,39 @@ def extract_calendar_state(html: str) -> str | dict:
         for value in data:
             if isinstance(value, dict) and "days" in value:
                 return value
+    return None
 
+
+def parse_calendar_state_literal(js_literal: str) -> dict:
+    json_text = js_object_to_json_text(js_literal)
+    data = json.loads(json_text)
+    state = find_calendar_state(data)
+    if state:
+        return state
     raise RuntimeError("calendarComponentStates parsed but no days data found")
 
 
+def extract_calendar_state(html: str) -> dict:
+    match = STATE_RE.search(html)
+    if match:
+        literal = extract_object_literal(html, match.group(0))
+        return parse_calendar_state_literal(literal)
+
+    match = STATE_MAP_RE.search(html)
+    if match:
+        map_literal = extract_object_literal(html, match.group(0))
+        return parse_calendar_state_literal(map_literal)
+
+    match = STATE_ANY_RE.search(html)
+    if match:
+        literal = extract_object_literal(html, match.group(0))
+        return parse_calendar_state_literal(literal)
+
+    raise RuntimeError("Marker not found: calendarComponentStates")
+
+
 def parse_calendar_html(html: str) -> list[dict]:
-    state = extract_calendar_state(html)
-    if isinstance(state, str):
-        json_text = js_object_to_json_text(state)
-        data = json.loads(json_text)
-    else:
-        data = state
+    data = extract_calendar_state(html)
     return normalize_events(data)
 
 
