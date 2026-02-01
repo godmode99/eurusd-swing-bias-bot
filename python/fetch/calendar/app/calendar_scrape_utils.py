@@ -16,6 +16,7 @@ STATE_PATH = Path("ff_storage.json")
 ART_DIR = Path("artifacts") / "ff"
 
 MARKER = "window.calendarComponentStates[1] ="
+STATE_RE = re.compile(r"window\.calendarComponentStates\[\d+\]\s*=")
 BKK = ZoneInfo("Asia/Bangkok")
 
 IMPACT_SCORE = {"high": 3, "medium": 2, "low": 1}
@@ -406,8 +407,15 @@ def normalize_events(data: dict) -> list[dict]:
     return rows
 
 
+def extract_calendar_state(html: str) -> str:
+    match = STATE_RE.search(html)
+    if not match:
+        raise RuntimeError("Marker not found: window.calendarComponentStates[...] =")
+    return extract_object_literal(html, match.group(0))
+
+
 def parse_calendar_html(html: str) -> list[dict]:
-    js_obj = extract_object_literal(html, MARKER)
+    js_obj = extract_calendar_state(html)
     json_text = js_object_to_json_text(js_obj)
     data = json.loads(json_text)
     return normalize_events(data)
