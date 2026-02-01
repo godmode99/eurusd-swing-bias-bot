@@ -6,6 +6,7 @@ import time
 import logging
 from pathlib import Path
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from typing import Any, Dict
 
 import yaml
@@ -67,12 +68,27 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+TH_TZ = ZoneInfo("Asia/Bangkok")
+
+
+def thai_now_iso() -> str:
+    return datetime.now(TH_TZ).replace(microsecond=0).isoformat()
+
+
 def date_utc_compact() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d")
 
 
 def datetime_utc_compact() -> str:
     return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
+def date_th_compact() -> str:
+    return datetime.now(TH_TZ).strftime("%Y%m%d")
+
+
+def datetime_th_compact() -> str:
+    return datetime.now(TH_TZ).strftime("%Y%m%d_%H%M%S")
 
 
 def atomic_write_text(path: Path, text: str) -> None:
