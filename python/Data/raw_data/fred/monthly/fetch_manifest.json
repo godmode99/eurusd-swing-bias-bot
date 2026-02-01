@@ -1,31 +1,31 @@
 {
-  "asof_utc": "2026-01-29T09:53:17Z",
+  "asof_utc": "2026-02-01T09:49:46Z",
   "sources": {
     "FRED_DGS2": {
       "ok": true,
-      "rows": 4018,
-      "latest": "2026-01-27",
+      "rows": 4020,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_EFFR": {
       "ok": true,
-      "rows": 4035,
-      "latest": "2026-01-27",
+      "rows": 4037,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_ECBDFR": {
       "ok": true,
-      "rows": 5872,
-      "latest": "2026-01-28",
+      "rows": 5874,
+      "latest": "2026-01-30",
       "used_cache": false,
       "error": null
     },
     "FRED_ECBESTRVOLWGTTRMDMNRT": {
       "ok": true,
-      "rows": 1621,
-      "latest": "2026-01-28",
+      "rows": 1622,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
@@ -38,36 +38,36 @@
     },
     "FRED_VIXCLS": {
       "ok": true,
-      "rows": 4069,
-      "latest": "2026-01-27",
+      "rows": 4071,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_DGS10": {
       "ok": true,
-      "rows": 4018,
-      "latest": "2026-01-27",
+      "rows": 4020,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_DFII10": {
       "ok": true,
-      "rows": 4018,
-      "latest": "2026-01-27",
+      "rows": 4020,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_BAMLH0A0HYM2": {
       "ok": true,
-      "rows": 4196,
-      "latest": "2026-01-27",
+      "rows": 4198,
+      "latest": "2026-01-29",
       "used_cache": false,
       "error": null
     },
     "FRED_T10YIE": {
       "ok": true,
-      "rows": 4019,
-      "latest": "2026-01-28",
+      "rows": 4021,
+      "latest": "2026-01-30",
       "used_cache": false,
       "error": null
     },
