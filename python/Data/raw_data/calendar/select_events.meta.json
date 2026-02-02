@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-02-02T08:10:13+00:00",
+  "generated_at_utc": "2026-02-02T08:19:51+00:00",
   "input_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_all_event.json",
   "output_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_select_events.json",
   "output_events_csv": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_select_events.csv",
-  "selected_count": 52,
+  "selected_count": 68,
   "filters": {
     "currencies": [
       "EUR",
