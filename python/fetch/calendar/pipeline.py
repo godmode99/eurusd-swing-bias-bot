@@ -101,7 +101,10 @@ def format_time_label(value: str) -> str:
         parsed = datetime.fromisoformat(cleaned)
     except ValueError:
         return cleaned
-    return parsed.strftime("%H:%M")
+    day = str(parsed.day)
+    month = parsed.strftime("%b")
+    time_label = parsed.strftime("%H:%M")
+    return f"{day}{month}-{time_label}"
 
 
 def format_pipeline_message(status: str, results: list[dict[str, Any]], error: str | None) -> str:
