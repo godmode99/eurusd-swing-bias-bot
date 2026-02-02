@@ -19,6 +19,7 @@ DEFAULT_STEPS = {
     "01_save_session": False,
     "02_capture_document_html": True,
     "03_extract_from_document": True,
+    "select_events": True,
     "20_make_risk_windows": False,
     "30_refresh_actuals": False,
     "40_compute_surprise": False,
