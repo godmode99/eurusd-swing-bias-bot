@@ -21,14 +21,17 @@ from typing import Optional
 
 from playwright.sync_api import sync_playwright
 
+from utils import load_config
+
 
 # -----------------------
 # Config
 # -----------------------
-URL = "https://www.forexfactory.com/calendar"
+DEFAULT_URL = "https://www.forexfactory.com/calendar"
 
 # Project-relative paths (run from repo root recommended)
 STATE_PATH = Path("ff_storage.json")
+CONFIG_PATH = Path(__file__).resolve().parent / "config.yaml"
 
 ART_DIR = Path("artifacts") / "ff"
 OUT_HTML = ART_DIR / "calendar_document.html"
@@ -63,7 +66,17 @@ def _abs(p: Path) -> str:
     return str(p.resolve())
 
 
+def _load_url() -> str:
+    if CONFIG_PATH.exists():
+        cfg = load_config(str(CONFIG_PATH))
+        url = (cfg.get("capture_document_html", {}) or {}).get("url", "")
+        if isinstance(url, str) and url.strip():
+            return url.strip()
+    return DEFAULT_URL
+
+
 def main() -> None:
+    url = _load_url()
     _ensure_dirs()
 
     if not STATE_PATH.exists():
@@ -102,7 +115,7 @@ def main() -> None:
             nonlocal html_text, doc_status, doc_headers
             try:
                 # We only want the top-level document for /calendar
-                if resp.request.resource_type == "document" and resp.url.startswith(URL):
+                if resp.request.resource_type == "document" and resp.url.startswith(url):
                     doc_status = resp.status
                     # headers can help debugging
                     doc_headers = {k.lower(): v for k, v in (resp.headers or {}).items()}
@@ -114,8 +127,8 @@ def main() -> None:
 
         page.on("response", on_response)
 
-        print("goto:", URL, flush=True)
-        page.goto(URL, wait_until="domcontentloaded", timeout=120000)
+        print("goto:", url, flush=True)
+        page.goto(url, wait_until="domcontentloaded", timeout=120000)
         page.wait_for_timeout(4000)
 
         final_url = page.url
@@ -155,7 +168,7 @@ def main() -> None:
     meta = Meta(
         fetched_at_utc=_iso_utc_now(),
         cwd=os.getcwd(),
-        url=URL,
+        url=url,
         final_url=final_url,
         page_title=page_title,
         html_saved_to=_abs(OUT_HTML),
