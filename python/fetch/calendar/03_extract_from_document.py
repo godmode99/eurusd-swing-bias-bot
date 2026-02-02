@@ -4,7 +4,7 @@
 # - Read artifacts/ff/calendar_document.html (captured network snapshot)
 # - Extract embedded JS object: window.calendarComponentStates[1] = {...}
 # - Convert JS object-literal to valid JSON text
-# - Output normalized events to artifacts/ff/events.json (+ events.csv optional)
+# - Output normalized events to artifacts/ff/calendar_event.json (+ calendar_event.csv)
 #
 # Notes:
 # - Console output is ASCII-only (Windows cp1252 safe).
@@ -26,8 +26,8 @@ from zoneinfo import ZoneInfo
 ART_DIR = Path("artifacts") / "ff"
 
 IN_HTML = ART_DIR / "calendar_document.html"
-OUT_EVENTS_JSON = ART_DIR / "events.json"
-OUT_EVENTS_CSV = ART_DIR / "events.csv"
+OUT_EVENTS_JSON = ART_DIR / "calendar_event.json"
+OUT_EVENTS_CSV = ART_DIR / "calendar_event.csv"
 OUT_META = ART_DIR / "events.meta.json"
 OUT_ERR = ART_DIR / "extract_error.txt"
 
@@ -379,6 +379,56 @@ def write_csv(rows: list[dict], path: Path) -> None:
             f.write(",".join(esc_csv(r.get(h)) for h in headers) + "\n")
 
 
+def load_existing_events(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    if isinstance(payload, list):
+        return [r for r in payload if isinstance(r, dict)]
+    return []
+
+
+def merge_events(existing: list[dict], incoming: list[dict]) -> list[dict]:
+    merged: dict[tuple[int, int], dict] = {}
+
+    def key_of(row: dict) -> tuple[int, int] | None:
+        event_id = row.get("event_id")
+        epoch = row.get("dateline_epoch")
+        if isinstance(event_id, int) and isinstance(epoch, int):
+            return (event_id, epoch)
+        return None
+
+    for row in existing:
+        key = key_of(row)
+        if key:
+            merged[key] = row
+
+    for row in incoming:
+        key = key_of(row)
+        if not key:
+            continue
+        if key not in merged:
+            merged[key] = row
+            continue
+        merged_row = dict(merged[key])
+        new_actual = row.get("actual")
+        if new_actual not in (None, ""):
+            merged_row["actual"] = new_actual
+        for field, value in row.items():
+            if field == "actual":
+                continue
+            if value not in (None, ""):
+                merged_row[field] = value
+        merged[key] = merged_row
+
+    rows = list(merged.values())
+    rows.sort(key=lambda r: (r["dateline_epoch"], r["event_id"]))
+    return rows
+
+
 # -----------------------
 # Main
 # -----------------------
@@ -438,7 +488,8 @@ def main() -> None:
                 }
             )
 
-    rows.sort(key=lambda r: (r["dateline_epoch"], r["event_id"]))
+    existing_rows = load_existing_events(OUT_EVENTS_JSON)
+    rows = merge_events(existing_rows, rows)
 
     OUT_EVENTS_JSON.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
     write_csv(rows, OUT_EVENTS_CSV)
@@ -451,6 +502,7 @@ def main() -> None:
         "output_events_json": str(OUT_EVENTS_JSON.resolve()),
         "output_events_csv": str(OUT_EVENTS_CSV.resolve()),
         "dedupe_key": "(event_id, dateline_epoch)",
+        "merge_policy": "merge by key, overwrite actual when provided",
     }
     OUT_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
