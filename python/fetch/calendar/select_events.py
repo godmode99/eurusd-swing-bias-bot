@@ -69,6 +69,55 @@ def load_events(path: Path) -> list[dict]:
     return [row for row in data if isinstance(row, dict)]
 
 
+def load_existing_events(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, list):
+        return []
+    return [row for row in data if isinstance(row, dict)]
+
+
+def event_key(event: dict) -> str:
+    event_id = event.get("event_id")
+    if event_id is not None and str(event_id).strip():
+        return str(event_id).strip()
+    dateline = event.get("dateline_epoch")
+    currency = (event.get("currency") or "").strip()
+    name = (event.get("name") or "").strip()
+    return f"{dateline}|{currency}|{name}"
+
+
+def has_actual(event: dict) -> bool:
+    actual = event.get("actual")
+    if actual is None:
+        return False
+    return str(actual).strip() != ""
+
+
+def merge_events(existing: list[dict], incoming: list[dict]) -> list[dict]:
+    merged: dict[str, dict] = {}
+    order: list[str] = []
+
+    for event in existing:
+        key = event_key(event)
+        if key not in merged:
+            merged[key] = event
+            order.append(key)
+
+    for event in incoming:
+        key = event_key(event)
+        if key not in merged:
+            merged[key] = event
+            order.append(key)
+            continue
+
+        if has_actual(event) and not has_actual(merged[key]):
+            merged[key] = event
+
+    return [merged[key] for key in order]
+
+
 def normalize_list(values: Any) -> list[str]:
     if not values:
         return []
@@ -175,6 +224,8 @@ def main() -> None:
 
     events = load_events(IN_EVENTS)
     selected = filter_events(events, cfg)
+    existing_selected = load_existing_events(OUT_EVENTS_JSON)
+    merged_selected = merge_events(existing_selected, selected)
 
     if selected:
         print("รายละเอียด select_events", flush=True)
@@ -190,15 +241,15 @@ def main() -> None:
                 flush=True,
             )
 
-    OUT_EVENTS_JSON.write_text(
-        json.dumps(selected, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
     OUT_LATEST_EVENTS_JSON.write_text(
         json.dumps(selected, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    write_csv(selected, OUT_EVENTS_CSV)
+    OUT_EVENTS_JSON.write_text(
+        json.dumps(merged_selected, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+    write_csv(merged_selected, OUT_EVENTS_CSV)
 
     meta = {
         "generated_at_utc": iso_utc_now(),
@@ -206,7 +257,8 @@ def main() -> None:
         "output_events_json": str(OUT_EVENTS_JSON.resolve()),
         "output_latest_events_json": str(OUT_LATEST_EVENTS_JSON.resolve()),
         "output_events_csv": str(OUT_EVENTS_CSV.resolve()),
-        "selected_count": len(selected),
+        "selected_count": len(merged_selected),
+        "latest_selected_count": len(selected),
         "filters": cfg.get("select_events", {}) or {},
     }
     OUT_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
