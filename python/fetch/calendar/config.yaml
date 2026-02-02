@@ -6,12 +6,25 @@ pipeline:
     "01_save_session": false
     "02_capture_document_html": true
     "03_extract_from_document": true
+    "select_events": true
     "20_make_risk_windows": false
     "30_refresh_actuals": false
     "40_compute_surprise": false
 
 capture_document_html:
   url: "https://www.forexfactory.com/calendar?month=next"
+
+select_events:
+  currencies:
+    - "EUR"
+    - "USD"
+  impacts:
+    - "high"
+    - "medium"
+  impact_score_min: null
+  countries: []
+  name_keywords: []
+  exclude_name_keywords: []
 
 telegram:
   enabled: true
