@@ -29,6 +29,7 @@ ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
 IN_EVENTS = ART_DIR / "calendar_all_event.json"
 OUT_EVENTS_JSON = ART_DIR / "calendar_select_events.json"
+OUT_LATEST_EVENTS_JSON = ART_DIR / "latest_select_events.json"
 OUT_EVENTS_CSV = ART_DIR / "calendar_select_events.csv"
 OUT_META = ART_DIR / "select_events.meta.json"
 OUT_ERR = ART_DIR / "select_events_error.txt"
@@ -153,12 +154,17 @@ def main() -> None:
         json.dumps(selected, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+    OUT_LATEST_EVENTS_JSON.write_text(
+        json.dumps(selected, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     write_csv(selected, OUT_EVENTS_CSV)
 
     meta = {
         "generated_at_utc": iso_utc_now(),
         "input_events_json": str(IN_EVENTS.resolve()),
         "output_events_json": str(OUT_EVENTS_JSON.resolve()),
+        "output_latest_events_json": str(OUT_LATEST_EVENTS_JSON.resolve()),
         "output_events_csv": str(OUT_EVENTS_CSV.resolve()),
         "selected_count": len(selected),
         "filters": cfg.get("select_events", {}) or {},
@@ -167,6 +173,7 @@ def main() -> None:
 
     print("OK selected:", len(selected), flush=True)
     print("OK saved:", str(OUT_EVENTS_JSON.resolve()), flush=True)
+    print("OK saved:", str(OUT_LATEST_EVENTS_JSON.resolve()), flush=True)
     print("OK saved:", str(OUT_EVENTS_CSV.resolve()), flush=True)
     print("OK saved:", str(OUT_META.resolve()), flush=True)
 

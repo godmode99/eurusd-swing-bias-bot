@@ -16,7 +16,7 @@ from typing import Any
 BASE_DIR = Path(__file__).parent.resolve()
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
 TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
-SELECT_EVENTS_JSON = PYTHON_DIR / "Data" / "raw_data" / "calendar" / "calendar_select_events.json"
+SELECT_EVENTS_JSON = PYTHON_DIR / "Data" / "raw_data" / "calendar" / "latest_select_events.json"
 
 if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
     sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
