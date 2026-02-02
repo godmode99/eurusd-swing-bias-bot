@@ -107,6 +107,11 @@ def filter_events(events: list[dict], cfg: dict) -> list[dict]:
         except Exception:
             days_forward = None
 
+    if days_back is None:
+        days_back = -5
+    if days_forward is None:
+        days_forward = 5
+
     start_epoch: float | None = None
     end_epoch: float | None = None
     if days_back is not None or days_forward is not None:
