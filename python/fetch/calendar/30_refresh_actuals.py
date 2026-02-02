@@ -6,13 +6,13 @@
 # - Keep a history snapshot (before/after) for audit/debug
 #
 # Inputs:
-# - artifacts/ff/events.json (previous)
+# - python/Data/raw_data/calendar/events.json (previous)
 #
 # Outputs:
-# - artifacts/ff/events_merged.json
-# - artifacts/ff/events_refresh.meta.json
-# - artifacts/ff/history/<timestamp>/events_before.json
-# - artifacts/ff/history/<timestamp>/events_after.json
+# - python/Data/raw_data/calendar/events_merged.json
+# - python/Data/raw_data/calendar/events_refresh.meta.json
+# - python/Data/raw_data/calendar/history/<timestamp>/events_before.json
+# - python/Data/raw_data/calendar/history/<timestamp>/events_after.json
 #
 # Notes:
 # - Uses subprocess to run step scripts (works even if filenames start with digits).
@@ -35,7 +35,7 @@ from typing import Any
 # -----------------------
 # Config paths
 # -----------------------
-ART_DIR = Path("artifacts") / "ff"
+ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 IN_EVENTS = ART_DIR / "events.json"
 
 OUT_MERGED = ART_DIR / "events_merged.json"
@@ -203,8 +203,8 @@ def main() -> None:
     ensure_dirs()
 
     ap = argparse.ArgumentParser(description="Refresh ForexFactory actuals by re-capturing and merging events.json")
-    ap.add_argument("--keep-after", action="store_true", help="Keep the freshly extracted after-events as artifacts/ff/events_after.json")
-    ap.add_argument("--overwrite-events", action="store_true", help="Overwrite artifacts/ff/events.json with merged output")
+    ap.add_argument("--keep-after", action="store_true", help="Keep the freshly extracted after-events as python/Data/raw_data/calendar/events_after.json")
+    ap.add_argument("--overwrite-events", action="store_true", help="Overwrite python/Data/raw_data/calendar/events.json with merged output")
     args = ap.parse_args()
 
     if not IN_EVENTS.exists():
@@ -224,7 +224,7 @@ def main() -> None:
     step02_ok = False
     step03_ok = False
 
-    # 2) Run step02 + step03 to produce AFTER (this will rewrite artifacts/ff/events.json)
+    # 2) Run step02 + step03 to produce AFTER (this will rewrite python/Data/raw_data/calendar/events.json)
     #    So first copy current events.json to a safe place (we already wrote events_before.json).
     try:
         print("RUN step02 ...", flush=True)

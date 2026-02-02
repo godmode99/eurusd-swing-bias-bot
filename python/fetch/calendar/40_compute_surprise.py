@@ -1,13 +1,13 @@
 # python/transform/calendar/40_compute_surprise.py
 #
 # Purpose:
-# - Read artifacts/ff/events.json (or events_merged.json)
+# - Read python/Data/raw_data/calendar/events.json (or events_merged.json)
 # - Filter to currencies for a target pair (default EURUSD => EUR, USD)
 # - Parse numeric strings (%, K/M/B, commas, etc.)
 # - Compute surprise metrics:
 #     - surprise = actual - forecast
 #     - surprise_pct = (actual-forecast)/abs(forecast) * 100 (when possible)
-# - Output artifacts/ff/event_surprises.json (+ meta)
+# - Output python/Data/raw_data/calendar/event_surprises.json (+ meta)
 #
 # Notes:
 # - ASCII-only console output (Windows cp1252 safe).
@@ -26,7 +26,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 
-ART_DIR = Path("artifacts") / "ff"
+ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
 DEFAULT_IN = ART_DIR / "events.json"
 ALT_IN = ART_DIR / "events_merged.json"

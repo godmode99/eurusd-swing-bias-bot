@@ -1,10 +1,10 @@
 # python/transform/calendar/20_make_risk_windows.py
 #
 # Purpose:
-# - Read artifacts/ff/events.json
+# - Read python/Data/raw_data/calendar/events.json
 # - Filter for a target pair (default: EURUSD => currencies EUR, USD)
 # - Build risk windows (no-trade windows) around events based on impact
-# - Output artifacts/ff/no_trade_windows.json (+ meta)
+# - Output python/Data/raw_data/calendar/no_trade_windows.json (+ meta)
 #
 # Notes:
 # - ASCII-only console output (Windows cp1252 safe).
@@ -23,7 +23,7 @@ from typing import Iterable
 # -----------------------
 # Config
 # -----------------------
-ART_DIR = Path("artifacts") / "ff"
+ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
 IN_EVENTS = ART_DIR / "events.json"
 OUT_WINDOWS = ART_DIR / "no_trade_windows.json"

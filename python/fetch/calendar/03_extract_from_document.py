@@ -1,10 +1,10 @@
 # python/fetch/calendar/03_extract_from_document.py
 #
 # Purpose:
-# - Read artifacts/ff/calendar_document.html (captured network snapshot)
+# - Read python/Data/raw_data/calendar/calendar_document.html (captured network snapshot)
 # - Extract embedded JS object: window.calendarComponentStates[1] = {...}
 # - Convert JS object-literal to valid JSON text
-# - Output normalized events to artifacts/ff/calendar_event.json (+ calendar_event.csv)
+# - Output normalized events to python/Data/raw_data/calendar/calendar_event.json (+ calendar_event.csv)
 #
 # Notes:
 # - Console output is ASCII-only (Windows cp1252 safe).
@@ -23,7 +23,7 @@ from zoneinfo import ZoneInfo
 # -----------------------
 # Config
 # -----------------------
-ART_DIR = Path("artifacts") / "ff"
+ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
 IN_HTML = ART_DIR / "calendar_document.html"
 OUT_EVENTS_JSON = ART_DIR / "calendar_event.json"

@@ -2,7 +2,7 @@
 #
 # Purpose:
 # - Open https://www.forexfactory.com/calendar using an existing Playwright storage_state (ff_storage.json)
-# - Capture the *document* response HTML (network snapshot) and save it to artifacts/ff/calendar_document.html
+# - Capture the *document* response HTML (network snapshot) and save it to python/Data/raw_data/calendar/calendar_document.html
 # - Save a debug screenshot + small metadata JSON for reproducibility
 #
 # Notes:
@@ -33,7 +33,7 @@ DEFAULT_URL = "https://www.forexfactory.com/calendar"
 STATE_PATH = Path("ff_storage.json")
 CONFIG_PATH = Path(__file__).resolve().parent / "config.yaml"
 
-ART_DIR = Path("artifacts") / "ff"
+ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 OUT_HTML = ART_DIR / "calendar_document.html"
 OUT_PNG = ART_DIR / "document_debug.png"
 OUT_META = ART_DIR / "calendar_document.meta.json"
@@ -159,7 +159,7 @@ def main() -> None:
             msg += "\n"
 
         OUT_ERR.write_text(msg, encoding="utf-8")
-        raise RuntimeError("No HTML captured. See artifacts/ff/capture_error.txt")
+        raise RuntimeError("No HTML captured. See python/Data/raw_data/calendar/capture_error.txt")
 
     # Save HTML snapshot
     OUT_HTML.write_text(html_text, encoding="utf-8")
