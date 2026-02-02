@@ -5,14 +5,17 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
+from html import escape
 from pathlib import Path
 from typing import Any
 
 BASE_DIR = Path(__file__).parent.resolve()
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
 TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
+SELECT_EVENTS_JSON = PYTHON_DIR / "Data" / "raw_data" / "calendar" / "calendar_select_events.json"
 
 if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
     sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
@@ -62,6 +65,33 @@ def run_step(name: str) -> None:
     subprocess.run([sys.executable, str(script_path)], check=True)
 
 
+def load_select_events(path: Path) -> list[dict[str, str]]:
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(data, list):
+        return []
+
+    rows: list[dict[str, str]] = []
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        time_label = item.get("datetime_bkk") or item.get("timeLabel") or ""
+        rows.append(
+            {
+                "time_label": str(time_label),
+                "currency": str(item.get("currency") or ""),
+                "impact": str(item.get("impact") or ""),
+                "name": str(item.get("name") or ""),
+                "actual": str(item.get("actual") or ""),
+            }
+        )
+    return rows
+
+
 def format_pipeline_message(status: str, results: list[dict[str, Any]], error: str | None) -> str:
     if status == "OK":
         head = "✅ <b>Calendar Fetch: OK</b>"
@@ -78,6 +108,21 @@ def format_pipeline_message(status: str, results: list[dict[str, Any]], error: s
             lines.append(f"• {name}: {tag}")
     if error:
         lines.append(f"<b>error</b>: {error}")
+
+    select_details = next(
+        (item.get("details") for item in results if item.get("name") == "select_events"),
+        None,
+    )
+    if select_details:
+        lines.append("<b>select_events</b>:")
+        lines.append("เวลาข่าวออก | currency | impact | name | actual")
+        for row in select_details:
+            time_label = escape(row.get("time_label", ""))
+            currency = escape(row.get("currency", ""))
+            impact = escape(row.get("impact", ""))
+            name = escape(row.get("name", ""))
+            actual = escape(row.get("actual", ""))
+            lines.append(f"{time_label} | {currency} | {impact} | {name} | {actual}")
     return "\n".join(lines)
 
 
@@ -98,7 +143,10 @@ def main() -> None:
         logger.info("RUN  %s", name)
         try:
             run_step(name)
-            results.append({"name": name, "status": "success"})
+            result: dict[str, Any] = {"name": name, "status": "success"}
+            if name == "select_events":
+                result["details"] = load_select_events(SELECT_EVENTS_JSON)
+            results.append(result)
         except Exception as exc:
             error_message = str(exc)
             results.append({"name": name, "status": "failed"})
