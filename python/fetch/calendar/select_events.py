@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import json
 import traceback
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -93,6 +93,29 @@ def filter_events(events: list[dict], cfg: dict) -> list[dict]:
         except Exception:
             impact_score_min = None
 
+    days_back = filters.get("days_back")
+    if days_back is not None:
+        try:
+            days_back = int(days_back)
+        except Exception:
+            days_back = None
+
+    days_forward = filters.get("days_forward")
+    if days_forward is not None:
+        try:
+            days_forward = int(days_forward)
+        except Exception:
+            days_forward = None
+
+    start_epoch: float | None = None
+    end_epoch: float | None = None
+    if days_back is not None or days_forward is not None:
+        now = datetime.now(timezone.utc)
+        if days_back is not None:
+            start_epoch = (now + timedelta(days=days_back)).timestamp()
+        if days_forward is not None:
+            end_epoch = (now + timedelta(days=days_forward)).timestamp()
+
     out: list[dict] = []
 
     for e in events:
@@ -114,6 +137,18 @@ def filter_events(events: list[dict], cfg: dict) -> list[dict]:
             except Exception:
                 score_val = 0
             if score_val < impact_score_min:
+                continue
+        if start_epoch is not None or end_epoch is not None:
+            epoch_val = e.get("dateline_epoch")
+            try:
+                epoch_val = int(epoch_val)
+            except Exception:
+                epoch_val = None
+            if epoch_val is None:
+                continue
+            if start_epoch is not None and epoch_val < start_epoch:
+                continue
+            if end_epoch is not None and epoch_val > end_epoch:
                 continue
         if name_keywords and not any(k in name for k in name_keywords):
             continue
