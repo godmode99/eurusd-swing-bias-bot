@@ -36,7 +36,7 @@ from utils import load_config, setup_logger, utc_now_iso
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-CONFIG_PATH = SCRIPT_DIR / "config.yaml"
+CONFIG_PATH = SCRIPT_DIR / "app" / "config.yaml"
 
 DEFAULT_STEPS = {
     "01_save_session": False,

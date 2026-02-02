@@ -31,7 +31,7 @@ DEFAULT_URL = "https://www.forexfactory.com/calendar"
 
 # Project-relative paths (run from repo root recommended)
 STATE_PATH = Path("ff_storage.json")
-CONFIG_PATH = Path(__file__).resolve().parent / "config.yaml"
+CONFIG_PATH = Path(__file__).resolve().parent / "app" / "config.yaml"
 
 ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 OUT_HTML = ART_DIR / "calendar_document.html"
