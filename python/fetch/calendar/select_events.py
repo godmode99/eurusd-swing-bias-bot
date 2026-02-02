@@ -135,6 +135,20 @@ def main() -> None:
     events = load_events(IN_EVENTS)
     selected = filter_events(events, cfg)
 
+    if selected:
+        print("รายละเอียด select_events", flush=True)
+        print("เวลาข่าวออก | currency | impact | name | actual", flush=True)
+        for ev in selected:
+            time_label = ev.get("datetime_bkk") or ev.get("timeLabel") or ""
+            currency = ev.get("currency") or ""
+            impact = ev.get("impact") or ""
+            name = ev.get("name") or ""
+            actual = ev.get("actual") or ""
+            print(
+                f"{time_label} | {currency} | {impact} | {name} | {actual}",
+                flush=True,
+            )
+
     OUT_EVENTS_JSON.write_text(
         json.dumps(selected, ensure_ascii=False, indent=2),
         encoding="utf-8",
