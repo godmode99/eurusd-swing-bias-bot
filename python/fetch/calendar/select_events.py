@@ -23,7 +23,7 @@ from utils import load_config
 # Config
 # -----------------------
 SCRIPT_DIR = Path(__file__).resolve().parent
-CONFIG_PATH = SCRIPT_DIR / "config.yaml"
+CONFIG_PATH = SCRIPT_DIR / "app" / "config.yaml"
 
 ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
