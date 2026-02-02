@@ -11,7 +11,7 @@ pipeline:
     "40_compute_surprise": false
 
 capture_document_html:
-  url: "https://www.forexfactory.com/calendar"
+  url: "https://www.forexfactory.com/calendar?month=next"
 
 telegram:
   enabled: true

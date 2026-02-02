@@ -26,8 +26,8 @@ from zoneinfo import ZoneInfo
 ART_DIR = Path("python") / "Data" / "raw_data" / "calendar"
 
 IN_HTML = ART_DIR / "calendar_document.html"
-OUT_EVENTS_JSON = ART_DIR / "calendar_event.json"
-OUT_EVENTS_CSV = ART_DIR / "calendar_event.csv"
+OUT_EVENTS_JSON = ART_DIR / "calendar_all_event.json"
+OUT_EVENTS_CSV = ART_DIR / "calendar_all_event.csv"
 OUT_META = ART_DIR / "events.meta.json"
 OUT_ERR = ART_DIR / "extract_error.txt"
 
