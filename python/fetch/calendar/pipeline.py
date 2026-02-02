@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from datetime import datetime
 from html import escape
 from pathlib import Path
 from typing import Any
@@ -92,6 +93,17 @@ def load_select_events(path: Path) -> list[dict[str, str]]:
     return rows
 
 
+def format_time_label(value: str) -> str:
+    cleaned = value.strip()
+    if not cleaned:
+        return ""
+    try:
+        parsed = datetime.fromisoformat(cleaned)
+    except ValueError:
+        return cleaned
+    return parsed.strftime("%H:%M")
+
+
 def format_pipeline_message(status: str, results: list[dict[str, Any]], error: str | None) -> str:
     if status == "OK":
         head = "✅ <b>Calendar Fetch: OK</b>"
@@ -117,7 +129,7 @@ def format_pipeline_message(status: str, results: list[dict[str, Any]], error: s
         lines.append("<b>select_events</b>:")
         lines.append("เวลาข่าวออก | currency | impact | name | actual")
         for row in select_details:
-            time_label = escape(row.get("time_label", ""))
+            time_label = escape(format_time_label(row.get("time_label", "")))
             currency = escape(row.get("currency", ""))
             impact = escape(row.get("impact", ""))
             name = escape(row.get("name", ""))
