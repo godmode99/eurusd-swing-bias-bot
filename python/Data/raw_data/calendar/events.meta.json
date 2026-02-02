@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-02-02T09:22:29+00:00",
+  "generated_at_utc": "2026-02-02T14:29:15+00:00",
   "input_html": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_document.html",
   "marker": "window.calendarComponentStates[1] =",
-  "events_count": 537,
+  "events_count": 538,
   "output_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_all_event.json",
   "output_events_csv": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_all_event.csv",
   "dedupe_key": "(event_id, dateline_epoch)",
