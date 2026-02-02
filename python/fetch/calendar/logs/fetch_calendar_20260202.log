@@ -43,3 +43,93 @@
 2026-02-02 15:19:51,712 | INFO | SKIP 30_refresh_actuals
 2026-02-02 15:19:51,713 | INFO | SKIP 40_compute_surprise
 2026-02-02 15:19:51,713 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 15:31:11,713 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 15:31:11,713 | INFO | SKIP 01_save_session
+2026-02-02 15:31:11,714 | INFO | RUN  02_capture_document_html
+2026-02-02 15:31:19,655 | INFO | RUN  03_extract_from_document
+2026-02-02 15:31:20,281 | INFO | RUN  select_events
+2026-02-02 15:31:20,462 | INFO | SKIP 20_make_risk_windows
+2026-02-02 15:31:20,463 | INFO | SKIP 30_refresh_actuals
+2026-02-02 15:31:20,463 | INFO | SKIP 40_compute_surprise
+2026-02-02 15:31:20,464 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 15:44:07,265 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 15:44:07,266 | INFO | SKIP 01_save_session
+2026-02-02 15:44:07,266 | INFO | RUN  02_capture_document_html
+2026-02-02 15:44:16,097 | INFO | RUN  03_extract_from_document
+2026-02-02 15:44:16,845 | INFO | RUN  select_events
+2026-02-02 15:44:17,029 | INFO | SKIP 20_make_risk_windows
+2026-02-02 15:44:17,029 | INFO | SKIP 30_refresh_actuals
+2026-02-02 15:44:17,029 | INFO | SKIP 40_compute_surprise
+2026-02-02 15:44:17,030 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 15:49:05,816 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 15:49:05,816 | INFO | SKIP 01_save_session
+2026-02-02 15:49:05,817 | INFO | RUN  02_capture_document_html
+2026-02-02 15:49:14,465 | INFO | RUN  03_extract_from_document
+2026-02-02 15:49:15,082 | INFO | RUN  select_events
+2026-02-02 15:49:15,243 | INFO | SKIP 20_make_risk_windows
+2026-02-02 15:49:15,243 | INFO | SKIP 30_refresh_actuals
+2026-02-02 15:49:15,243 | INFO | SKIP 40_compute_surprise
+2026-02-02 15:49:15,244 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 15:54:02,988 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 15:54:02,989 | INFO | SKIP 01_save_session
+2026-02-02 15:54:02,989 | INFO | RUN  02_capture_document_html
+2026-02-02 15:54:11,000 | INFO | RUN  03_extract_from_document
+2026-02-02 15:54:11,532 | INFO | RUN  select_events
+2026-02-02 15:54:11,696 | INFO | SKIP 20_make_risk_windows
+2026-02-02 15:54:11,696 | INFO | SKIP 30_refresh_actuals
+2026-02-02 15:54:11,696 | INFO | SKIP 40_compute_surprise
+2026-02-02 15:54:11,697 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 15:58:45,778 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 15:58:45,778 | INFO | SKIP 01_save_session
+2026-02-02 15:58:45,779 | INFO | RUN  02_capture_document_html
+2026-02-02 15:58:53,818 | INFO | RUN  03_extract_from_document
+2026-02-02 15:58:54,352 | INFO | RUN  select_events
+2026-02-02 15:58:54,525 | INFO | SKIP 20_make_risk_windows
+2026-02-02 15:58:54,526 | INFO | SKIP 30_refresh_actuals
+2026-02-02 15:58:54,526 | INFO | SKIP 40_compute_surprise
+2026-02-02 15:58:54,526 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 16:01:57,722 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 16:01:57,722 | INFO | SKIP 01_save_session
+2026-02-02 16:01:57,722 | INFO | RUN  02_capture_document_html
+2026-02-02 16:02:05,551 | INFO | RUN  03_extract_from_document
+2026-02-02 16:02:06,101 | INFO | RUN  select_events
+2026-02-02 16:02:06,311 | INFO | SKIP 20_make_risk_windows
+2026-02-02 16:02:06,311 | INFO | SKIP 30_refresh_actuals
+2026-02-02 16:02:06,312 | INFO | SKIP 40_compute_surprise
+2026-02-02 16:02:06,312 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 16:02:32,360 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 16:02:32,360 | INFO | SKIP 01_save_session
+2026-02-02 16:02:32,360 | INFO | RUN  02_capture_document_html
+2026-02-02 16:02:40,459 | INFO | RUN  03_extract_from_document
+2026-02-02 16:02:41,027 | INFO | RUN  select_events
+2026-02-02 16:02:41,208 | INFO | SKIP 20_make_risk_windows
+2026-02-02 16:02:41,209 | INFO | SKIP 30_refresh_actuals
+2026-02-02 16:02:41,209 | INFO | SKIP 40_compute_surprise
+2026-02-02 16:02:41,209 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 16:03:00,295 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 16:03:00,295 | INFO | SKIP 01_save_session
+2026-02-02 16:03:00,296 | INFO | RUN  02_capture_document_html
+2026-02-02 16:03:08,151 | INFO | RUN  03_extract_from_document
+2026-02-02 16:03:08,671 | INFO | RUN  select_events
+2026-02-02 16:03:08,867 | INFO | SKIP 20_make_risk_windows
+2026-02-02 16:03:08,867 | INFO | SKIP 30_refresh_actuals
+2026-02-02 16:03:08,868 | INFO | SKIP 40_compute_surprise
+2026-02-02 16:03:08,868 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 16:03:27,953 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 16:03:27,953 | INFO | SKIP 01_save_session
+2026-02-02 16:03:27,954 | INFO | RUN  02_capture_document_html
+2026-02-02 16:03:35,752 | INFO | RUN  03_extract_from_document
+2026-02-02 16:03:36,308 | INFO | RUN  select_events
+2026-02-02 16:03:36,481 | INFO | SKIP 20_make_risk_windows
+2026-02-02 16:03:36,481 | INFO | SKIP 30_refresh_actuals
+2026-02-02 16:03:36,481 | INFO | SKIP 40_compute_surprise
+2026-02-02 16:03:36,481 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 16:15:43,236 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 16:15:43,237 | INFO | SKIP 01_save_session
+2026-02-02 16:15:43,237 | INFO | RUN  02_capture_document_html
+2026-02-02 16:15:51,116 | INFO | RUN  03_extract_from_document
+2026-02-02 16:15:51,611 | INFO | RUN  select_events
+2026-02-02 16:15:51,774 | INFO | SKIP 20_make_risk_windows
+2026-02-02 16:15:51,775 | INFO | SKIP 30_refresh_actuals
+2026-02-02 16:15:51,775 | INFO | SKIP 40_compute_surprise
+2026-02-02 16:15:51,775 | INFO | === CALENDAR PIPELINE END ===

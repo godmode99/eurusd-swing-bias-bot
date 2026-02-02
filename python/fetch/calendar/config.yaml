@@ -12,7 +12,7 @@ pipeline:
     "40_compute_surprise": false
 
 capture_document_html:
-  url: "https://www.forexfactory.com/calendar?"
+  url: "https://www.forexfactory.com/calendar?week=last"
 
 select_events:
   currencies:
@@ -21,8 +21,8 @@ select_events:
   impacts:
     - "high"
     - "medium"
-  days_back: null
-  days_forward: null
+  days_back: -3
+  days_forward: 3
   impact_score_min: null
   countries: []
   name_keywords: []
