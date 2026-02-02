@@ -8,10 +8,11 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 BASE_DIR = Path(__file__).parent.resolve()
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
@@ -93,18 +94,26 @@ def load_select_events(path: Path) -> list[dict[str, str]]:
     return rows
 
 
-def format_time_label(value: str) -> str:
+def get_bangkok_today() -> datetime.date:
+    return datetime.now(timezone.utc).astimezone(ZoneInfo("Asia/Bangkok")).date()
+
+
+def format_time_label(value: str, today_bkk: datetime.date) -> tuple[str, bool]:
     cleaned = value.strip()
     if not cleaned:
-        return ""
+        return "", False
     try:
         parsed = datetime.fromisoformat(cleaned)
     except ValueError:
-        return cleaned
+        return cleaned, False
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=ZoneInfo("Asia/Bangkok"))
+    parsed_bkk = parsed.astimezone(ZoneInfo("Asia/Bangkok"))
     day = str(parsed.day)
     month = parsed.strftime("%b")
     time_label = parsed.strftime("%H:%M")
-    return f"{day}{month}-{time_label}"
+    label = f"{day}{month}-{time_label}"
+    return label, parsed_bkk.date() == today_bkk
 
 
 def format_pipeline_message(status: str, results: list[dict[str, Any]], error: str | None) -> str:
@@ -131,8 +140,12 @@ def format_pipeline_message(status: str, results: list[dict[str, Any]], error: s
     if select_details:
         lines.append("<b>select_events</b>:")
         lines.append("เวลาข่าวออก | currency | impact | name | actual")
+        today_bkk = get_bangkok_today()
         for row in select_details:
-            time_label = escape(format_time_label(row.get("time_label", "")))
+            time_label, is_today = format_time_label(row.get("time_label", ""), today_bkk)
+            time_label = escape(time_label)
+            if is_today:
+                time_label = f"<b>{time_label}</b>"
             currency = escape(row.get("currency", ""))
             impact = escape(row.get("impact", ""))
             name = escape(row.get("name", ""))
