@@ -79,6 +79,15 @@ def save_csv(df: pd.DataFrame, path: Path) -> None:
     out.to_csv(path, index=False)
 
 
+def format_timeframe_label(timeframe: str) -> str:
+    tf = timeframe.upper()
+    digits = "".join(ch for ch in tf if ch.isdigit())
+    letters = "".join(ch for ch in tf if ch.isalpha())
+    if letters == "MN":
+        letters = "M"
+    return f"{digits}{letters}" if digits and letters else tf
+
+
 def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str, Any]:
     """
     Policy:
@@ -102,13 +111,32 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     terminal_path = cfg["mt5"].get("terminal_path") or None
     symbols: List[str] = cfg.get("symbols", ["EURUSD"])
-    timeframe = str(cfg["fetch"]["timeframe"]).upper()
-    bars = int(cfg["fetch"]["bars"])
-    store_time_as_th = bool(cfg["fetch"].get("store_time_as_th", True))
+    fetch_cfg = cfg.get("fetch", {}) or {}
+    store_time_as_th_default = bool(fetch_cfg.get("store_time_as_th", True))
     output_format = str(cfg.get("output", {}).get("format", "csv")).lower()
     if output_format == "cvs":
         output_format = "csv"
-    file_label = str(cfg.get("output", {}).get("file_label", timeframe.lower()))
+    file_label_default = str(cfg.get("output", {}).get("file_label", "data"))
+    timeframe_configs = fetch_cfg.get("timeframes")
+    if timeframe_configs:
+        fetch_specs = [
+            {
+                "timeframe": str(item["timeframe"]).upper(),
+                "bars": int(item["bars"]),
+                "store_time_as_th": bool(item.get("store_time_as_th", store_time_as_th_default)),
+                "file_label": str(item.get("file_label", file_label_default)),
+            }
+            for item in timeframe_configs
+        ]
+    else:
+        fetch_specs = [
+            {
+                "timeframe": str(fetch_cfg["timeframe"]).upper(),
+                "bars": int(fetch_cfg["bars"]),
+                "store_time_as_th": store_time_as_th_default,
+                "file_label": file_label_default,
+            }
+        ]
 
     mt5c = MT5Client(terminal_path=terminal_path)
     stale_sources: List[str] = []
@@ -128,20 +156,24 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
         # Fallback to cache for each symbol/timeframe
         for sym in symbols:
-            cache_path = find_latest_cache(data_dir, sym, file_label, output_format)
-            if cache_path and output_format == "json":
-                cache_df = load_cache_json(cache_path)
-            elif cache_path:
-                cache_df = load_cache_csv(cache_path)
-            else:
-                cache_df = None
-            key = f"{sym}_{timeframe}"
-            if cache_df is not None and len(cache_df) > 0:
-                latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
-                statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
-                stale_sources.append(key)
-            else:
-                statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
+            for spec in fetch_specs:
+                timeframe = spec["timeframe"]
+                file_label = spec["file_label"]
+                timeframe_label = format_timeframe_label(timeframe)
+                cache_path = find_latest_cache(data_dir, sym, file_label, output_format, timeframe_label)
+                if cache_path and output_format == "json":
+                    cache_df = load_cache_json(cache_path)
+                elif cache_path:
+                    cache_df = load_cache_csv(cache_path)
+                else:
+                    cache_df = None
+                key = f"{sym}_{timeframe}"
+                if cache_df is not None and len(cache_df) > 0:
+                    latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
+                    statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
+                    stale_sources.append(key)
+                else:
+                    statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
 
         manifest = {
             "asof_th": th_now_iso(),
@@ -167,54 +199,60 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     # --- FETCH ---
     for sym in symbols:
-        timestamp = timestamp_th_compact()
-        filename = build_output_filename(sym, file_label, output_format, timestamp)
-        output_path = data_dir / filename
-        try:
-            logger.info(f"Fetching {sym} {timeframe} ({bars} bars)...")
-            res = mt5c.fetch_rates(sym, timeframe, bars, store_time_as_th=store_time_as_th)
-            validate_ohlc(res.df, cfg)
-            if output_format == "json":
-                save_json(res.df, output_path)
-            else:
-                save_csv(res.df, output_path)
-            statuses[f"{sym}_{timeframe}"] = SourceStatus(
-                ok=True,
-                rows=res.rows,
-                latest_time=res.latest_time_th,
-                used_cache=False,
-                error=None,
-            )
-            logger.info(f"Saved {output_path} rows={res.rows} latest={res.latest_time_th}")
-        except Exception as e:
-            logger.error(f"Fetch {sym} {timeframe} failed: {e}")
-            cache_path = find_latest_cache(data_dir, sym, file_label, output_format)
-            if cache_path and output_format == "json":
-                cache_df = load_cache_json(cache_path)
-            elif cache_path:
-                cache_df = load_cache_csv(cache_path)
-            else:
-                cache_df = None
-            key = f"{sym}_{timeframe}"
-            if cache_df is not None and len(cache_df) > 0:
-                latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
-                statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
-                stale_sources.append(key)
-                logger.warning(f"Using cache for {sym} {timeframe} (stale).")
-                if keep_error_report:
-                    atomic_write_json(error_path_archive, {
-                        "asof_th": th_now_iso(),
-                        "stage": f"fetch_{sym}_{timeframe}",
-                        "error": str(e),
-                    })
-            else:
-                statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
-                if keep_error_report:
-                    atomic_write_json(error_path_archive, {
-                        "asof_th": th_now_iso(),
-                        "stage": f"fetch_{sym}_{timeframe}",
-                        "error": str(e),
-                    })
+        for spec in fetch_specs:
+            timeframe = spec["timeframe"]
+            bars = spec["bars"]
+            store_time_as_th = spec["store_time_as_th"]
+            file_label = spec["file_label"]
+            timeframe_label = format_timeframe_label(timeframe)
+            timestamp = timestamp_th_compact()
+            filename = build_output_filename(sym, file_label, output_format, timestamp, timeframe_label)
+            output_path = data_dir / filename
+            try:
+                logger.info(f"Fetching {sym} {timeframe} ({bars} bars)...")
+                res = mt5c.fetch_rates(sym, timeframe, bars, store_time_as_th=store_time_as_th)
+                validate_ohlc(res.df, cfg)
+                if output_format == "json":
+                    save_json(res.df, output_path)
+                else:
+                    save_csv(res.df, output_path)
+                statuses[f"{sym}_{timeframe}"] = SourceStatus(
+                    ok=True,
+                    rows=res.rows,
+                    latest_time=res.latest_time_th,
+                    used_cache=False,
+                    error=None,
+                )
+                logger.info(f"Saved {output_path} rows={res.rows} latest={res.latest_time_th}")
+            except Exception as e:
+                logger.error(f"Fetch {sym} {timeframe} failed: {e}")
+                cache_path = find_latest_cache(data_dir, sym, file_label, output_format, timeframe_label)
+                if cache_path and output_format == "json":
+                    cache_df = load_cache_json(cache_path)
+                elif cache_path:
+                    cache_df = load_cache_csv(cache_path)
+                else:
+                    cache_df = None
+                key = f"{sym}_{timeframe}"
+                if cache_df is not None and len(cache_df) > 0:
+                    latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
+                    statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
+                    stale_sources.append(key)
+                    logger.warning(f"Using cache for {sym} {timeframe} (stale).")
+                    if keep_error_report:
+                        atomic_write_json(error_path_archive, {
+                            "asof_th": th_now_iso(),
+                            "stage": f"fetch_{sym}_{timeframe}",
+                            "error": str(e),
+                        })
+                else:
+                    statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
+                    if keep_error_report:
+                        atomic_write_json(error_path_archive, {
+                            "asof_th": th_now_iso(),
+                            "stage": f"fetch_{sym}_{timeframe}",
+                            "error": str(e),
+                        })
 
     # Shutdown MT5 cleanly
     try:

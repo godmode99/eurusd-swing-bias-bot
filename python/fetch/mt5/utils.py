@@ -82,9 +82,16 @@ def atomic_write_json(path: Path, payload: Dict[str, Any]) -> None:
     atomic_write_text(path, text)
 
 
-def build_output_filename(symbol: str, label: str, output_format: str, timestamp: str) -> str:
+def build_output_filename(
+    symbol: str,
+    label: str,
+    output_format: str,
+    timestamp: str,
+    timeframe_label: str | None = None,
+) -> str:
     ext = output_format.lower()
-    return f"raw_{symbol.lower()}_{label}_{timestamp}.{ext}"
+    prefix = f"{timeframe_label}_" if timeframe_label else ""
+    return f"{prefix}raw_{symbol.lower()}_{label}_{timestamp}.{ext}"
 
 
 def save_json(df, path: Path) -> None:
@@ -107,8 +114,15 @@ def load_cache_json(path: Path):
     return df
 
 
-def find_latest_cache(data_dir: Path, symbol: str, label: str, ext: str) -> Path | None:
-    pattern = f"raw_{symbol.lower()}_{label}_*.{ext}"
+def find_latest_cache(
+    data_dir: Path,
+    symbol: str,
+    label: str,
+    ext: str,
+    timeframe_label: str | None = None,
+) -> Path | None:
+    prefix = f"{timeframe_label}_" if timeframe_label else ""
+    pattern = f"{prefix}raw_{symbol.lower()}_{label}_*.{ext}"
     candidates = list(data_dir.glob(pattern))
     if not candidates:
         return None
