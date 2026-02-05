@@ -224,14 +224,13 @@ def main() -> None:
 
     events = load_events(IN_EVENTS)
     selected = filter_events(events, cfg)
-    selected_dedup = merge_events([], selected)
     existing_selected = load_existing_events(OUT_EVENTS_JSON)
-    merged_selected = merge_events(existing_selected, selected_dedup)
+    merged_selected = merge_events(existing_selected, selected)
 
-    if selected_dedup:
+    if selected:
         print("รายละเอียด select_events", flush=True)
         print("เวลาข่าวออก | currency | impact | name | actual", flush=True)
-        for ev in selected_dedup:
+        for ev in selected:
             time_label = ev.get("datetime_bkk") or ev.get("timeLabel") or ""
             currency = ev.get("currency") or ""
             impact = ev.get("impact") or ""
@@ -243,7 +242,7 @@ def main() -> None:
             )
 
     OUT_LATEST_EVENTS_JSON.write_text(
-        json.dumps(selected_dedup, ensure_ascii=False, indent=2),
+        json.dumps(selected, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     OUT_EVENTS_JSON.write_text(
@@ -259,7 +258,7 @@ def main() -> None:
         "output_latest_events_json": str(OUT_LATEST_EVENTS_JSON.resolve()),
         "output_events_csv": str(OUT_EVENTS_CSV.resolve()),
         "selected_count": len(merged_selected),
-        "latest_selected_count": len(selected_dedup),
+        "latest_selected_count": len(selected),
         "filters": cfg.get("select_events", {}) or {},
     }
     OUT_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")

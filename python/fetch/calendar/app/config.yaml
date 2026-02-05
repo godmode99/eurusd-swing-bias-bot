@@ -21,8 +21,8 @@ select_events:
   impacts:
     - "high"
     - "medium"
-  days_back: -3
-  days_forward: 5
+  days_back: -30
+  days_forward: 50
   impact_score_min: null
   countries: []
   name_keywords: []
