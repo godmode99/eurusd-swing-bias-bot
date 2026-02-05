@@ -424,9 +424,18 @@ def merge_events(existing: list[dict], incoming: list[dict]) -> list[dict]:
                 merged_row[field] = value
         merged[key] = merged_row
 
-    rows = list(merged.values())
-    rows.sort(key=lambda r: (r["dateline_epoch"], r["event_id"]))
-    return rows
+    return list(merged.values())
+
+
+def sort_events_desc(rows: list[dict]) -> list[dict]:
+    def sort_key(row: dict) -> tuple[int, int]:
+        epoch = row.get("dateline_epoch")
+        event_id = row.get("event_id")
+        epoch_val = int(epoch) if isinstance(epoch, int) else -1
+        event_val = int(event_id) if isinstance(event_id, int) else -1
+        return (-epoch_val, -event_val)
+
+    return sorted(rows, key=sort_key)
 
 
 # -----------------------
@@ -490,6 +499,7 @@ def main() -> None:
 
     existing_rows = load_existing_events(OUT_EVENTS_JSON)
     rows = merge_events(existing_rows, rows)
+    rows = sort_events_desc(rows)
 
     OUT_EVENTS_JSON.write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
     write_csv(rows, OUT_EVENTS_CSV)
