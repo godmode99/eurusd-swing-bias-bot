@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Optional, Tuple
+from typing import Optional
 
 import pandas as pd
+from zoneinfo import ZoneInfo
 
 # ต้องติดตั้ง: pip install MetaTrader5 pandas
 import MetaTrader5 as mt5
@@ -21,7 +21,7 @@ TF_MAP = {
 @dataclass
 class MT5FetchResult:
     df: pd.DataFrame
-    latest_time_utc: str
+    latest_time_th: str
     rows: int
 
 
@@ -54,7 +54,7 @@ class MT5Client:
             if not mt5.symbol_select(symbol, True):
                 raise RuntimeError(f"symbol_select({symbol}, True) failed")
 
-    def fetch_rates(self, symbol: str, timeframe: str, bars: int, store_time_as_utc: bool = True) -> MT5FetchResult:
+    def fetch_rates(self, symbol: str, timeframe: str, bars: int, store_time_as_th: bool = True) -> MT5FetchResult:
         if timeframe not in TF_MAP:
             raise ValueError(f"Unsupported timeframe: {timeframe}. Use one of {list(TF_MAP.keys())}")
 
@@ -66,31 +66,31 @@ class MT5Client:
             raise RuntimeError(f"copy_rates_from_pos returned empty for {symbol} {timeframe}")
 
         df = pd.DataFrame(rates)
-        # MT5 returns 'time' as POSIX seconds in terminal timezone context; treat as UTC seconds safely
-        df["time"] = pd.to_datetime(df["time"], unit="s", utc=True)
+        # MT5 returns 'time' as POSIX seconds; treat as UTC then convert to Thailand time.
+        th_tz = ZoneInfo("Asia/Bangkok")
+        df["time"] = pd.to_datetime(df["time"], unit="s", utc=True).dt.tz_convert(th_tz)
 
         # Normalize columns
         df = df.rename(columns={
-            "time": "time_utc",
+            "time": "time_th",
             "tick_volume": "tick_volume",
         })
 
         # Keep only common columns
-        keep = ["time_utc", "open", "high", "low", "close", "tick_volume"]
+        keep = ["time_th", "open", "high", "low", "close", "tick_volume"]
         for col in keep:
             if col not in df.columns:
                 df[col] = None
         df = df[keep].copy()
 
         # Sort and drop duplicates
-        df = df.sort_values("time_utc").drop_duplicates(subset=["time_utc"], keep="last").reset_index(drop=True)
+        df = df.sort_values("time_th").drop_duplicates(subset=["time_th"], keep="last").reset_index(drop=True)
 
-        latest_time = df["time_utc"].iloc[-1]
-        latest_iso = latest_time.to_pydatetime().replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+        latest_time = df["time_th"].iloc[-1]
+        latest_iso = latest_time.to_pydatetime().isoformat()
 
-        # Option: store as naive UTC string in CSV (easy to parse)
-        if not store_time_as_utc:
-            # If user wants server time, they'd handle it; default is UTC
+        if not store_time_as_th:
+            # Placeholder for alternate time handling if needed in the future.
             pass
 
-        return MT5FetchResult(df=df, latest_time_utc=latest_iso, rows=len(df))
+        return MT5FetchResult(df=df, latest_time_th=latest_iso, rows=len(df))

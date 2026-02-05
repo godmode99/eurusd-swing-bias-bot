@@ -16,7 +16,7 @@ fetch:
   # จำนวนแท่งที่จะดึง
   bars: 600
   # จะบังคับใช้ server time ของ MT5 หรือแปลงเป็น UTC
-  store_time_as_utc: true
+  store_time_as_th: true
 
 output:
   data_dir: "../../Data/raw_data/mt5/daily"

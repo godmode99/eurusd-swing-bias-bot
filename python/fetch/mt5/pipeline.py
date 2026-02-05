@@ -10,10 +10,10 @@ import pandas as pd
 from fetch_mt5 import MT5Client
 from utils import (
     ensure_dir,
-    utc_now_iso,
+    th_now_iso,
     atomic_write_json,
-    date_utc_compact,
-    timestamp_compact,
+    date_th_compact,
+    timestamp_th_compact,
     build_output_filename,
     save_json,
     load_cache_json,
@@ -54,25 +54,28 @@ def validate_ohlc(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
         raise ValueError("OHLC containment failed for close")
 
     # time monotonic
-    if not df["time_utc"].is_monotonic_increasing:
-        raise ValueError("time_utc is not sorted increasing")
+    if not df["time_th"].is_monotonic_increasing:
+        raise ValueError("time_th is not sorted increasing")
 
 
 def load_cache_csv(path: Path) -> pd.DataFrame | None:
     if not path.exists():
         return None
     df = pd.read_csv(path)
-    if "time_utc" in df.columns:
-        df["time_utc"] = pd.to_datetime(df["time_utc"], utc=True)
+    if "time_th" in df.columns:
+        df["time_th"] = pd.to_datetime(df["time_th"])
+    elif "time_utc" in df.columns:
+        df["time_th"] = pd.to_datetime(df["time_utc"], utc=True).dt.tz_convert("Asia/Bangkok")
+        df = df.drop(columns=["time_utc"])
     return df
 
 
 def save_csv(df: pd.DataFrame, path: Path) -> None:
     """
-    Always overwrites OHLC files (as requested). We store time_utc as ISO-Z string.
+    Always overwrites OHLC files (as requested). We store time_th as ISO-TH string.
     """
     out = df.copy()
-    out["time_utc"] = out["time_utc"].dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    out["time_th"] = out["time_th"].dt.strftime("%Y-%m-%dT%H:%M:%S%z")
     out.to_csv(path, index=False)
 
 
@@ -87,7 +90,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     # Resolve output dirs relative to the folder containing main.py/config.yaml
     data_dir = ensure_dir((base_dir / cfg["output"]["data_dir"]).resolve())
 
-    run_tag = date_utc_compact()  # YYYYMMDD (UTC)
+    run_tag = date_th_compact()  # YYYYMMDD (TH)
 
     # Manifests
     manifest_path_latest = data_dir / "fetch_manifest.json"                 # overwrite
@@ -101,7 +104,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     symbols: List[str] = cfg.get("symbols", ["EURUSD"])
     timeframe = str(cfg["fetch"]["timeframe"]).upper()
     bars = int(cfg["fetch"]["bars"])
-    store_time_as_utc = bool(cfg["fetch"].get("store_time_as_utc", True))
+    store_time_as_th = bool(cfg["fetch"].get("store_time_as_th", True))
     output_format = str(cfg.get("output", {}).get("format", "csv")).lower()
     if output_format == "cvs":
         output_format = "csv"
@@ -134,14 +137,14 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 cache_df = None
             key = f"{sym}_{timeframe}"
             if cache_df is not None and len(cache_df) > 0:
-                latest = pd.to_datetime(cache_df["time_utc"].iloc[-1], utc=True).strftime("%Y-%m-%dT%H:%M:%SZ")
+                latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
                 statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
                 stale_sources.append(key)
             else:
                 statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
 
         manifest = {
-            "asof_utc": utc_now_iso(),
+            "asof_th": th_now_iso(),
             "sources": {k: vars(v) for k, v in statuses.items()},
             "stale_sources": stale_sources,
             "notes": "MT5 connect failed; used cache where available.",
@@ -155,7 +158,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
         # Write error report (dated)
         if keep_error_report:
             atomic_write_json(error_path_archive, {
-                "asof_utc": utc_now_iso(),
+                "asof_th": th_now_iso(),
                 "stage": "connect_mt5",
                 "error": str(e),
             })
@@ -164,12 +167,12 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     # --- FETCH ---
     for sym in symbols:
-        timestamp = timestamp_compact()
+        timestamp = timestamp_th_compact()
         filename = build_output_filename(sym, file_label, output_format, timestamp)
         output_path = data_dir / filename
         try:
             logger.info(f"Fetching {sym} {timeframe} ({bars} bars)...")
-            res = mt5c.fetch_rates(sym, timeframe, bars, store_time_as_utc=store_time_as_utc)
+            res = mt5c.fetch_rates(sym, timeframe, bars, store_time_as_th=store_time_as_th)
             validate_ohlc(res.df, cfg)
             if output_format == "json":
                 save_json(res.df, output_path)
@@ -178,11 +181,11 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
             statuses[f"{sym}_{timeframe}"] = SourceStatus(
                 ok=True,
                 rows=res.rows,
-                latest_time=res.latest_time_utc,
+                latest_time=res.latest_time_th,
                 used_cache=False,
                 error=None,
             )
-            logger.info(f"Saved {output_path} rows={res.rows} latest={res.latest_time_utc}")
+            logger.info(f"Saved {output_path} rows={res.rows} latest={res.latest_time_th}")
         except Exception as e:
             logger.error(f"Fetch {sym} {timeframe} failed: {e}")
             cache_path = find_latest_cache(data_dir, sym, file_label, output_format)
@@ -194,13 +197,13 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 cache_df = None
             key = f"{sym}_{timeframe}"
             if cache_df is not None and len(cache_df) > 0:
-                latest = pd.to_datetime(cache_df["time_utc"].iloc[-1], utc=True).strftime("%Y-%m-%dT%H:%M:%SZ")
+                latest = pd.to_datetime(cache_df["time_th"].iloc[-1]).strftime("%Y-%m-%dT%H:%M:%S%z")
                 statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
                 stale_sources.append(key)
                 logger.warning(f"Using cache for {sym} {timeframe} (stale).")
                 if keep_error_report:
                     atomic_write_json(error_path_archive, {
-                        "asof_utc": utc_now_iso(),
+                        "asof_th": th_now_iso(),
                         "stage": f"fetch_{sym}_{timeframe}",
                         "error": str(e),
                     })
@@ -208,7 +211,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 statuses[key] = SourceStatus(ok=False, rows=0, latest_time=None, used_cache=False, error=str(e))
                 if keep_error_report:
                     atomic_write_json(error_path_archive, {
-                        "asof_utc": utc_now_iso(),
+                        "asof_th": th_now_iso(),
                         "stage": f"fetch_{sym}_{timeframe}",
                         "error": str(e),
                     })
@@ -221,7 +224,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
 
     # --- MANIFEST WRITE ---
     manifest = {
-        "asof_utc": utc_now_iso(),
+        "asof_th": th_now_iso(),
         "sources": {k: vars(v) for k, v in statuses.items()},
         "stale_sources": stale_sources,
         "notes": "",
