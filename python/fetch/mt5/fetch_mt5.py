@@ -13,6 +13,8 @@ import MetaTrader5 as mt5
 TF_MAP = {
     "D1": mt5.TIMEFRAME_D1,
     "H4": mt5.TIMEFRAME_H4,
+    "W1": mt5.TIMEFRAME_W1,
+    "MN1": mt5.TIMEFRAME_MN1,
 }
 
 
@@ -71,12 +73,10 @@ class MT5Client:
         df = df.rename(columns={
             "time": "time_utc",
             "tick_volume": "tick_volume",
-            "real_volume": "real_volume",
-            "spread": "spread",
         })
 
         # Keep only common columns
-        keep = ["time_utc", "open", "high", "low", "close", "tick_volume", "spread", "real_volume"]
+        keep = ["time_utc", "open", "high", "low", "close", "tick_volume"]
         for col in keep:
             if col not in df.columns:
                 df[col] = None

@@ -6,11 +6,17 @@ from pathlib import Path
 from typing import Any, Dict
 
 import yaml
+import pandas as pd
 
 
 def date_utc_compact() -> str:
     # YYYYMMDD (UTC)
     return datetime.now(timezone.utc).strftime("%Y%m%d")
+
+
+def timestamp_compact() -> str:
+    # DDMMYY_HHMM
+    return datetime.now(timezone.utc).strftime("%d%m%y_%H%M")
 
 def load_config(path: str) -> Dict[str, Any]:
     load_env_file(Path(path).resolve().parent)
@@ -71,6 +77,36 @@ def atomic_write_text(path: Path, text: str) -> None:
 def atomic_write_json(path: Path, payload: Dict[str, Any]) -> None:
     text = json.dumps(payload, ensure_ascii=False, indent=2)
     atomic_write_text(path, text)
+
+
+def build_output_filename(symbol: str, label: str, output_format: str, timestamp: str) -> str:
+    ext = output_format.lower()
+    return f"raw_{symbol.lower()}_{label}_{timestamp}.{ext}"
+
+
+def save_json(df, path: Path) -> None:
+    out = df.copy()
+    out["time_utc"] = out["time_utc"].dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    payload = out.to_dict(orient="records")
+    atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2))
+
+
+def load_cache_json(path: Path):
+    if not path.exists():
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    df = pd.DataFrame(payload)
+    if "time_utc" in df.columns:
+        df["time_utc"] = pd.to_datetime(df["time_utc"], utc=True)
+    return df
+
+
+def find_latest_cache(data_dir: Path, symbol: str, label: str, ext: str) -> Path | None:
+    pattern = f"raw_{symbol.lower()}_{label}_*.{ext}"
+    candidates = list(data_dir.glob(pattern))
+    if not candidates:
+        return None
+    return max(candidates, key=lambda p: p.stat().st_mtime)
 
 
 def setup_logger(logs_dir: Path, name: str = "fetch") -> logging.Logger:
