@@ -36,6 +36,8 @@ from pipeline import run_fetch_pipeline
 
 def run_with_config(config_filename: str) -> None:
     cfg_path = BASE_DIR / config_filename
+    if not cfg_path.exists():
+        cfg_path = BASE_DIR / "app" / config_filename
     cfg = load_config(str(cfg_path))
 
     logs_dir = (BASE_DIR / cfg["output"]["logs_dir"]).resolve()
