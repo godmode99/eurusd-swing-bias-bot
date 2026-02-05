@@ -1,16 +1,16 @@
 {
-  "asof_th": "2026-02-05T16:24:25+07:00",
+  "asof_th": "2026-02-05T19:14:04+07:00",
   "sources": {
     "EURUSD_H4": {
       "ok": true,
       "rows": 400,
-      "latest_time": "2026-02-05T15:00:00+07:00",
+      "latest_time": "2026-02-05T19:00:00+07:00",
       "used_cache": false,
       "error": null
     },
     "EURUSD_D1": {
       "ok": true,
-      "rows": 584,
+      "rows": 600,
       "latest_time": "2026-02-05T07:00:00+07:00",
       "used_cache": false,
       "error": null
