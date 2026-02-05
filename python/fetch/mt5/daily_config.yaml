@@ -11,17 +11,18 @@ symbols:
   - "EURUSD"
 
 fetch:
-  # จำนวนแท่งที่จะดึง (มากพอสำหรับ MA/ATR/Fractal ภายหลัง)
-  bars_d1: 600
-  bars_h4: 1200
-
+  # Timeframe ที่ต้องการดึง
+  timeframe: "D1"
+  # จำนวนแท่งที่จะดึง
+  bars: 600
   # จะบังคับใช้ server time ของ MT5 หรือแปลงเป็น UTC
   store_time_as_utc: true
 
 output:
-  data_dir: "../../Data/raw_data/mt5"
+  data_dir: "../../Data/raw_data/mt5/daily"
   logs_dir: "logs"
-  overwrite_ohlc: true
+  format: "csv" # csv หรือ json
+  file_label: "daily"
 
 archive:
   keep_run_manifest: true
