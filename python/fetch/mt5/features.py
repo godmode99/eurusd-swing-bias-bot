@@ -166,7 +166,7 @@ def compute_features(
     ).max(axis=1)
 
     out["tr"] = tr
-    out["atr14"] = tr.rolling(14, min_periods=1).mean()
+    out["atr14"] = tr.ewm(alpha=1 / 14, adjust=False, min_periods=1).mean()
     out["range"] = range_
     out["body"] = (out["close"] - out["open"]).abs()
     out["upper_wick"] = out["high"] - out[["open", "close"]].max(axis=1)
