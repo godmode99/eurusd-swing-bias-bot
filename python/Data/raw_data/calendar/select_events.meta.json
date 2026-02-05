@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-02-05T06:43:09+00:00",
+  "generated_at_utc": "2026-02-05T06:50:18+00:00",
   "input_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_all_event.json",
   "output_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\calendar_select_events.json",
   "output_latest_events_json": "C:\\Users\\iidogpon\\Documents\\GitHub\\eurusd-swing-bias-bot\\python\\Data\\raw_data\\calendar\\latest_select_events.json",
