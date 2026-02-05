@@ -1,16 +1,16 @@
 {
-  "asof_th": "2026-02-05T16:02:50+07:00",
+  "asof_th": "2026-02-05T18:48:27+07:00",
   "sources": {
     "EURUSD_W1": {
       "ok": true,
-      "rows": 106,
+      "rows": 155,
       "latest_time": "2026-02-01T07:00:00+07:00",
       "used_cache": false,
       "error": null
     },
     "EURUSD_D1": {
       "ok": true,
-      "rows": 524,
+      "rows": 824,
       "latest_time": "2026-02-05T07:00:00+07:00",
       "used_cache": false,
       "error": null
@@ -18,7 +18,7 @@
     "EURUSD_H4": {
       "ok": true,
       "rows": 600,
-      "latest_time": "2026-02-05T15:00:00+07:00",
+      "latest_time": "2026-02-05T19:00:00+07:00",
       "used_cache": false,
       "error": null
     }
