@@ -21,6 +21,11 @@ def timestamp_th_compact() -> str:
     # DDMMYY_HHMM (TH)
     return datetime.now(TH_TZ).strftime("%d%m%y_%H%M")
 
+
+def timestamp_th_compact_with_t() -> str:
+    # DDMMYYTHHMM (TH)
+    return datetime.now(TH_TZ).strftime("%d%m%yT%H%M")
+
 def load_config(path: str) -> Dict[str, Any]:
     load_env_file(Path(path).resolve().parent)
     with open(path, "r", encoding="utf-8") as f:
