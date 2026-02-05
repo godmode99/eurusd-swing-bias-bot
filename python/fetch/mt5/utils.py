@@ -94,6 +94,18 @@ def build_output_filename(
     return f"{prefix}raw_{symbol.lower()}_{label}_{timestamp}.{ext}"
 
 
+def build_feature_filename(
+    symbol: str,
+    label: str,
+    output_format: str,
+    timestamp: str,
+    timeframe_label: str | None = None,
+) -> str:
+    ext = output_format.lower()
+    prefix = f"{timeframe_label}_" if timeframe_label else ""
+    return f"{prefix}feature_{symbol.lower()}_{label}_{timestamp}.{ext}"
+
+
 def save_json(df, path: Path) -> None:
     out = df.copy()
     out["time_th"] = out["time_th"].dt.strftime("%Y-%m-%dT%H:%M:%S%z")
