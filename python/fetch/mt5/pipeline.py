@@ -14,6 +14,7 @@ from utils import (
     atomic_write_json,
     date_th_compact,
     timestamp_th_compact,
+    timestamp_th_compact_with_t,
     build_output_filename,
     build_feature_filename,
     save_json,
@@ -21,6 +22,244 @@ from utils import (
     find_latest_cache,
 )
 from features import compute_features, select_feature_columns
+from zoneinfo import ZoneInfo
+
+
+TH_TZ = ZoneInfo("Asia/Bangkok")
+
+TIMEFRAME_RANK = {
+    "MN1": 600,
+    "W1": 500,
+    "D1": 400,
+    "H12": 300,
+    "H8": 290,
+    "H6": 280,
+    "H4": 270,
+    "H2": 260,
+    "H1": 250,
+    "M30": 200,
+    "M15": 190,
+    "M5": 180,
+    "M1": 170,
+}
+
+
+def _safe_float(value: Any, decimals: int | None = None) -> float | None:
+    if value is None or pd.isna(value):
+        return None
+    out = float(value)
+    if decimals is not None:
+        out = round(out, decimals)
+    return out
+
+
+def _safe_int(value: Any) -> int | None:
+    if value is None or pd.isna(value):
+        return None
+    return int(value)
+
+
+def _ensure_th(ts: pd.Timestamp) -> pd.Timestamp:
+    if ts.tzinfo is None:
+        return ts.tz_localize(TH_TZ)
+    return ts.tz_convert(TH_TZ)
+
+
+def _time_iso_th(ts: pd.Timestamp) -> str:
+    return _ensure_th(ts).strftime("%Y-%m-%dT%H:%M:%S%z")
+
+
+def _time_iso_utc(ts: pd.Timestamp) -> str:
+    return _ensure_th(ts).tz_convert("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _trend_hint_from_event(event_type: str | None) -> str | None:
+    if not event_type:
+        return None
+    return {
+        "BOS_UP": "bullish_or_range",
+        "BOS_DN": "bearish_or_range",
+        "CHOCH_UP": "bullish_reversal",
+        "CHOCH_DN": "bearish_reversal",
+    }.get(event_type, None)
+
+
+def _format_last_event(features_df: pd.DataFrame, event_type: str, idx: int) -> Dict[str, Any]:
+    return {
+        "type": event_type,
+        "time_th": _time_iso_th(pd.Timestamp(features_df.loc[idx, "time_th"])),
+        "level_close": _safe_float(features_df.loc[idx, "close"]),
+    }
+
+
+def _collect_swings(features_df: pd.DataFrame, flag_col: str, price_col: str) -> List[Dict[str, Any]]:
+    swings = features_df.loc[features_df[flag_col] == 1, ["time_th", price_col]].tail(2)
+    payload = []
+    for _, row in swings.iterrows():
+        payload.append(
+            {
+                "time_th": _time_iso_th(pd.Timestamp(row["time_th"])),
+                "price": _safe_float(row[price_col]),
+            }
+        )
+    return payload
+
+
+def _build_positioning_atr(last_row: pd.Series, prev_levels: Dict[str, Any]) -> Dict[str, Any] | None:
+    atr = _safe_float(last_row.get("atr14"))
+    price_now = _safe_float(last_row.get("close"))
+    if atr is None or atr == 0 or price_now is None:
+        return None
+    payload: Dict[str, Any] = {"price_now": price_now}
+    for level_key, level_value in prev_levels.items():
+        if level_value is None:
+            continue
+        payload[f"dist_to_{level_key}_atr"] = _safe_float(abs(float(level_value) - price_now) / atr, 4)
+    ema20 = _safe_float(last_row.get("ema20"))
+    if ema20 is not None:
+        payload["dist_to_ema20_atr"] = _safe_float(abs(ema20 - price_now) / atr, 4)
+    return payload
+
+
+def _summary_timeframe_payload(
+    timeframe: str,
+    raw_df: pd.DataFrame,
+    features_df: pd.DataFrame,
+    bars: int,
+) -> Dict[str, Any]:
+    last_raw = raw_df.iloc[-1]
+    last_features = features_df.iloc[-1]
+
+    last_bar = {
+        "time_th": _time_iso_th(pd.Timestamp(last_raw["time_th"])),
+        "open": _safe_float(last_raw.get("open")),
+        "high": _safe_float(last_raw.get("high")),
+        "low": _safe_float(last_raw.get("low")),
+        "close": _safe_float(last_raw.get("close")),
+        "tick_volume": _safe_int(last_raw.get("tick_volume")),
+    }
+
+    indicators = {
+        "atr14": _safe_float(last_features.get("atr14")),
+        "ema20": _safe_float(last_features.get("ema20")),
+        "ema50": _safe_float(last_features.get("ema50")),
+    }
+
+    events = features_df["structure_event"].dropna()
+    last_event = None
+    if not events.empty:
+        idx = events.index[-1]
+        last_event = _format_last_event(features_df, str(events.iloc[-1]), idx)
+
+    choch_events = events[events.str.startswith("CHOCH")]
+    last_choch = None
+    if not choch_events.empty:
+        idx = choch_events.index[-1]
+        last_choch = _format_last_event(features_df, str(choch_events.iloc[-1]), idx)
+
+    trend_hint = _trend_hint_from_event(last_event["type"] if last_event else None)
+
+    structure = {
+        "trend_hint": trend_hint,
+        "last_event": last_event,
+        "last_choch": last_choch,
+    }
+
+    prev_levels = {}
+    for key in ["pdh", "pdl", "pdc", "pwh", "pwl", "pwc", "pmh", "pml", "pmc"]:
+        if key in last_features:
+            prev_levels[key] = _safe_float(last_features.get(key))
+    prev_levels = {k: v for k, v in prev_levels.items() if v is not None}
+
+    swings = {
+        "last_swing_highs": _collect_swings(features_df, "swing_high", "high"),
+        "last_swing_lows": _collect_swings(features_df, "swing_low", "low"),
+    }
+
+    positioning = _build_positioning_atr(last_features, prev_levels)
+
+    notes_flags = {
+        "sweep_prev_high": _safe_int(last_features.get("sweep_prev_high")) or 0,
+        "sweep_prev_low": _safe_int(last_features.get("sweep_prev_low")) or 0,
+    }
+
+    payload = {
+        "lookback_bars": bars,
+        "last_bar": last_bar,
+        "indicators": indicators,
+        "structure": structure,
+    }
+    if prev_levels:
+        payload["prev_levels"] = prev_levels
+    if swings["last_swing_highs"] or swings["last_swing_lows"]:
+        payload["swings"] = swings
+    if positioning:
+        payload["positioning_atr"] = positioning
+    payload["notes_flags"] = notes_flags
+    return payload
+
+
+def build_bias_summary(
+    symbol: str,
+    raw_frames: Dict[str, pd.DataFrame],
+    feature_timeframes: Dict[str, Dict[str, Any]],
+    pivot_left: int,
+    pivot_right: int,
+    bars_lookup: Dict[str, int],
+    timezone: str,
+) -> Dict[str, Any] | None:
+    timeframes_payload: Dict[str, Any] = {}
+    asof_time: pd.Timestamp | None = None
+    asof_rank = -1
+
+    for timeframe, feature_item in feature_timeframes.items():
+        raw_df = raw_frames.get(timeframe)
+        if raw_df is None or raw_df.empty:
+            continue
+        prev_period = feature_item.get("prev_period")
+        features_df = compute_features(raw_df, pivot_left, pivot_right, prev_period=prev_period)
+        timeframes_payload[timeframe] = _summary_timeframe_payload(
+            timeframe,
+            raw_df,
+            features_df,
+            bars_lookup.get(timeframe, len(raw_df)),
+        )
+
+        rank = TIMEFRAME_RANK.get(timeframe, 0)
+        last_time = pd.Timestamp(raw_df.iloc[-1]["time_th"])
+        if rank > asof_rank:
+            asof_rank = rank
+            asof_time = last_time
+
+    if not timeframes_payload:
+        return None
+
+    if asof_time is None:
+        asof_time = pd.Timestamp(list(raw_frames.values())[0].iloc[-1]["time_th"])
+
+    asof = {
+        "time_th": _time_iso_th(asof_time),
+        "time_utc": _time_iso_utc(asof_time),
+    }
+
+    summary = {
+        "symbol": symbol,
+        "asof": asof,
+        "meta": {
+            "timezone_for_period_levels": timezone,
+            "atr_period": 14,
+            "atr_method": "EMA_TR",
+            "swing_pivot": {"left": pivot_left, "right": pivot_right},
+            "bos_rule": "close_break",
+            "choch_rule": "close_break",
+        },
+        "timeframes": timeframes_payload,
+        "calendar_risk": {
+            "next_high_impact_utc": None,
+            "rule": "avoid_new_entries_60m_before",
+        },
+    }
+    return summary
 
 
 @dataclass
@@ -159,6 +398,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     mt5c = MT5Client(terminal_path=terminal_path)
     stale_sources: List[str] = []
     statuses: Dict[str, SourceStatus] = {}
+    raw_frames: Dict[str, Dict[str, pd.DataFrame]] = {sym: {} for sym in symbols}
 
     # --- CONNECT ---
     try:
@@ -235,6 +475,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                     save_json(res.df, output_path)
                 else:
                     save_csv(res.df, output_path)
+                raw_frames[sym][timeframe] = res.df
                 feature_item = feature_timeframes.get(timeframe, {})
                 feature_columns = feature_item.get("columns")
                 if feature_columns:
@@ -271,6 +512,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                     statuses[key] = SourceStatus(ok=True, rows=len(cache_df), latest_time=latest, used_cache=True, error=str(e))
                     stale_sources.append(key)
                     logger.warning(f"Using cache for {sym} {timeframe} (stale).")
+                    raw_frames[sym][timeframe] = cache_df
                     if keep_error_report:
                         atomic_write_json(error_path_archive, {
                             "asof_th": th_now_iso(),
@@ -309,5 +551,30 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     logger.info(f"Wrote manifest latest: {manifest_path_latest}")
     if keep_run_manifest:
         logger.info(f"Wrote manifest archive: {manifest_path_archive}")
+
+    summary_cfg = cfg.get("summary", {}) or {}
+    summary_enabled = bool(summary_cfg.get("enabled", True))
+    if summary_enabled:
+        summary_label = str(summary_cfg.get("file_label", f"{file_label_default}"))
+        summary_timestamp = timestamp_th_compact_with_t()
+        timezone = str(cfg.get("app", {}).get("timezone", "Asia/Bangkok"))
+        bars_lookup = {spec["timeframe"]: spec["bars"] for spec in fetch_specs}
+        for sym in symbols:
+            summary_payload = build_bias_summary(
+                sym,
+                raw_frames.get(sym, {}),
+                feature_timeframes,
+                pivot_left,
+                pivot_right,
+                bars_lookup,
+                timezone,
+            )
+            if not summary_payload:
+                continue
+            suffix = f"_{sym.lower()}" if len(symbols) > 1 else ""
+            summary_name = f"{summary_label}_summary{suffix}_{summary_timestamp}.json"
+            summary_path = data_dir / summary_name
+            atomic_write_json(summary_path, summary_payload)
+            logger.info(f"Wrote summary: {summary_path}")
 
     return manifest
