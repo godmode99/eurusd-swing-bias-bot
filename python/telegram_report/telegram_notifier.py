@@ -75,7 +75,17 @@ def classify_manifest(manifest: Dict[str, Any]) -> str:
 
 def format_manifest_message(manifest: Dict[str, Any]) -> str:
     status = classify_manifest(manifest)
-    asof = manifest.get("asof_utc", "?")
+    asof_utc = manifest.get("asof_utc")
+    asof_th = manifest.get("asof_th")
+    if asof_utc:
+        asof_label = "asof_utc"
+        asof = asof_utc
+    elif asof_th:
+        asof_label = "asof_th"
+        asof = asof_th
+    else:
+        asof_label = "asof"
+        asof = "?"
 
     if status == "OK":
         head = "✅ <b>MT5 Fetch: OK</b>"
@@ -84,7 +94,7 @@ def format_manifest_message(manifest: Dict[str, Any]) -> str:
     else:
         head = "❌ <b>MT5 Fetch: ERROR</b>"
 
-    lines = [head, f"<b>asof_utc</b>: {asof}"]
+    lines = [head, f"<b>{asof_label}</b>: {asof}"]
 
     sources = manifest.get("sources", {}) or {}
     if isinstance(sources, dict) and sources:
