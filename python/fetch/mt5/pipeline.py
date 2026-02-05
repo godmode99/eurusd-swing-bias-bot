@@ -66,11 +66,11 @@ def _ensure_th(ts: pd.Timestamp) -> pd.Timestamp:
 
 
 def _time_iso_th(ts: pd.Timestamp) -> str:
-    return _ensure_th(ts).strftime("%Y-%m-%dT%H:%M:%S%z")
+    return _ensure_th(ts).isoformat(timespec="seconds")
 
 
 def _time_iso_utc(ts: pd.Timestamp) -> str:
-    return _ensure_th(ts).tz_convert("UTC").strftime("%Y-%m-%dT%H:%M:%SZ")
+    return _ensure_th(ts).tz_convert("UTC").isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
 def _trend_hint_from_event(event_type: str | None) -> str | None:
@@ -84,16 +84,38 @@ def _trend_hint_from_event(event_type: str | None) -> str | None:
     }.get(event_type, None)
 
 
-def _format_last_event(features_df: pd.DataFrame, event_type: str, idx: int) -> Dict[str, Any]:
+def _format_last_event(
+    features_df: pd.DataFrame,
+    event_type: str,
+    idx: int,
+    asof_index: int,
+) -> Dict[str, Any]:
+    idx_pos = int(features_df.index.get_loc(idx))
+    age_bars = max(0, asof_index - idx_pos)
     return {
         "type": event_type,
         "time_th": _time_iso_th(pd.Timestamp(features_df.loc[idx, "time_th"])),
         "level_close": _safe_float(features_df.loc[idx, "close"]),
+        "age_bars": age_bars,
     }
 
+def _age_days(asof_time: pd.Timestamp, event_time: pd.Timestamp) -> int:
+    delta_days = (asof_time - event_time).total_seconds() / 86400
+    return max(0, int(delta_days))
 
-def _collect_swings(features_df: pd.DataFrame, flag_col: str, price_col: str) -> List[Dict[str, Any]]:
-    swings = features_df.loc[features_df[flag_col] == 1, ["time_th", price_col]].tail(2)
+
+def _collect_swings_recent(
+    features_df: pd.DataFrame,
+    flag_col: str,
+    price_col: str,
+    asof_time: pd.Timestamp,
+    window_days: int,
+) -> List[Dict[str, Any]]:
+    start_time = asof_time - pd.Timedelta(days=window_days)
+    swings = features_df.loc[
+        (features_df[flag_col] == 1) & (features_df["time_th"] >= start_time),
+        ["time_th", price_col],
+    ]
     payload = []
     for _, row in swings.iterrows():
         payload.append(
@@ -102,6 +124,36 @@ def _collect_swings(features_df: pd.DataFrame, flag_col: str, price_col: str) ->
                 "price": _safe_float(row[price_col]),
             }
         )
+    return payload
+
+
+def _collect_swings_nearest(
+    features_df: pd.DataFrame,
+    flag_col: str,
+    price_col: str,
+    asof_time: pd.Timestamp,
+    price_now: float,
+    atr: float,
+    max_distance_atr: float,
+) -> List[Dict[str, Any]]:
+    swings = features_df.loc[features_df[flag_col] == 1, ["time_th", price_col]]
+    payload = []
+    for _, row in swings.iterrows():
+        price = _safe_float(row[price_col])
+        if price is None:
+            continue
+        distance_atr = abs(price - price_now) / atr
+        if distance_atr > max_distance_atr:
+            continue
+        time_th = pd.Timestamp(row["time_th"])
+        payload.append(
+            {
+                "time_th": _time_iso_th(time_th),
+                "price": price,
+                "distance_atr": distance_atr,
+            }
+        )
+    payload.sort(key=lambda item: item["distance_atr"])
     return payload
 
 
@@ -114,10 +166,14 @@ def _build_positioning_atr(last_row: pd.Series, prev_levels: Dict[str, Any]) -> 
     for level_key, level_value in prev_levels.items():
         if level_value is None:
             continue
-        payload[f"dist_to_{level_key}_atr"] = _safe_float(abs(float(level_value) - price_now) / atr, 4)
+        level_label = str(level_key).upper()
+        payload[f"dist_to_{level_label}_atr"] = _safe_float(abs(float(level_value) - price_now) / atr, 4)
     ema20 = _safe_float(last_row.get("ema20"))
     if ema20 is not None:
         payload["dist_to_ema20_atr"] = _safe_float(abs(ema20 - price_now) / atr, 4)
+    ema50 = _safe_float(last_row.get("ema50"))
+    if ema50 is not None:
+        payload["dist_to_ema50_atr"] = _safe_float(abs(ema50 - price_now) / atr, 4)
     return payload
 
 
@@ -126,9 +182,12 @@ def _summary_timeframe_payload(
     raw_df: pd.DataFrame,
     features_df: pd.DataFrame,
     bars: int,
+    prev_period: str | None,
 ) -> Dict[str, Any]:
     last_raw = raw_df.iloc[-1]
     last_features = features_df.iloc[-1]
+    asof_time = pd.Timestamp(last_raw["time_th"])
+    asof_index = len(features_df) - 1
 
     last_bar = {
         "time_th": _time_iso_th(pd.Timestamp(last_raw["time_th"])),
@@ -149,19 +208,23 @@ def _summary_timeframe_payload(
     last_event = None
     if not events.empty:
         idx = events.index[-1]
-        last_event = _format_last_event(features_df, str(events.iloc[-1]), idx)
+        last_event = _format_last_event(features_df, str(events.iloc[-1]), idx, asof_index)
+
+    bos_events = events[events.str.startswith("BOS")]
+    last_bos = None
+    if not bos_events.empty:
+        idx = bos_events.index[-1]
+        last_bos = _format_last_event(features_df, str(bos_events.iloc[-1]), idx, asof_index)
 
     choch_events = events[events.str.startswith("CHOCH")]
     last_choch = None
     if not choch_events.empty:
         idx = choch_events.index[-1]
-        last_choch = _format_last_event(features_df, str(choch_events.iloc[-1]), idx)
-
-    trend_hint = _trend_hint_from_event(last_event["type"] if last_event else None)
+        last_choch = _format_last_event(features_df, str(choch_events.iloc[-1]), idx, asof_index)
 
     structure = {
-        "trend_hint": trend_hint,
         "last_event": last_event,
+        "last_bos": last_bos,
         "last_choch": last_choch,
     }
 
@@ -171,17 +234,113 @@ def _summary_timeframe_payload(
             prev_levels[key] = _safe_float(last_features.get(key))
     prev_levels = {k: v for k, v in prev_levels.items() if v is not None}
 
-    swings = {
-        "last_swing_highs": _collect_swings(features_df, "swing_high", "high"),
-        "last_swing_lows": _collect_swings(features_df, "swing_low", "low"),
-    }
-
     positioning = _build_positioning_atr(last_features, prev_levels)
 
     notes_flags = {
         "sweep_prev_high": _safe_int(last_features.get("sweep_prev_high")) or 0,
         "sweep_prev_low": _safe_int(last_features.get("sweep_prev_low")) or 0,
     }
+
+    swing_window_map = {"D1": 120, "H4": 30}
+    window_days = swing_window_map.get(timeframe, 60)
+    max_distance_atr = 3.0
+    atr = _safe_float(last_features.get("atr14"))
+    price_now = _safe_float(last_features.get("close"))
+
+    swings_recent = {
+        "window_days": window_days,
+        "highs": _collect_swings_recent(features_df, "swing_high", "high", asof_time, window_days),
+        "lows": _collect_swings_recent(features_df, "swing_low", "low", asof_time, window_days),
+    }
+
+    swings_nearest = None
+    if atr and price_now:
+        swings_nearest = {
+            "max_distance_atr": max_distance_atr,
+            "highs": _collect_swings_nearest(
+                features_df, "swing_high", "high", asof_time, price_now, atr, max_distance_atr
+            ),
+            "lows": _collect_swings_nearest(
+                features_df, "swing_low", "low", asof_time, price_now, atr, max_distance_atr
+            ),
+        }
+
+    key_levels_ranked = []
+    if atr and price_now:
+        recency_distance_atr = 1.5
+        ema20 = _safe_float(last_features.get("ema20"))
+        if ema20 is not None:
+            key_levels_ranked.append(
+                {
+                    "type": "EMA20",
+                    "level": ema20,
+                    "distance_atr": abs(ema20 - price_now) / atr,
+                    "age_days": 0,
+                }
+            )
+        ema50 = _safe_float(last_features.get("ema50"))
+        if ema50 is not None:
+            key_levels_ranked.append(
+                {
+                    "type": "EMA50",
+                    "level": ema50,
+                    "distance_atr": abs(ema50 - price_now) / atr,
+                    "age_days": 0,
+                }
+            )
+        for level_key, level_value in prev_levels.items():
+            if level_value is None:
+                continue
+            age_days = 0
+            if prev_period:
+                period_days = {"D": 1, "W": 7, "M": 30}.get(prev_period.upper(), 0)
+                age_days = period_days
+            key_levels_ranked.append(
+                {
+                    "type": str(level_key).upper(),
+                    "level": _safe_float(level_value),
+                    "distance_atr": abs(float(level_value) - price_now) / atr,
+                    "age_days": age_days,
+                }
+            )
+
+        for event in [last_bos, last_choch]:
+            if not event:
+                continue
+            event_time = pd.Timestamp(event["time_th"])
+            key_levels_ranked.append(
+                {
+                    "type": event["type"],
+                    "level": event["level_close"],
+                    "distance_atr": abs(float(event["level_close"]) - price_now) / atr,
+                    "age_days": _age_days(asof_time, event_time),
+                }
+            )
+
+        for flag_col, price_col, level_type in [
+            ("swing_high", "high", "SWING_HIGH"),
+            ("swing_low", "low", "SWING_LOW"),
+        ]:
+            swings = features_df.loc[features_df[flag_col] == 1, ["time_th", price_col]]
+            for _, row in swings.iterrows():
+                price = _safe_float(row[price_col])
+                if price is None:
+                    continue
+                time_th = pd.Timestamp(row["time_th"])
+                age_days = _age_days(asof_time, time_th)
+                distance_atr = abs(price - price_now) / atr
+                if age_days > window_days and distance_atr > recency_distance_atr:
+                    continue
+                key_levels_ranked.append(
+                    {
+                        "type": level_type,
+                        "level": price,
+                        "distance_atr": distance_atr,
+                        "age_days": age_days,
+                    }
+                )
+
+        key_levels_ranked.sort(key=lambda item: (item["distance_atr"], item["age_days"]))
 
     payload = {
         "lookback_bars": bars,
@@ -191,10 +350,14 @@ def _summary_timeframe_payload(
     }
     if prev_levels:
         payload["prev_levels"] = prev_levels
-    if swings["last_swing_highs"] or swings["last_swing_lows"]:
-        payload["swings"] = swings
+    if swings_recent["highs"] or swings_recent["lows"]:
+        payload["swings_recent"] = swings_recent
+    if swings_nearest and (swings_nearest["highs"] or swings_nearest["lows"]):
+        payload["swings_nearest"] = swings_nearest
     if positioning:
         payload["positioning_atr"] = positioning
+    if key_levels_ranked:
+        payload["key_levels_ranked"] = key_levels_ranked
     payload["notes_flags"] = notes_flags
     return payload
 
@@ -203,6 +366,7 @@ def build_bias_summary(
     symbol: str,
     raw_frames: Dict[str, pd.DataFrame],
     feature_timeframes: Dict[str, Dict[str, Any]],
+    feature_files: Dict[str, str],
     pivot_left: int,
     pivot_right: int,
     bars_lookup: Dict[str, int],
@@ -223,6 +387,7 @@ def build_bias_summary(
             raw_df,
             features_df,
             bars_lookup.get(timeframe, len(raw_df)),
+            prev_period,
         )
 
         rank = TIMEFRAME_RANK.get(timeframe, 0)
@@ -242,21 +407,31 @@ def build_bias_summary(
         "time_utc": _time_iso_utc(asof_time),
     }
 
+    inputs: Dict[str, Any] = {}
+    for timeframe, filename in feature_files.items():
+        inputs[f"{timeframe.lower()}_features_file"] = filename
+
     summary = {
+        "schema_version": "bias_summary.v1",
         "symbol": symbol,
         "asof": asof,
         "meta": {
             "timezone_for_period_levels": timezone,
+            "inputs": inputs,
+            "feature_rules": {
+                "recency_filter": "Levels older than window are only kept if distance_atr <= 1.5 (nearest swings).",
+                "rank_rule": "Sort by distance_atr then age_days.",
+            },
             "atr_period": 14,
-            "atr_method": "EMA_TR",
+            "atr_method": "EMA_TR (from your current features.py)",
             "swing_pivot": {"left": pivot_left, "right": pivot_right},
-            "bos_rule": "close_break",
-            "choch_rule": "close_break",
+            "bos_rule": "close_break (based on your implementation)",
+            "choch_rule": "close_break (based on your implementation)",
         },
         "timeframes": timeframes_payload,
         "calendar_risk": {
             "next_high_impact_utc": None,
-            "rule": "avoid_new_entries_60m_before",
+            "rule": "avoid_new_entries_60m_before_high_impact",
         },
     }
     return summary
@@ -399,6 +574,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     stale_sources: List[str] = []
     statuses: Dict[str, SourceStatus] = {}
     raw_frames: Dict[str, Dict[str, pd.DataFrame]] = {sym: {} for sym in symbols}
+    feature_files_by_symbol: Dict[str, Dict[str, str]] = {sym: {} for sym in symbols}
 
     # --- CONNECT ---
     try:
@@ -489,6 +665,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                     else:
                         save_feature_csv(selected, feature_path)
                     logger.info(f"Saved {feature_path} rows={len(selected)}")
+                    feature_files_by_symbol[sym][timeframe] = feature_filename
                 statuses[f"{sym}_{timeframe}"] = SourceStatus(
                     ok=True,
                     rows=res.rows,
@@ -564,6 +741,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 sym,
                 raw_frames.get(sym, {}),
                 feature_timeframes,
+                feature_files_by_symbol.get(sym, {}),
                 pivot_left,
                 pivot_right,
                 bars_lookup,
