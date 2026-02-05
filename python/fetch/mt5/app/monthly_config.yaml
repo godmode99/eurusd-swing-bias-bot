@@ -14,7 +14,11 @@ fetch:
   # Timeframe ที่ต้องการดึง (รองรับหลาย timeframe)
   timeframes:
     - timeframe: "MN1"
-      bars: 120
+      bars: 300
+    - timeframe: "W1"
+      bars: 500
+    - timeframe: "D1"
+      bars: 1000
   # จะบังคับใช้ server time ของ MT5 หรือแปลงเป็น UTC
   store_time_as_th: true
 
