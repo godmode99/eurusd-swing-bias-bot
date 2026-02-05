@@ -226,6 +226,8 @@ def main() -> None:
     selected = filter_events(events, cfg)
     existing_selected = load_existing_events(OUT_EVENTS_JSON)
     merged_selected = merge_events(existing_selected, selected)
+    existing_keys = {event_key(ev) for ev in existing_selected}
+    latest_selected = [ev for ev in selected if event_key(ev) not in existing_keys]
 
     if selected:
         print("รายละเอียด select_events", flush=True)
@@ -242,7 +244,7 @@ def main() -> None:
             )
 
     OUT_LATEST_EVENTS_JSON.write_text(
-        json.dumps(selected, ensure_ascii=False, indent=2),
+        json.dumps(latest_selected, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     OUT_EVENTS_JSON.write_text(
@@ -258,7 +260,7 @@ def main() -> None:
         "output_latest_events_json": str(OUT_LATEST_EVENTS_JSON.resolve()),
         "output_events_csv": str(OUT_EVENTS_CSV.resolve()),
         "selected_count": len(merged_selected),
-        "latest_selected_count": len(selected),
+        "latest_selected_count": len(latest_selected),
         "filters": cfg.get("select_events", {}) or {},
     }
     OUT_META.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
