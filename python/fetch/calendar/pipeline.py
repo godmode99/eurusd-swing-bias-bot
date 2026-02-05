@@ -18,6 +18,7 @@ BASE_DIR = Path(__file__).parent.resolve()
 PYTHON_DIR = BASE_DIR.parents[1].resolve()
 TELEGRAM_REPORT_DIR = PYTHON_DIR / "telegram_report"
 SELECT_EVENTS_JSON = PYTHON_DIR / "Data" / "raw_data" / "calendar" / "latest_select_events.json"
+SELECT_EVENTS_META_JSON = PYTHON_DIR / "Data" / "raw_data" / "calendar" / "select_events.meta.json"
 
 if TELEGRAM_REPORT_DIR.exists() and str(TELEGRAM_REPORT_DIR) not in sys.path:
     sys.path.insert(0, str(TELEGRAM_REPORT_DIR))
@@ -67,15 +68,48 @@ def run_step(name: str) -> None:
     subprocess.run([sys.executable, str(script_path)], check=True)
 
 
-def load_select_events(path: Path) -> list[dict[str, str]]:
+def derive_select_events_reason(meta_path: Path) -> str | None:
+    if not meta_path.exists():
+        return "ไม่พบไฟล์ select_events.meta.json เพื่อระบุสาเหตุ"
+    try:
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return "อ่านไฟล์ select_events.meta.json ไม่ได้ (JSON ผิดรูปแบบ)"
+    if not isinstance(meta, dict):
+        return "ไฟล์ select_events.meta.json ไม่ใช่ข้อมูลแบบ object"
+
+    selected_count = meta.get("selected_count")
+    latest_count = meta.get("latest_selected_count")
+    try:
+        selected_count = int(selected_count)
+    except Exception:
+        selected_count = None
+    try:
+        latest_count = int(latest_count)
+    except Exception:
+        latest_count = None
+
+    if latest_count == 0:
+        if selected_count == 0:
+            return "ไม่พบข่าวที่ผ่านเงื่อนไขการคัดเลือก (selected_count=0)"
+        return "ไม่มีข้อมูลข่าวใหม่อัปเดต (latest_selected_count=0)"
+    if latest_count is None and selected_count == 0:
+        return "ไม่พบข่าวที่ผ่านเงื่อนไขการคัดเลือก (selected_count=0)"
+    return "latest_select_events.json ว่าง แต่ไม่พบสาเหตุที่ชัดเจนใน meta"
+
+
+def load_select_events(path: Path, meta_path: Path) -> tuple[list[dict[str, str]], str | None]:
     if not path.exists():
-        return []
+        return [], "ไม่พบไฟล์ latest_select_events.json"
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
-        return []
+        return [], "อ่านไฟล์ latest_select_events.json ไม่ได้ (JSON ผิดรูปแบบ)"
     if not isinstance(data, list):
-        return []
+        return [], "latest_select_events.json ไม่ใช่ array"
+
+    if not data:
+        return [], derive_select_events_reason(meta_path)
 
     rows: list[dict[str, str]] = []
     for item in data:
@@ -91,7 +125,7 @@ def load_select_events(path: Path) -> list[dict[str, str]]:
                 "actual": str(item.get("actual") or ""),
             }
         )
-    return rows
+    return rows, None
 
 
 def get_bangkok_today() -> datetime.date:
@@ -133,24 +167,28 @@ def format_pipeline_message(status: str, results: list[dict[str, Any]], error: s
     if error:
         lines.append(f"<b>error</b>: {error}")
 
-    select_details = next(
-        (item.get("details") for item in results if item.get("name") == "select_events"),
-        None,
-    )
-    if select_details:
+    select_result = next((item for item in results if item.get("name") == "select_events"), None)
+    if select_result is not None:
+        select_details = select_result.get("details")
+        empty_reason = select_result.get("empty_reason")
         lines.append("<b>select_events</b>:")
-        lines.append("เวลาข่าวออก | currency | impact | name | actual")
-        today_bkk = get_bangkok_today()
-        for row in select_details:
-            time_label, is_today = format_time_label(row.get("time_label", ""), today_bkk)
-            time_label = escape(time_label)
-            if is_today:
-                time_label = f"<b>{time_label}</b>"
-            currency = escape(row.get("currency", ""))
-            impact = escape(row.get("impact", ""))
-            name = escape(row.get("name", ""))
-            actual = escape(row.get("actual", ""))
-            lines.append(f"{time_label} | {currency} | {impact} | {name} | {actual}")
+        if select_details:
+            lines.append("เวลาข่าวออก | currency | impact | name | actual")
+            today_bkk = get_bangkok_today()
+            for row in select_details:
+                time_label, is_today = format_time_label(row.get("time_label", ""), today_bkk)
+                time_label = escape(time_label)
+                if is_today:
+                    time_label = f"<b>{time_label}</b>"
+                currency = escape(row.get("currency", ""))
+                impact = escape(row.get("impact", ""))
+                name = escape(row.get("name", ""))
+                actual = escape(row.get("actual", ""))
+                lines.append(f"{time_label} | {currency} | {impact} | {name} | {actual}")
+        else:
+            lines.append("ไม่มีข้อมูลใหม่ใน latest_select_events.json")
+            if empty_reason:
+                lines.append(f"<b>reason</b>: {escape(empty_reason)}")
     return "\n".join(lines)
 
 
@@ -173,7 +211,9 @@ def main() -> None:
             run_step(name)
             result: dict[str, Any] = {"name": name, "status": "success"}
             if name == "select_events":
-                result["details"] = load_select_events(SELECT_EVENTS_JSON)
+                details, empty_reason = load_select_events(SELECT_EVENTS_JSON, SELECT_EVENTS_META_JSON)
+                result["details"] = details
+                result["empty_reason"] = empty_reason
             results.append(result)
         except Exception as exc:
             error_message = str(exc)
