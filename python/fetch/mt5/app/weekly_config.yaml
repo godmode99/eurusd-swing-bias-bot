@@ -11,10 +11,10 @@ symbols:
   - "EURUSD"
 
 fetch:
-  # Timeframe ที่ต้องการดึง
-  timeframe: "W1"
-  # จำนวนแท่งที่จะดึง
-  bars: 260
+  # Timeframe ที่ต้องการดึง (รองรับหลาย timeframe)
+  timeframes:
+    - timeframe: "W1"
+      bars: 50
   # จะบังคับใช้ server time ของ MT5 หรือแปลงเป็น UTC
   store_time_as_th: true
 
