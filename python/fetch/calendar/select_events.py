@@ -118,6 +118,17 @@ def merge_events(existing: list[dict], incoming: list[dict]) -> list[dict]:
     return [merged[key] for key in order]
 
 
+def sort_events_desc(events: list[dict]) -> list[dict]:
+    def sort_key(event: dict) -> tuple[int, int]:
+        epoch = event.get("dateline_epoch")
+        event_id = event.get("event_id")
+        epoch_val = int(epoch) if isinstance(epoch, int) else -1
+        event_val = int(event_id) if isinstance(event_id, int) else -1
+        return (-epoch_val, -event_val)
+
+    return sorted(events, key=sort_key)
+
+
 def normalize_list(values: Any) -> list[str]:
     if not values:
         return []
@@ -228,6 +239,8 @@ def main() -> None:
     merged_selected = merge_events(existing_selected, selected)
     existing_keys = {event_key(ev) for ev in existing_selected}
     latest_selected = [ev for ev in selected if event_key(ev) not in existing_keys]
+    merged_selected = sort_events_desc(merged_selected)
+    latest_selected = sort_events_desc(latest_selected)
 
     if selected:
         print("รายละเอียด select_events", flush=True)
