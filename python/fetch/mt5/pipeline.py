@@ -110,6 +110,7 @@ def _collect_swings_recent(
     price_col: str,
     asof_time: pd.Timestamp,
     window_days: int,
+    price_filter: Callable[[float], bool] | None = None,
 ) -> List[Dict[str, Any]]:
     start_time = asof_time - pd.Timedelta(days=window_days)
     swings = features_df.loc[
@@ -118,10 +119,15 @@ def _collect_swings_recent(
     ]
     payload = []
     for _, row in swings.iterrows():
+        price = _safe_float(row[price_col])
+        if price is None:
+            continue
+        if price_filter and not price_filter(price):
+            continue
         payload.append(
             {
                 "time_th": _time_iso_th(pd.Timestamp(row["time_th"])),
-                "price": _safe_float(row[price_col]),
+                "price": price,
             }
         )
     return payload
@@ -258,29 +264,10 @@ def _summary_timeframe_payload(
     }
 
     swings_nearest = None
+    key_levels_ranked_far: List[Dict[str, Any]] = []
     if atr and price_now:
         swings_nearest = {
             "max_distance_atr": max_distance_atr,
-            "highs": _collect_swings_nearest(
-                features_df,
-                "swing_high",
-                "high",
-                asof_time,
-                price_now,
-                atr,
-                max_distance_atr,
-                price_filter=lambda price: price >= price_now,
-            ),
-            "lows": _collect_swings_nearest(
-                features_df,
-                "swing_low",
-                "low",
-                asof_time,
-                price_now,
-                atr,
-                max_distance_atr,
-                price_filter=lambda price: price <= price_now,
-            ),
             "resistance_highs_nearest": _collect_swings_nearest(
                 features_df,
                 "swing_high",
@@ -302,6 +289,22 @@ def _summary_timeframe_payload(
                 price_filter=lambda price: price <= price_now,
             ),
         }
+        swings_recent["resistance_highs_recent"] = _collect_swings_recent(
+            features_df,
+            "swing_high",
+            "high",
+            asof_time,
+            window_days,
+            price_filter=lambda price: price >= price_now,
+        )
+        swings_recent["support_lows_recent"] = _collect_swings_recent(
+            features_df,
+            "swing_low",
+            "low",
+            asof_time,
+            window_days,
+            price_filter=lambda price: price <= price_now,
+        )
 
     key_levels_ranked = []
     if atr and price_now:
@@ -383,11 +386,17 @@ def _summary_timeframe_payload(
                 )
 
         key_levels_ranked.sort(key=lambda item: (item["distance_atr"], item["age_days"]))
-        key_levels_ranked = [
+        key_levels_ranked_near = [
             item
             for item in key_levels_ranked
-            if item["distance_atr"] <= max_distance_atr or item["age_days"] <= window_days
+            if item["distance_atr"] <= max_distance_atr and item["age_days"] <= window_days
         ][:max_ranked_levels]
+        key_levels_ranked_far = [
+            item
+            for item in key_levels_ranked
+            if item["distance_atr"] > max_distance_atr and item["age_days"] <= window_days
+        ][:max_ranked_levels]
+        key_levels_ranked = key_levels_ranked_near
 
     payload = {
         "lookback_bars": bars,
@@ -397,14 +406,20 @@ def _summary_timeframe_payload(
     }
     if prev_levels:
         payload["prev_levels"] = prev_levels
-    if swings_recent["highs"] or swings_recent["lows"]:
+    if any(
+        value
+        for key, value in swings_recent.items()
+        if key != "window_days"
+    ):
         payload["swings_recent"] = swings_recent
-    if swings_nearest and (swings_nearest["highs"] or swings_nearest["lows"]):
+    if swings_nearest and (swings_nearest["resistance_highs_nearest"] or swings_nearest["support_lows_nearest"]):
         payload["swings_nearest"] = swings_nearest
     if positioning:
         payload["positioning_atr"] = positioning
     if key_levels_ranked:
         payload["key_levels_ranked"] = key_levels_ranked
+    if key_levels_ranked_far:
+        payload["key_levels_ranked_far"] = key_levels_ranked_far
     payload["notes_flags"] = notes_flags
     return payload
 
@@ -467,7 +482,7 @@ def build_bias_summary(
             "inputs": inputs,
             "feature_rules": {
                 "recency_filter": "Levels older than window are only kept if distance_atr <= 1.5 (nearest swings).",
-                "rank_rule": "Sort by distance_atr then age_days.",
+                "rank_rule": "Sort by distance_atr then age_days; key_levels_ranked keeps distance_atr <= 3 and age_days <= window_days.",
             },
             "atr_period": 14,
             "atr_method": "EMA_TR (alpha=1/14, adjust=False)",
