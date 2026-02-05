@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Callable
 
 import pandas as pd
 
@@ -135,12 +135,15 @@ def _collect_swings_nearest(
     price_now: float,
     atr: float,
     max_distance_atr: float,
+    price_filter: Callable[[float], bool] | None = None,
 ) -> List[Dict[str, Any]]:
     swings = features_df.loc[features_df[flag_col] == 1, ["time_th", price_col]]
     payload = []
     for _, row in swings.iterrows():
         price = _safe_float(row[price_col])
         if price is None:
+            continue
+        if price_filter and not price_filter(price):
             continue
         distance_atr = abs(price - price_now) / atr
         if distance_atr > max_distance_atr:
@@ -244,6 +247,7 @@ def _summary_timeframe_payload(
     swing_window_map = {"D1": 120, "H4": 30}
     window_days = swing_window_map.get(timeframe, 60)
     max_distance_atr = 3.0
+    max_ranked_levels = 15
     atr = _safe_float(last_features.get("atr14"))
     price_now = _safe_float(last_features.get("close"))
 
@@ -258,10 +262,44 @@ def _summary_timeframe_payload(
         swings_nearest = {
             "max_distance_atr": max_distance_atr,
             "highs": _collect_swings_nearest(
-                features_df, "swing_high", "high", asof_time, price_now, atr, max_distance_atr
+                features_df,
+                "swing_high",
+                "high",
+                asof_time,
+                price_now,
+                atr,
+                max_distance_atr,
+                price_filter=lambda price: price >= price_now,
             ),
             "lows": _collect_swings_nearest(
-                features_df, "swing_low", "low", asof_time, price_now, atr, max_distance_atr
+                features_df,
+                "swing_low",
+                "low",
+                asof_time,
+                price_now,
+                atr,
+                max_distance_atr,
+                price_filter=lambda price: price <= price_now,
+            ),
+            "resistance_highs_nearest": _collect_swings_nearest(
+                features_df,
+                "swing_high",
+                "high",
+                asof_time,
+                price_now,
+                atr,
+                max_distance_atr,
+                price_filter=lambda price: price >= price_now,
+            ),
+            "support_lows_nearest": _collect_swings_nearest(
+                features_df,
+                "swing_low",
+                "low",
+                asof_time,
+                price_now,
+                atr,
+                max_distance_atr,
+                price_filter=lambda price: price <= price_now,
             ),
         }
 
@@ -326,6 +364,10 @@ def _summary_timeframe_payload(
                 price = _safe_float(row[price_col])
                 if price is None:
                     continue
+                if level_type == "SWING_HIGH" and price < price_now:
+                    continue
+                if level_type == "SWING_LOW" and price > price_now:
+                    continue
                 time_th = pd.Timestamp(row["time_th"])
                 age_days = _age_days(asof_time, time_th)
                 distance_atr = abs(price - price_now) / atr
@@ -341,6 +383,11 @@ def _summary_timeframe_payload(
                 )
 
         key_levels_ranked.sort(key=lambda item: (item["distance_atr"], item["age_days"]))
+        key_levels_ranked = [
+            item
+            for item in key_levels_ranked
+            if item["distance_atr"] <= max_distance_atr or item["age_days"] <= window_days
+        ][:max_ranked_levels]
 
     payload = {
         "lookback_bars": bars,
@@ -423,7 +470,7 @@ def build_bias_summary(
                 "rank_rule": "Sort by distance_atr then age_days.",
             },
             "atr_period": 14,
-            "atr_method": "EMA_TR (from your current features.py)",
+            "atr_method": "EMA_TR (alpha=1/14, adjust=False)",
             "swing_pivot": {"left": pivot_left, "right": pivot_right},
             "bos_rule": "close_break (based on your implementation)",
             "choch_rule": "close_break (based on your implementation)",
