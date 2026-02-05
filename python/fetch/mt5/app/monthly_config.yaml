@@ -28,6 +28,78 @@ output:
   format: "csv" # csv หรือ json
   file_label: "monthly"
 
+features:
+  file_label: "monthly"
+  pivot_left: 2
+  pivot_right: 2
+  timeframes:
+    - timeframe: "D1"
+      columns:
+        - tr
+        - atr14
+        - range
+        - body
+        - upper_wick
+        - lower_wick
+        - close_pos
+        - swing_high
+        - swing_low
+        - structure_event
+        - bos_up
+        - bos_dn
+        - choch_up
+        - choch_dn
+        - ema20
+        - ema50
+        - pwh
+        - pwl
+        - pwc
+        - sweep_prev_high
+        - sweep_prev_low
+      prev_period: "W"
+    - timeframe: "W1"
+      columns:
+        - tr
+        - atr14
+        - range
+        - body
+        - upper_wick
+        - lower_wick
+        - close_pos
+        - swing_high
+        - swing_low
+        - structure_event
+        - bos_up
+        - bos_dn
+        - choch_up
+        - choch_dn
+        - ema20
+        - ema50
+        - pmh
+        - pml
+        - pmc
+        - sweep_prev_high
+        - sweep_prev_low
+      prev_period: "M"
+    - timeframe: "MN1"
+      columns:
+        - tr
+        - atr14
+        - range
+        - body
+        - upper_wick
+        - lower_wick
+        - close_pos
+        - swing_high
+        - swing_low
+        - structure_event
+        - bos_up
+        - bos_dn
+        - choch_up
+        - choch_dn
+        - ema20
+        - ema50
+
 archive:
   keep_run_manifest: true
   keep_error_report: true

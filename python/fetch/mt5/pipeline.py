@@ -15,10 +15,12 @@ from utils import (
     date_th_compact,
     timestamp_th_compact,
     build_output_filename,
+    build_feature_filename,
     save_json,
     load_cache_json,
     find_latest_cache,
 )
+from features import compute_features, select_feature_columns
 
 
 @dataclass
@@ -79,6 +81,13 @@ def save_csv(df: pd.DataFrame, path: Path) -> None:
     out.to_csv(path, index=False)
 
 
+def save_feature_csv(df: pd.DataFrame, path: Path) -> None:
+    out = df.copy()
+    if "time_th" in out.columns:
+        out["time_th"] = out["time_th"].dt.strftime("%Y-%m-%dT%H:%M:%S%z")
+    out.to_csv(path, index=False)
+
+
 def format_timeframe_label(timeframe: str) -> str:
     tf = timeframe.upper()
     digits = "".join(ch for ch in tf if ch.isdigit())
@@ -113,6 +122,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
     symbols: List[str] = cfg.get("symbols", ["EURUSD"])
     fetch_cfg = cfg.get("fetch", {}) or {}
     store_time_as_th_default = bool(fetch_cfg.get("store_time_as_th", True))
+    feature_cfg = cfg.get("features", {}) or {}
     output_format = str(cfg.get("output", {}).get("format", "csv")).lower()
     if output_format == "cvs":
         output_format = "csv"
@@ -125,6 +135,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 "bars": int(item["bars"]),
                 "store_time_as_th": bool(item.get("store_time_as_th", store_time_as_th_default)),
                 "file_label": str(item.get("file_label", file_label_default)),
+                "feature_label": str(item.get("feature_label", str(feature_cfg.get("file_label", "feature")))),
             }
             for item in timeframe_configs
         ]
@@ -135,8 +146,15 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                 "bars": int(fetch_cfg["bars"]),
                 "store_time_as_th": store_time_as_th_default,
                 "file_label": file_label_default,
+                "feature_label": str(feature_cfg.get("file_label", "feature")),
             }
         ]
+
+    pivot_left = int(feature_cfg.get("pivot_left", 2))
+    pivot_right = int(feature_cfg.get("pivot_right", 2))
+    feature_timeframes = {
+        str(item.get("timeframe", "")).upper(): item for item in feature_cfg.get("timeframes", []) if item.get("timeframe")
+    }
 
     mt5c = MT5Client(terminal_path=terminal_path)
     stale_sources: List[str] = []
@@ -204,6 +222,7 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
             bars = spec["bars"]
             store_time_as_th = spec["store_time_as_th"]
             file_label = spec["file_label"]
+            feature_label = spec["feature_label"]
             timeframe_label = format_timeframe_label(timeframe)
             timestamp = timestamp_th_compact()
             filename = build_output_filename(sym, file_label, output_format, timestamp, timeframe_label)
@@ -216,6 +235,19 @@ def run_fetch_pipeline(cfg: Dict[str, Any], logger, base_dir: Path) -> Dict[str,
                     save_json(res.df, output_path)
                 else:
                     save_csv(res.df, output_path)
+                feature_item = feature_timeframes.get(timeframe, {})
+                feature_columns = feature_item.get("columns")
+                if feature_columns:
+                    prev_period = feature_item.get("prev_period")
+                    features_df = compute_features(res.df, pivot_left, pivot_right, prev_period=prev_period)
+                    selected = select_feature_columns(features_df, feature_columns)
+                    feature_filename = build_feature_filename(sym, feature_label, output_format, timestamp, timeframe_label)
+                    feature_path = data_dir / feature_filename
+                    if output_format == "json":
+                        save_json(selected, feature_path)
+                    else:
+                        save_feature_csv(selected, feature_path)
+                    logger.info(f"Saved {feature_path} rows={len(selected)}")
                 statuses[f"{sym}_{timeframe}"] = SourceStatus(
                     ok=True,
                     rows=res.rows,
