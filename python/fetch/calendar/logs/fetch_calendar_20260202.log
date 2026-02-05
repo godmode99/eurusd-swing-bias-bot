@@ -214,3 +214,39 @@
 2026-02-02 21:29:15,875 | INFO | SKIP 30_refresh_actuals
 2026-02-02 21:29:15,876 | INFO | SKIP 40_compute_surprise
 2026-02-02 21:29:15,876 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 21:30:59,016 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 21:30:59,016 | INFO | SKIP 01_save_session
+2026-02-02 21:30:59,017 | INFO | RUN  02_capture_document_html
+2026-02-02 21:31:07,266 | INFO | RUN  03_extract_from_document
+2026-02-02 21:31:07,860 | INFO | RUN  select_events
+2026-02-02 21:31:08,055 | INFO | SKIP 20_make_risk_windows
+2026-02-02 21:31:08,055 | INFO | SKIP 30_refresh_actuals
+2026-02-02 21:31:08,055 | INFO | SKIP 40_compute_surprise
+2026-02-02 21:31:08,056 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 21:31:48,042 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 21:31:48,043 | INFO | SKIP 01_save_session
+2026-02-02 21:31:48,043 | INFO | RUN  02_capture_document_html
+2026-02-02 21:31:57,829 | INFO | RUN  03_extract_from_document
+2026-02-02 21:31:58,455 | INFO | RUN  select_events
+2026-02-02 21:31:58,672 | INFO | SKIP 20_make_risk_windows
+2026-02-02 21:31:58,672 | INFO | SKIP 30_refresh_actuals
+2026-02-02 21:31:58,672 | INFO | SKIP 40_compute_surprise
+2026-02-02 21:31:58,673 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 21:36:14,998 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 21:36:14,998 | INFO | SKIP 01_save_session
+2026-02-02 21:36:14,999 | INFO | RUN  02_capture_document_html
+2026-02-02 21:36:23,751 | INFO | RUN  03_extract_from_document
+2026-02-02 21:36:24,338 | INFO | RUN  select_events
+2026-02-02 21:36:24,528 | INFO | SKIP 20_make_risk_windows
+2026-02-02 21:36:24,528 | INFO | SKIP 30_refresh_actuals
+2026-02-02 21:36:24,528 | INFO | SKIP 40_compute_surprise
+2026-02-02 21:36:24,529 | INFO | === CALENDAR PIPELINE END ===
+2026-02-02 22:27:56,408 | INFO | === CALENDAR PIPELINE START ===
+2026-02-02 22:27:56,408 | INFO | SKIP 01_save_session
+2026-02-02 22:27:56,409 | INFO | RUN  02_capture_document_html
+2026-02-02 22:28:05,348 | INFO | RUN  03_extract_from_document
+2026-02-02 22:28:06,023 | INFO | RUN  select_events
+2026-02-02 22:28:06,227 | INFO | SKIP 20_make_risk_windows
+2026-02-02 22:28:06,228 | INFO | SKIP 30_refresh_actuals
+2026-02-02 22:28:06,228 | INFO | SKIP 40_compute_surprise
+2026-02-02 22:28:06,228 | INFO | === CALENDAR PIPELINE END ===
