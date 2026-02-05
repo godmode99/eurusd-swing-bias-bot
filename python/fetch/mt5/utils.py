@@ -1,22 +1,25 @@
 from __future__ import annotations
 import os, json, time, logging
-from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
 import yaml
 import pandas as pd
+from zoneinfo import ZoneInfo
 
 
-def date_utc_compact() -> str:
-    # YYYYMMDD (UTC)
-    return datetime.now(timezone.utc).strftime("%Y%m%d")
+TH_TZ = ZoneInfo("Asia/Bangkok")
 
 
-def timestamp_compact() -> str:
-    # DDMMYY_HHMM
-    return datetime.now(timezone.utc).strftime("%d%m%y_%H%M")
+def date_th_compact() -> str:
+    # YYYYMMDD (TH)
+    return datetime.now(TH_TZ).strftime("%Y%m%d")
+
+
+def timestamp_th_compact() -> str:
+    # DDMMYY_HHMM (TH)
+    return datetime.now(TH_TZ).strftime("%d%m%y_%H%M")
 
 def load_config(path: str) -> Dict[str, Any]:
     load_env_file(Path(path).resolve().parent)
@@ -64,8 +67,8 @@ def ensure_dir(p: str | Path) -> Path:
     return pp
 
 
-def utc_now_iso() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+def th_now_iso() -> str:
+    return datetime.now(TH_TZ).replace(microsecond=0).isoformat()
 
 
 def atomic_write_text(path: Path, text: str) -> None:
@@ -86,7 +89,7 @@ def build_output_filename(symbol: str, label: str, output_format: str, timestamp
 
 def save_json(df, path: Path) -> None:
     out = df.copy()
-    out["time_utc"] = out["time_utc"].dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+    out["time_th"] = out["time_th"].dt.strftime("%Y-%m-%dT%H:%M:%S%z")
     payload = out.to_dict(orient="records")
     atomic_write_text(path, json.dumps(payload, ensure_ascii=False, indent=2))
 
@@ -96,8 +99,11 @@ def load_cache_json(path: Path):
         return None
     payload = json.loads(path.read_text(encoding="utf-8"))
     df = pd.DataFrame(payload)
-    if "time_utc" in df.columns:
-        df["time_utc"] = pd.to_datetime(df["time_utc"], utc=True)
+    if "time_th" in df.columns:
+        df["time_th"] = pd.to_datetime(df["time_th"])
+    elif "time_utc" in df.columns:
+        df["time_th"] = pd.to_datetime(df["time_utc"], utc=True).dt.tz_convert(TH_TZ)
+        df = df.drop(columns=["time_utc"])
     return df
 
 
@@ -115,7 +121,7 @@ def setup_logger(logs_dir: Path, name: str = "fetch") -> logging.Logger:
     logger.setLevel(logging.INFO)
     logger.handlers.clear()
 
-    log_file = logs_dir / f"{name}_{datetime.now().strftime('%Y%m%d')}.log"
+    log_file = logs_dir / f"{name}_{datetime.now(TH_TZ).strftime('%Y%m%d')}.log"
     fh = logging.FileHandler(log_file, encoding="utf-8")
     fh.setLevel(logging.INFO)
 
