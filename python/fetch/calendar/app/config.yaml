@@ -11,6 +11,29 @@ pipeline:
     "30_refresh_actuals": false
     "40_compute_surprise": false
 
+  cleanup:
+    enabled: true
+    target_dir: "python/Data/raw_data/calendar"
+    remove_files:
+      - "calendar_document.html"
+      - "calendar_document.meta.json"
+      - "document_debug.png"
+      - "capture_error.txt"
+      - "extract_error.txt"
+    remove_globs:
+      - "*.tmp"
+      - "*.temp"
+      - "*.bak"
+      - "*debug*"
+    keep_files:
+      - "latest_select_events.json"
+      - "calendar_select_events.json"
+      - "calendar_select_events.csv"
+      - "select_events.meta.json"
+      - "calendar_all_event.json"
+      - "calendar_all_event.csv"
+      - "events.meta.json"
+
 capture_document_html:
   url: "https://www.forexfactory.com/calendar?"
 

@@ -11,6 +11,7 @@ import sys
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
+import fnmatch
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -49,6 +50,33 @@ DEFAULT_STEPS = {
     "40_compute_surprise": False,
 }
 
+DEFAULT_CLEANUP = {
+    "enabled": True,
+    "target_dir": str(PYTHON_DIR / "Data" / "raw_data" / "calendar"),
+    "remove_files": [
+        "calendar_document.html",
+        "calendar_document.meta.json",
+        "document_debug.png",
+        "capture_error.txt",
+        "extract_error.txt",
+    ],
+    "remove_globs": [
+        "*.tmp",
+        "*.temp",
+        "*.bak",
+        "*debug*",
+    ],
+    "keep_files": [
+        "latest_select_events.json",
+        "calendar_select_events.json",
+        "calendar_select_events.csv",
+        "select_events.meta.json",
+        "calendar_all_event.json",
+        "calendar_all_event.csv",
+        "events.meta.json",
+    ],
+}
+
 
 def load_steps() -> dict[str, bool]:
     cfg = load_config(str(CONFIG_PATH)) if CONFIG_PATH.exists() else {}
@@ -66,6 +94,64 @@ def run_step(name: str) -> None:
     if not script_path.exists():
         raise FileNotFoundError(f"Missing step script: {script_path}")
     subprocess.run([sys.executable, str(script_path)], check=True)
+
+
+def load_cleanup_config(cfg: dict[str, Any]) -> dict[str, Any]:
+    cleanup_cfg = ((cfg.get("pipeline", {}) or {}).get("cleanup", {}) or {}).copy()
+    merged: dict[str, Any] = {**DEFAULT_CLEANUP, **cleanup_cfg}
+
+    # normalize list-like fields
+    for key in ("remove_files", "remove_globs", "keep_files"):
+        value = merged.get(key)
+        if not isinstance(value, list):
+            merged[key] = list(DEFAULT_CLEANUP[key])
+            continue
+        merged[key] = [str(item) for item in value if str(item).strip()]
+
+    target_dir = merged.get("target_dir") or DEFAULT_CLEANUP["target_dir"]
+    merged["target_dir"] = Path(str(target_dir)).resolve()
+    merged["enabled"] = bool(merged.get("enabled", True))
+    return merged
+
+
+def cleanup_pipeline_artifacts(cleanup_cfg: dict[str, Any], logger: Any) -> None:
+    if not cleanup_cfg.get("enabled", True):
+        logger.info("CLEANUP disabled")
+        return
+
+    target_dir = cleanup_cfg["target_dir"]
+    if not isinstance(target_dir, Path):
+        target_dir = Path(str(target_dir)).resolve()
+
+    if not target_dir.exists():
+        logger.info("CLEANUP skip: target_dir does not exist (%s)", target_dir)
+        return
+
+    keep_files = set(cleanup_cfg.get("keep_files", []))
+    remove_files = set(cleanup_cfg.get("remove_files", []))
+    remove_globs = list(cleanup_cfg.get("remove_globs", []))
+
+    removed: list[str] = []
+    for path in target_dir.iterdir():
+        if not path.is_file():
+            continue
+        if path.name in keep_files:
+            continue
+
+        should_remove = path.name in remove_files
+        if not should_remove:
+            should_remove = any(fnmatch.fnmatch(path.name, pattern) for pattern in remove_globs)
+        if not should_remove:
+            continue
+
+        path.unlink(missing_ok=True)
+        removed.append(path.name)
+
+    if removed:
+        removed.sort()
+        logger.info("CLEANUP removed %d files: %s", len(removed), ", ".join(removed))
+    else:
+        logger.info("CLEANUP completed: no files removed")
 
 
 def derive_select_events_reason(meta_path: Path) -> str | None:
@@ -223,6 +309,11 @@ def main() -> None:
     logger.info("=== CALENDAR PIPELINE END ===")
 
     status = "ERROR" if error_message else "OK"
+
+    if status == "OK":
+        cleanup_cfg = load_cleanup_config(cfg)
+        cleanup_pipeline_artifacts(cleanup_cfg, logger)
+
     tg = cfg.get("telegram", {}) or {}
     send_ok = bool(tg.get("send_on_success", True))
     send_err = bool(tg.get("send_on_error", True))
