@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\03_extract_from_document.py", line 527, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\fetch\calendar\03_extract_from_document.py", line 448, in main
+    raise FileNotFoundError("Missing input HTML: " + str(IN_HTML.resolve()))
+FileNotFoundError: Missing input HTML: C:\Users\iidogpon\Documents\GitHub\eurusd-swing-bias-bot\python\Data\raw_data\calendar\calendar_document.html

@@ -3,7 +3,7 @@ output:
 
 pipeline:
   steps:
-    "01_save_session": false
+    "01_save_session": true
     "02_capture_document_html": true
     "03_extract_from_document": true
     "select_events": true
@@ -15,11 +15,7 @@ pipeline:
     enabled: true
     target_dir: "python/Data/raw_data/calendar"
     remove_files:
-      - "calendar_document.html"
-      - "calendar_document.meta.json"
-      - "document_debug.png"
-      - "capture_error.txt"
-      - "extract_error.txt"
+
     remove_globs:
       - "*.tmp"
       - "*.temp"
@@ -33,9 +29,14 @@ pipeline:
       - "calendar_all_event.json"
       - "calendar_all_event.csv"
       - "events.meta.json"
+      - "calendar_document.html"
+      - "calendar_document.meta.json"
+      - "document_debug.png"
+      - "capture_error.txt"
+      - "extract_error.txt"
 
 capture_document_html:
-  url: "https://www.forexfactory.com/calendar?"
+  url: "https://www.forexfactory.com/calendar"
 
 select_events:
   currencies:

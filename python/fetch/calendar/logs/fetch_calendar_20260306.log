@@ -1,0 +1,50 @@
+2026-03-06 19:55:27,376 | INFO | === CALENDAR PIPELINE START ===
+2026-03-06 19:55:27,376 | INFO | SKIP 01_save_session
+2026-03-06 19:55:27,377 | INFO | RUN  02_capture_document_html
+2026-03-06 19:55:49,212 | INFO | RUN  03_extract_from_document
+2026-03-06 19:55:49,598 | INFO | RUN  select_events
+2026-03-06 19:55:49,770 | INFO | SKIP 20_make_risk_windows
+2026-03-06 19:55:49,770 | INFO | SKIP 30_refresh_actuals
+2026-03-06 19:55:49,770 | INFO | SKIP 40_compute_surprise
+2026-03-06 19:55:49,771 | INFO | === CALENDAR PIPELINE END ===
+2026-03-06 19:55:49,774 | INFO | CLEANUP removed 4 files: calendar_document.html, calendar_document.meta.json, capture_error.txt, document_debug.png
+2026-03-06 19:58:23,320 | INFO | === CALENDAR PIPELINE START ===
+2026-03-06 19:58:23,320 | INFO | SKIP 01_save_session
+2026-03-06 19:58:23,320 | INFO | RUN  02_capture_document_html
+2026-03-06 19:59:00,293 | INFO | RUN  03_extract_from_document
+2026-03-06 19:59:01,078 | INFO | RUN  select_events
+2026-03-06 19:59:01,243 | INFO | SKIP 20_make_risk_windows
+2026-03-06 19:59:01,244 | INFO | SKIP 30_refresh_actuals
+2026-03-06 19:59:01,244 | INFO | SKIP 40_compute_surprise
+2026-03-06 19:59:01,244 | INFO | === CALENDAR PIPELINE END ===
+2026-03-06 19:59:01,247 | INFO | CLEANUP removed 2 files: capture_error.txt, extract_error.txt
+2026-03-06 20:00:10,092 | INFO | === CALENDAR PIPELINE START ===
+2026-03-06 20:00:10,092 | INFO | RUN  01_save_session
+2026-03-06 20:00:32,177 | INFO | RUN  02_capture_document_html
+2026-03-06 20:00:53,536 | INFO | RUN  03_extract_from_document
+2026-03-06 20:01:00,897 | INFO | RUN  select_events
+2026-03-06 20:01:01,061 | INFO | SKIP 20_make_risk_windows
+2026-03-06 20:01:01,062 | INFO | SKIP 30_refresh_actuals
+2026-03-06 20:01:01,062 | INFO | SKIP 40_compute_surprise
+2026-03-06 20:01:01,062 | INFO | === CALENDAR PIPELINE END ===
+2026-03-06 20:01:01,065 | INFO | CLEANUP removed 3 files: capture_error.txt, document_debug.png, extract_error.txt
+2026-03-06 20:02:01,609 | INFO | === CALENDAR PIPELINE START ===
+2026-03-06 20:02:01,610 | INFO | RUN  01_save_session
+2026-03-06 20:02:08,959 | INFO | RUN  02_capture_document_html
+2026-03-06 20:02:20,685 | INFO | RUN  03_extract_from_document
+2026-03-06 20:02:25,090 | INFO | RUN  select_events
+2026-03-06 20:02:25,258 | INFO | SKIP 20_make_risk_windows
+2026-03-06 20:02:25,258 | INFO | SKIP 30_refresh_actuals
+2026-03-06 20:02:25,259 | INFO | SKIP 40_compute_surprise
+2026-03-06 20:02:25,259 | INFO | === CALENDAR PIPELINE END ===
+2026-03-06 20:02:25,260 | INFO | CLEANUP completed: no files removed
+2026-03-06 20:16:37,600 | INFO | === CALENDAR PIPELINE START ===
+2026-03-06 20:16:37,600 | INFO | RUN  01_save_session
+2026-03-06 20:16:41,625 | INFO | RUN  02_capture_document_html
+2026-03-06 20:16:53,046 | INFO | RUN  03_extract_from_document
+2026-03-06 20:16:54,355 | INFO | RUN  select_events
+2026-03-06 20:16:54,511 | INFO | SKIP 20_make_risk_windows
+2026-03-06 20:16:54,511 | INFO | SKIP 30_refresh_actuals
+2026-03-06 20:16:54,511 | INFO | SKIP 40_compute_surprise
+2026-03-06 20:16:54,511 | INFO | === CALENDAR PIPELINE END ===
+2026-03-06 20:16:54,514 | INFO | CLEANUP completed: no files removed

@@ -128,8 +128,8 @@ def main() -> None:
         page.on("response", on_response)
 
         print("goto:", url, flush=True)
-        page.goto(url, wait_until="domcontentloaded", timeout=120000)
-        page.wait_for_timeout(4000)
+        page.goto(url, wait_until="domcontentloaded", timeout=1200000)
+        page.wait_for_timeout(40000)
 
         final_url = page.url
         page_title = page.title()
