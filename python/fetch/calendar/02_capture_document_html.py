@@ -39,6 +39,20 @@ OUT_PNG = ART_DIR / "document_debug.png"
 OUT_META = ART_DIR / "calendar_document.meta.json"
 OUT_ERR = ART_DIR / "capture_error.txt"
 
+SECURITY_KEYWORDS = (
+    "security verification",
+    "verifies you are not a bot",
+    "just a moment",
+    "checking your browser",
+    "cf-challenge",
+)
+
+CALENDAR_MARKERS = (
+    "calendar__table",
+    'id="calendar"',
+    "calendar__row",
+)
+
 
 @dataclass
 class Meta:
@@ -73,6 +87,16 @@ def _load_url() -> str:
         if isinstance(url, str) and url.strip():
             return url.strip()
     return DEFAULT_URL
+
+
+def _looks_like_security_gate(text: str) -> bool:
+    lowered = text.lower()
+    return any(keyword in lowered for keyword in SECURITY_KEYWORDS)
+
+
+def _looks_like_calendar_page(text: str) -> bool:
+    lowered = text.lower()
+    return any(marker in lowered for marker in CALENDAR_MARKERS)
 
 
 def main() -> None:
@@ -129,10 +153,36 @@ def main() -> None:
 
         print("goto:", url, flush=True)
         page.goto(url, wait_until="domcontentloaded", timeout=1200000)
-        page.wait_for_timeout(40000)
+
+        # ForexFactory frequently shows a security-verification interstitial.
+        # Give it time to solve and continue only after calendar DOM appears.
+        challenge_seen = False
+        wait_rounds = 24  # 24 x 5s = 120s
+        for _ in range(wait_rounds):
+            page.wait_for_timeout(5000)
+            html_now = page.content()
+            title_now = page.title()
+
+            if _looks_like_security_gate(title_now) or _looks_like_security_gate(html_now):
+                challenge_seen = True
+                continue
+
+            if _looks_like_calendar_page(html_now):
+                break
+
+        # One more settle window after challenge is gone.
+        if challenge_seen:
+            page.wait_for_timeout(5000)
 
         final_url = page.url
         page_title = page.title()
+
+        # Fallback capture from rendered DOM when network capture misses due redirects/challenges.
+        if not html_text:
+            dom_html = page.content()
+            if _looks_like_calendar_page(dom_html) and not _looks_like_security_gate(dom_html):
+                html_text = dom_html
+                doc_status = doc_status or 200
 
         # Save a debug screenshot (useful to confirm not "Just a moment...")
         page.screenshot(path=str(OUT_PNG), full_page=True)
@@ -150,6 +200,7 @@ def main() -> None:
             f"- final_url: {final_url}\n"
             f"- title: {page_title}\n"
             f"- state: {_abs(STATE_PATH)}\n"
+            "- hint: page appears to still be behind anti-bot security verification.\n"
             "Try re-generating ff_storage.json and rerun.\n"
         )
         # Include relevant headers if any
